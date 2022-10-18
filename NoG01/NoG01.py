@@ -1,3 +1,6 @@
+#203213ゆゆゆ
+#203128 bit
+
 #tkinterのインポート
 import tkinter
 
