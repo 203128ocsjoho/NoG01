@@ -1,3 +1,5 @@
+#203213ゆゆゆ
+
 #tkinterのインポート
 import tkinter
 
