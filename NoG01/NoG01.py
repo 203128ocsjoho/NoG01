@@ -1,4 +1,7 @@
 #203213ゆゆゆ
+#203211noog
+
+#203213ゆゆゆ
 
 #tkinterのインポート
 import tkinter
