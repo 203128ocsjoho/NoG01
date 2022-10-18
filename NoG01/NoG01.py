@@ -1,3 +1,8 @@
+#203213ゆゆゆ
+#203211noog
+#203105かにかに
+#203128bit
+
 #tkinterのインポート
 import tkinter
 
