@@ -12,6 +12,8 @@
 
 
 
+
+#5
 #tkinterのインポート
 import tkinter
 
