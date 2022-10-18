@@ -1,5 +1,3 @@
-#203105 かじかん
-
 #tkinterのインポート
 import tkinter
 
