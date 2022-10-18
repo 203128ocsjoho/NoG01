@@ -53,7 +53,7 @@ label_tikawa.grid()
 btn_go = tkinter.Button(root, text='Go',
 width = 10,
 height = 3,
-foreground = "White",
+foreground = "Black",
 bg = "Cyan",
 )
 
@@ -62,7 +62,7 @@ width = 85,
 height = 3,
 pady = 3,
 wrap = tkinter.NONE,
-foreground = "White",
+foreground = "Black",
 bg = "Cyan",
 )
 
