@@ -66,14 +66,14 @@ foreground = "Black",
 bg = "Cyan",
 )
 
-"""
-btn_close = tkinter.Button(root, text='閉じる',
-width = 20,
+
+btn_close = tkinter.Button(root, text='泣いちゃった',
+width = 10,
 height = 2,
-bg = "White",
+bg = "Red",
 command = close_window
 )
-"""
+
 
 #ボタンやテキストを配置する位置の設定
 
@@ -88,7 +88,7 @@ text_input.place(x=210, y=255)
 
 btn_go.place(x=450, y=325)
 
-#btn_close.place(x=700, y=450)
+btn_close.place(x=900, y=20)
 
 
 """
