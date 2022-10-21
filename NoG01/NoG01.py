@@ -22,6 +22,9 @@
 
 #5
 #tkinterのインポート
+<<<<<<< HEAD
+import tkinter 
+=======
 import tensorflow as tf
 import numpy as np
 import keras as ks
@@ -52,20 +55,19 @@ import os
 '''
 
 import tkinter
+>>>>>>> 733f479644a57c060275255faaa43f6080c975b9
 
 from tkinter import Text, Tk, ttk
 
 #tkinterを起動
 root = tkinter.Tk()
 
-#タイトルの設定
+#メインフレームの作成
+frame1 = tkinter.Frame(root,height=500,width=1000)
+
+#メインウィンドウの設定
 root.title("釣り動画判別ソフト : メインメニュー")
-
-#画面サイズの指定
 root.geometry("1000x500")
-
-def close_window():
-    root.destroy()
 
 """
 def cry_window():
@@ -76,11 +78,21 @@ def cry_window():
 label_title = tkinter.Label(root, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
 label_title.grid()
 
+
 label_desc = tkinter.Label(root, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
 label_desc.grid()
 
 label_inputURL = tkinter.Label(root, text="URLを入力↓", font=("MSゴシック", "12", "bold"))
 label_inputURL.grid()
+
+label_error = tkinter.Label(root, text="URLに誤りがあります！！",font=("MSゴシック", "11", "bold"),
+                            foreground='linen',background='red')
+label_error.grid()
+
+"""
+label_title = tkinter.Label(root, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
+"""
+
 
 """
 label_tikawa = tkinter.Label(root, text="ワ・・・ツール", font=("MSゴシック", "20", "bold"))
@@ -104,6 +116,8 @@ foreground = "Black",
 bg = "Cyan",
 )
 
+def close_window():
+    root.destroy()
 
 btn_close = tkinter.Button(root, text='泣いちゃった',
 width = 10,
@@ -121,12 +135,35 @@ label_desc.place(x=410, y=115)
 
 label_inputURL.place(x=440, y=200)
 
+
+label_error.place(x=100, y=50)
+
+
 text_input.place(x=210, y=255)
 #text_input.insert(0, "https://www.youtube.com/watch?v=5qWYfTlAJsg")
 
 btn_go.place(x=450, y=325)
 
 btn_close.place(x=900, y=20)
+
+frame1.pack()
+
+#判別結果ウィンドウの作成
+
+frame2 =tkinter.Frame(root,height=500,width=1000)
+
+#判別結果ウィンドウの設定
+
+root.title("釣り動画判別ソフト : 判別結果")
+root.geometry("1000x500")
+
+#ラベル表示
+label_title = tkinter.Label(root, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
+label_title.grid()
+
+
+
+frame2.pack()
 
 
 """
