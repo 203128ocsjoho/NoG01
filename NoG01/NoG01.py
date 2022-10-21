@@ -22,9 +22,8 @@
 
 #5
 #tkinterのインポート
-<<<<<<< HEAD
 import tkinter 
-=======
+
 import tensorflow as tf
 import numpy as np
 import keras as ks
@@ -53,9 +52,6 @@ import os
 #import openpyxl
 #import xlrd
 '''
-
-import tkinter
->>>>>>> 733f479644a57c060275255faaa43f6080c975b9
 
 from tkinter import Text, Tk, ttk
 
@@ -152,6 +148,8 @@ frame1.pack()
 
 frame2 =tkinter.Frame(root,height=500,width=1000)
 
+
+"""
 #判別結果ウィンドウの設定
 
 root.title("釣り動画判別ソフト : 判別結果")
@@ -159,12 +157,10 @@ root.geometry("1000x500")
 
 #ラベル表示
 label_title = tkinter.Label(root, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
-label_title.grid()
-
 
 
 frame2.pack()
-
+"""
 
 """
 btn1 = tkinter.Button(root, text='チャンネルID検索',
