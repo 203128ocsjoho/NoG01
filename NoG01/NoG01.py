@@ -22,7 +22,7 @@
 
 #5
 #tkinterのインポート
-import tkinter 
+import tkinter as tk
 
 import tensorflow as tf
 import numpy as np
@@ -53,29 +53,32 @@ import os
 #import xlrd
 '''
 
+import tkinter.ttk as ttk
 from tkinter import Text, Tk, ttk
 
 #tkinterを起動
-root = tkinter.Tk()
+root = tk.Tk()
 
 #メインウィンドウの設定
 root.title("釣り動画判別ソフト : メインメニュー")
-root.geometry("1000x500")
+root.geometry("1600x900")
 
 #フレームの作成
 
-frame1 = tkinter.Frame(root,height=500,width=1000)
+frame1 = tk.Frame(root,height=900,width=1600)
 
-frame2 = tkinter.Frame(root, height=500, width=1000)
+frame2 = tk.Frame(root,height=900,width=1600)
 
 def close_window():
     root.destroy()
 
-def go_window1():
-    raise_frame(frame1)
-
 def go_window2():
-    raise_frame(frame2)
+    frame1.pack_forget()
+    frame2.pack(padx = 5, pady = 5)
+
+def go_window1():
+    frame2.pack_forget()
+    frame1.pack(padx = 5, pady = 5)
 
 def close_frame1():
     frame1.destroy()
@@ -87,22 +90,17 @@ def raise_frame(frame):
     frame.tkraise()
 
 # ラベル表示
-label_title = tkinter.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
-label_title.grid()
+label_title = tk.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
 
+label_desc = tk.Label(frame1, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
 
-label_desc = tkinter.Label(frame1, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
-label_desc.grid()
+label_inputURL = tk.Label(frame1, text="URLを入力↓", font=("MSゴシック", "12", "bold"))
 
-label_inputURL = tkinter.Label(frame1, text="URLを入力↓", font=("MSゴシック", "12", "bold"))
-label_inputURL.grid()
-
-label_error = tkinter.Label(frame1, text="URLに誤りがあります！！",font=("MSゴシック", "11", "bold"),
+label_error = tk.Label(frame1, text="URLに誤りがあります！！",font=("MSゴシック", "11", "bold"),
                             foreground='linen',background='red')
-label_error.grid()
 
 # ボタン, テキストの設定(text=ボタンに表示するテキスト)
-btn_go = tkinter.Button(frame1, text='Go',
+btn_go = tk.Button(frame1, text='Go',
 width = 10,
 height = 3,
 foreground = "Black",
@@ -110,16 +108,16 @@ bg = "Cyan",
 command = go_window2
 )
 
-text_input = tkinter.Text(frame1, 
+text_input = tk.Text(frame1, 
 width = 85,
 height = 3,
 pady = 3,
-wrap = tkinter.NONE,
+wrap = tk.NONE,
 foreground = "Black",
 bg = "Cyan",
 )
 
-btn_close = tkinter.Button(frame1, text='泣いちゃった',
+btn_cry = tk.Button(frame1, text='泣いちゃった',
 width = 10,
 height = 2,
 bg = "Red",
@@ -127,8 +125,12 @@ command = close_window
 )
 
 # frame2
-btn_test = tkinter.Button(frame2, text='test',
-width = 10,
+label_URLsearch = tk.Label(frame2, text="URL検索", font=("MSゴシック", "10", "bold"))
+
+label_dangerlevel = tk.Label(frame2, text="動画の釣り危険度XX%", font=("MSゴシック", "40", "bold"))
+
+btn_return = tk.Button(frame2, text='最初の画面に戻る',
+width = 15,
 height = 3,
 foreground = "Cyan",
 bg = "Black",
@@ -136,8 +138,10 @@ command = go_window1
 )
 
 
-#ボタンやテキストを配置する位置の設定
 
+#ボタンやテキストを配置する位置の設定(frame1)
+
+"""
 label_title.place(x=350, y=50)
 
 label_desc.place(x=410, y=115)
@@ -153,19 +157,57 @@ text_input.place(x=210, y=255)
 
 btn_go.place(x=450, y=325)
 
-btn_close.place(x=900, y=20)
+btn_cry.place(x=900, y=20)
+"""
 
-btn_test.place(x=900, y=20)
+btn_cry.pack(pady = 30, anchor = tk.NE, expand=1)
 
-frame1.grid(row=0, column=0)
+label_title.pack(padx = 50, pady = 40, expand=1)
+
+label_desc.pack(padx = 50, pady = 35, expand=1)
+label_inputURL.pack(padx = 50, pady = 10, expand=1)
+label_error.pack(padx = 50, pady = 10, expand=1)
+text_input.pack(padx = 50, pady = 30, expand=1)
+btn_go.pack(padx = 50, pady = 20, expand=1)
+
+sizegrip1 = ttk.Sizegrip(frame1)
+sizegrip1.pack(padx = 5, pady = 5)
+
+frame1.pack(padx = 5, pady = 5)
+
+#ボタンやテキストを配置する位置の設定(frame2)
+"""
+label_URLsearch.place(x=100, y=50)
+
+label_dangerlevel.place(x=250, y=70)
+
+btn_return.place(x=350, y=450)
+"""
+
+label_URLsearch.pack(padx = 50, pady = 10, expand=1)
+label_dangerlevel.pack(padx = 50, pady = 10, expand=1)
+btn_return.pack(padx = 50, pady = 10, expand=1)
+
+sizegrip2 = ttk.Sizegrip(frame1)
+sizegrip2.pack(padx = 5, pady = 5)
 
 raise_frame(frame1)
+#raise_frame(frame2)
 
-#判別結果ウィンドウの作成
+"""
+label_URLsearch.grid(row = 0, column = 0, sticky=tkinter.EW)
+label_dangerlevel.grid(row = 1, column = 1, sticky=tkinter.EW)
+btn_return.grid(row = 2, column = 2, sticky=tkinter.EW)
 
+label_dangerlevel.grid_remove()
+"""
+
+"""
+frame1.grid(row=0, column=0)
 frame2.grid(row=0, column=0)
+"""
 
-#frame2.tkraise()
+
 
 '''
 # 足し算サンプル（使えるかもしれんから残しとく）
