@@ -58,52 +58,59 @@ from tkinter import Text, Tk, ttk
 #tkinterを起動
 root = tkinter.Tk()
 
-#メインフレームの作成
-frame1 = tkinter.Frame(root,height=500,width=1000)
-
 #メインウィンドウの設定
 root.title("釣り動画判別ソフト : メインメニュー")
 root.geometry("1000x500")
 
-"""
-def cry_window():
+#フレームの作成
+
+frame1 = tkinter.Frame(root,height=500,width=1000)
+
+frame2 = tkinter.Frame(root, height=500, width=1000)
+
+def close_window():
     root.destroy()
-"""
+
+def go_window1():
+    raise_frame(frame1)
+
+def go_window2():
+    raise_frame(frame2)
+
+def close_frame1():
+    frame1.destroy()
+
+def close_frame2():
+    frame2.destroy()
+
+def raise_frame(frame):
+    frame.tkraise()
 
 # ラベル表示
-label_title = tkinter.Label(root, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
+label_title = tkinter.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
 label_title.grid()
 
 
-label_desc = tkinter.Label(root, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
+label_desc = tkinter.Label(frame1, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
 label_desc.grid()
 
-label_inputURL = tkinter.Label(root, text="URLを入力↓", font=("MSゴシック", "12", "bold"))
+label_inputURL = tkinter.Label(frame1, text="URLを入力↓", font=("MSゴシック", "12", "bold"))
 label_inputURL.grid()
 
-label_error = tkinter.Label(root, text="URLに誤りがあります！！",font=("MSゴシック", "11", "bold"),
+label_error = tkinter.Label(frame1, text="URLに誤りがあります！！",font=("MSゴシック", "11", "bold"),
                             foreground='linen',background='red')
 label_error.grid()
 
-"""
-label_title = tkinter.Label(root, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
-"""
-
-
-"""
-label_tikawa = tkinter.Label(root, text="ワ・・・ツール", font=("MSゴシック", "20", "bold"))
-label_tikawa.grid()
-"""
-
-# ボタンの設定(text=ボタンに表示するテキスト)
-btn_go = tkinter.Button(root, text='Go',
+# ボタン, テキストの設定(text=ボタンに表示するテキスト)
+btn_go = tkinter.Button(frame1, text='Go',
 width = 10,
 height = 3,
 foreground = "Black",
 bg = "Cyan",
+command = go_window2
 )
 
-text_input = tkinter.Text(root, 
+text_input = tkinter.Text(frame1, 
 width = 85,
 height = 3,
 pady = 3,
@@ -112,14 +119,20 @@ foreground = "Black",
 bg = "Cyan",
 )
 
-def close_window():
-    root.destroy()
-
-btn_close = tkinter.Button(root, text='泣いちゃった',
+btn_close = tkinter.Button(frame1, text='泣いちゃった',
 width = 10,
 height = 2,
 bg = "Red",
 command = close_window
+)
+
+# frame2
+btn_test = tkinter.Button(frame2, text='test',
+width = 10,
+height = 3,
+foreground = "Cyan",
+bg = "Black",
+command = go_window1
 )
 
 
@@ -142,55 +155,19 @@ btn_go.place(x=450, y=325)
 
 btn_close.place(x=900, y=20)
 
-frame1.pack()
+btn_test.place(x=900, y=20)
+
+frame1.grid(row=0, column=0)
+
+raise_frame(frame1)
 
 #判別結果ウィンドウの作成
 
-frame2 =tkinter.Frame(root,height=500,width=1000)
+frame2.grid(row=0, column=0)
 
+#frame2.tkraise()
 
-"""
-#判別結果ウィンドウの設定
-
-root.title("釣り動画判別ソフト : 判別結果")
-root.geometry("1000x500")
-
-#ラベル表示
-label_title = tkinter.Label(root, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
-
-
-frame2.pack()
-"""
-
-"""
-btn1 = tkinter.Button(root, text='チャンネルID検索',
-width = 50,
-height = 2,
-bg = "White",
-)
-
-btn2 = tkinter.Button(root, text='ちいかわ',
-width = 50,
-height = 2,
-bg = "White",
-)
-
-btn3 = tkinter.Button(root, text='泣いちゃった',
-width = 50,
-height = 2,
-bg = "White",
-command = cry_window
-)
-
-#btn1.place(x=20, y=120)
-
-#btn2.place(x=20, y=180)
-
-#btn3.place(x=20, y=240)
-"""
-
-
-"""
+'''
 # 足し算サンプル（使えるかもしれんから残しとく）
 a = tf.constant(1234)
 b = tf.constant(5000)
@@ -198,7 +175,7 @@ b = tf.constant(5000)
 add_op = a + b
 
 tf.print(add_op)
-"""
+'''
 
 '''
 # numpytest　ナムパイテスト　後で(10/21)使うはず
@@ -208,15 +185,14 @@ plt.scatter(temp, ice)
 x = np.linspace(0, 20, 100)
 plt.plot(x, np.sin(x))
 plt.show()
-'''
 
-'''
+
 # numpytest ナムパイテスト 複数　配列をランダムで作成
 data = np.random.randint(low=0, high=5, size=10)
 '''
 
 print("\n(1)起動！起動！！！！\n")
-#root.mainloop() #なんかわからんけどGUIをループして起動するやつ
+root.mainloop() #なんかわからんけどGUIをループして起動するやつ
 
 print("\n(2)終わりってことだよぉ！(GUI終了)\n")
 
@@ -477,3 +453,4 @@ model.save(path) #モデルを保存
 
 
 print("\n(7)終わりってことだよぉ！(すべての最後―終わり―)\n")
+
