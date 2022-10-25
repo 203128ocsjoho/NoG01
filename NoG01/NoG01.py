@@ -55,14 +55,16 @@ import os
 
 import tkinter.ttk as ttk
 from tkinter import Text, Tk, ttk
+from tkinter import messagebox
 
+from PIL import ImageTk, Image 
 
 #YoutubeAPI系 インポート
 import datetime
 import requests
 import json
 import re
-from apiclient.discovery import build
+#from apiclient.discovery import build
 
 
 #tkinterを起動
@@ -92,11 +94,14 @@ def cry_window():
         text_input.pack(padx = 50, pady = 30, expand=1)
         btn_go.pack(padx = 50, pady = 20, expand=1)
 
+        messagebox.showinfo("確認", text_input.get("1.0", "end"))
+
     cryCount += 1
 
 def go_window2():
     frame1.pack_forget()
     frame2.pack(padx = 5, pady = 5)
+
 
 def go_window1():
     frame2.pack_forget()
@@ -151,6 +156,19 @@ label_URLsearch = tk.Label(frame2, text="URL検索", font=("MSゴシック", "10
 
 label_dangerlevel = tk.Label(frame2, text="動画の釣り危険度XX%", font=("MSゴシック", "40", "bold"))
 
+path_thumbnail = "pictures"
+if os.path.isdir(path_thumbnail):
+    None
+else:
+    os.makedirs('pictures/')
+
+image1 = Image.open(path_thumbnail + "/pic1.png")
+test = ImageTk.PhotoImage(image1)
+
+
+label_thumbnail = tk.Label(frame2, image=test)
+label_thumbnail.image = test
+
 btn_return = tk.Button(frame2, text='最初の画面に戻る',
 width = 15,
 height = 3,
@@ -192,6 +210,7 @@ label_inputURL.pack(padx = 50, pady = 5, expand=1)
 text_input.pack(padx = 50, pady = 30, expand=1)
 btn_go.pack(padx = 50, pady = 20, expand=1)
 
+#自動リサイズできるお
 sizegrip1 = ttk.Sizegrip(frame1)
 sizegrip1.pack(padx = 5, pady = 5)
 
@@ -206,8 +225,10 @@ label_dangerlevel.place(x=250, y=70)
 btn_return.place(x=350, y=450)
 """
 
-label_URLsearch.pack(padx = 50, pady = 10, expand=1)
+#2画面目
+label_URLsearch.pack(padx = 10, pady = 10, expand=1)
 label_dangerlevel.pack(padx = 50, pady = 10, expand=1)
+label_thumbnail.pack(padx = 50, pady = 50)
 btn_return.pack(padx = 50, pady = 10, expand=1)
 
 sizegrip2 = ttk.Sizegrip(frame1)
@@ -451,6 +472,7 @@ res['items']
 
 #---------------------------------------------------------- Step 1 to 2 ---------------------------------
 
+'''
 YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
 
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
@@ -572,7 +594,7 @@ def setVideoDatas():
 setVideoDatas()
 print(test_video_data_x)
 
-
+'''
 
 #----------------------------------  YoutubeAPIここまで？ -------------------------------------------------------------------------------
 """
