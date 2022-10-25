@@ -56,6 +56,15 @@ import os
 import tkinter.ttk as ttk
 from tkinter import Text, Tk, ttk
 
+
+#YoutubeAPI系 インポート
+import datetime
+import requests
+import json
+import re
+from apiclient.discovery import build
+
+
 #tkinterを起動
 root = tk.Tk()
 
@@ -69,8 +78,21 @@ frame1 = tk.Frame(root,height=900,width=1600)
 
 frame2 = tk.Frame(root,height=900,width=1600)
 
-def close_window():
-    root.destroy()
+cryCount = 1
+def cry_window():
+
+    global cryCount
+
+    if cryCount % 2 == 0:
+        label_error.pack_forget()
+    else:
+        text_input.pack_forget()
+        btn_go.pack_forget()
+        label_error.pack(padx = 50, pady = 5, expand=1)
+        text_input.pack(padx = 50, pady = 30, expand=1)
+        btn_go.pack(padx = 50, pady = 20, expand=1)
+
+    cryCount += 1
 
 def go_window2():
     frame1.pack_forget()
@@ -121,7 +143,7 @@ btn_cry = tk.Button(frame1, text='泣いちゃった',
 width = 10,
 height = 2,
 bg = "Red",
-command = close_window
+command = cry_window
 )
 
 # frame2
@@ -165,8 +187,8 @@ btn_cry.pack(pady = 30, anchor = tk.NE, expand=1)
 label_title.pack(padx = 50, pady = 40, expand=1)
 
 label_desc.pack(padx = 50, pady = 35, expand=1)
-label_inputURL.pack(padx = 50, pady = 10, expand=1)
-label_error.pack(padx = 50, pady = 10, expand=1)
+label_inputURL.pack(padx = 50, pady = 5, expand=1)
+#label_error.pack(padx = 50, pady = 10, expand=1)
 text_input.pack(padx = 50, pady = 30, expand=1)
 btn_go.pack(padx = 50, pady = 20, expand=1)
 
@@ -233,10 +255,17 @@ plt.show()
 data = np.random.randint(low=0, high=5, size=10)
 '''
 
+
 print("\n(1)起動！起動！！！！\n")
 root.mainloop() #なんかわからんけどGUIをループして起動するやつ
 
 print("\n(2)終わりってことだよぉ！(GUI終了)\n")
+
+
+#----------------------------------  ここまでGUI   ------------------------------------------------------------------------------------
+
+
+print("\n(3)【モデルとか、データ定義始め！】\n")
 
 
 #怪しさ単語登録
@@ -294,8 +323,6 @@ def eva_toInt(string):
     return count
 
 
-print("\n(3)【モデルとか、データ定義始め！】\n")
-
 
 #たくさんの項目数、順番で、それぞれ何を意味しているか。　上、英語　下、日本語
 """
@@ -314,6 +341,7 @@ ViewCount, LikeCount, (DislikeCount)
 , チャンネル名, チャンネル登録者数
 , 評価の高いコメント, 評価の低いコメント
 """
+
 test_video_data_x = np.array([
 
             np.array([2000, 1000, 500
@@ -325,29 +353,29 @@ test_video_data_x = np.array([
 
             np.array([100, 2, 60
                         , 2, 60, 60
-                        , eva_toInt("は？？"), eva_toInt("きれそう"),
-                        2022, 4, 4, 0
+                        , eva_toInt("は？？"), eva_toInt("きれそう")
+                        , 2022, 4, 4, 0
                         , eva_toInt("登録よろしく！！"), 5
                         , eva_toInt("引退しろ！！！"), eva_toInt("次郎、今度野球いこうぜ！")]),
 
             np.array([30000, 3000, 30
                         , 10, 1, 480
-                        , eva_toInt("よろしくおねがいします！！"), eva_toInt("趣味は化粧と裁縫とネイルです！( ^)o(^ )"),
-                        2022, 5, 1, 1
+                        , eva_toInt("よろしくおねがいします！！"), eva_toInt("趣味は化粧と裁縫とネイルです！( ^)o(^ )")
+                        , 2022, 5, 1, 1
                         , eva_toInt("カニちゃん(カニザン)のお化粧備忘録チャンネル"), 3000
                         , eva_toInt("動画内の化粧品まとめ:\n<br>SK-2 税込￥29800\n<br>ニベア 税込￥1980"), eva_toInt("私と同じくらいかわいいですね。")]),
 
             np.array([150000, 1500, 15000
                         , 1, 10, 300
-                        , eva_toInt("じゃんけんの勝ち方、、、徹底解説します。"), eva_toInt("明日から勝率１００パー間違いねぇぜ！"),
-                        2022, 4, 1, 1
+                        , eva_toInt("じゃんけんの勝ち方、、、徹底解説します。"), eva_toInt("明日から勝率１００パー間違いねぇぜ！")
+                        , 2022, 4, 1, 1
                         , eva_toInt("令和のギャンブラー田中一郎の明日から使えるヤバい技チャンネル"), 800
                         , eva_toInt("ネタかと思った。\n<br>でも顔がマジやん。。"), eva_toInt("この動画のおかげで彼女できました！田中一郎に感謝！！。")]),
 
             np.array([240000, 4800, 30000
                         , 2, 13, 630
-                        , eva_toInt("Youtuber、やめます！"), eva_toInt("これで終わりだっ・・。\n<br>今までありがとうございました。"),
-                        2022, 7, 7, 1,
+                        , eva_toInt("Youtuber、やめます！"), eva_toInt("これで終わりだっ・・。\n<br>今までありがとうございました。")
+                        , 2022, 7, 7, 1,
                         eva_toInt("ピカル(Pikaru)"), 180000,
                         eva_toInt("この動画は釣り動画、詐欺動画です。ブラウザバックをお勧めします。"), eva_toInt("ごみ！\n\n<br><br><br><br><br><br><br><br>しね！")]),
 
@@ -355,6 +383,203 @@ test_video_data_x = np.array([
 
 #釣り動画＝1 普通動画＝0 # 2 ＝　ネタ動画
 answer_data_y = np.array([0, 0, 0, 1, 1])
+
+
+#-------------------------------------------------------データ定義---------------------------------------------------------
+
+"""
+"""
+
+"""
+YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+
+youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+
+
+def get_channel_videos(channel_id):
+    
+    # get Uploads playlist id
+    res = youtube.channels().list(id=channel_id, 
+                                  part='contentDetails').execute()
+    playlist_id = res['items'][0]['contentDetails']['relatedPlaylists']['uploads']
+    
+    videos = []
+    next_page_token = None
+    
+    while 1:
+        res = youtube.playlistItems().list(playlistId=playlist_id, 
+                                           part='snippet', 
+                                           maxResults=50,
+                                           pageToken=next_page_token).execute()
+        videos += res['items']
+        next_page_token = res.get('nextPageToken')
+        
+        if next_page_token is None:
+            break
+    
+    return videos
+
+
+def get_videos_stats(video_ids):
+    stats = []
+    for i in range(0, len(video_ids), 50):
+        res = youtube.videos().list(id=','.join(video_ids[i:i+50]),
+                                   part='statistics').execute()
+        stats += res['items']
+        
+    return stats
+
+
+videos = get_channel_videos('UCaminwG9MTO4sLYeC3s6udA')
+video_ids = list(map(lambda x:x['snippet']['resourceId']['videoId'], videos))
+stats = get_videos_stats(video_ids)
+
+len(stats)
+
+res = youtube.videos().list(id=videos[0]['snippet']['resourceId']['videoId'],part='statistics').execute()
+res['items']
+
+"""
+
+#['items']['statistics']['likeCount']
+
+#most_disliked = sorted(stats, key=lambda x:int(x['statistics']['likeCount']), reverse=False)
+#most_disliked
+
+#for video in most_disliked:
+#    print(video['id'], video['statistics']['dislikeCount'])
+
+#---------------------------------------------------------- Step 1 to 2 ---------------------------------
+
+YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+
+youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+
+def setVideoDatas():
+
+    dayB = datetime.date.fromisoformat('2022-06-01')
+    dayB = datetime.datetime.strftime(dayB, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+    dayA = datetime.date.today()
+    dayA = datetime.datetime.strftime(dayA, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+
+    search_response = youtube.search().list(
+    part='snippet',
+    order='rating',
+    type='video',
+    regionCode='JP',
+    maxResults=50,
+    channelId='UCaminwG9MTO4sLYeC3s6udA',
+    publishedAfter=dayB,
+    publishedBefore=dayA,
+    ).execute()
+
+
+    video_ids = []
+
+    videoCountForAPI = 0
+    commentCount = 0
+
+    for item in search_response['items'][:50]:
+    
+        videoCountForAPI += 1
+
+        title = item['snippet']['title']
+        description = item['snippet']['description']
+
+        vidDuration = item['contentDetails']['duration']
+
+        url = 'https://www.youtube.com/watch?v=%s' % item["id"]["videoId"]
+        thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
+        thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
+        dateUploaded = item["snippet"]["publishedAt"]
+        channelName = item["snippet"]["channelTitle"]
+        videoId = item['id']['videoId']
+
+        res = youtube.videos().list(id=videoId,part='statistics').execute()
+        print(res['items'])
+
+        video_ids.append(videoId)
+        request = youtube.commentThreads().list(
+            part = "snippet",
+            videoId=videoId,
+            maxResults = 500
+        )
+        response = request.execute()
+
+  
+        print("タイトル = [", title , "]")
+        print("詳細文　＝　[", description , "]")
+        print("チャンネルID = [", channelName , "]")
+        print("VideoURL = [", url , "]")
+        print("投稿時間 = [", dateUploaded , "]")
+        print("サムネURL1 = [", thumbnailUrl1 , "]")
+        print("サムネURL2 = [", thumbnailUrl2 , "]\n")
+        print(videoCountForAPI)
+  
+        commentCount = 0
+        toplevelcomment = "a"
+        toplevelcommentauthor = "aa"
+        fiftyThLevelcomment = "z"
+        fiftyThLevelcommentauthor = "zz"
+
+        for item in response["items"]:
+
+            comment = item["snippet"]["topLevelComment"]
+
+            author = comment["snippet"]["authorDisplayName"]
+
+            if commentCount == 0:
+                toplevelcomment = comment
+                toplevelcommentauthor = author
+
+            comment_text = comment["snippet"]["textDisplay"]
+            if commentCount == 49:
+                fiftyThLevelcomment = comment_text
+                fiftyThLevelcommentauthor = author
+
+            commentCount += 1
+
+            print("[",author,"]  " , comment_text, "コメ目 → ",commentCount)
+
+
+        print("\n")
+
+        vidMinutes = re.findall(r'T.*M',vidDuration)
+        vidMinutesAfter = vidMinutes[1:-1]
+        vidSeconds = re.findall(r'M.*S',vidDuration)
+        vidSecondsAfter = vidSeconds[1:-1]
+        vidSecondsAfterAll = 60 * vidMinutesAfter + vidSecondsAfter
+
+        vidViewCount = res['items']['statistics']['viewCount']
+        vidLikeCount = res['items']['statistics']['likeCount']
+        vidDislikeCount = res['items']['statistics']['dislikeCount']
+        subscriberCount = 0
+        if res['items']['statistics']['hiddenSubscriberCount']:
+            subscriberCount = vidViewCount
+        else:
+            subscriberCount = res['items']['statistics']['subscriberCount']
+
+        test_video_data_x[videoCountForAPI-1] = np.array(vidViewCount, vidLikeCount, vidDislikeCount
+                                                        , (vidLikeCount*100)/vidViewCount, 1, (vidDislikeCount*100)/vidViewCount
+                                                        , eva_toInt(title), eva_toInt(description)
+                                                        , dateUploaded.Year, dateUploaded.Month, dateUploaded.Day, dateUploaded.hour
+                                                        , eva_toInt(channelName), subscriberCount
+                                                        , eva_toInt(toplevelcomment), eva_toInt(fiftyThLevelcomment)),
+
+
+setVideoDatas()
+print(test_video_data_x)
+
+
+
+#----------------------------------  YoutubeAPIここまで？ -------------------------------------------------------------------------------
+"""
+"""
+
+
+
 
 
 scaler = preprocessing.StandardScaler()
