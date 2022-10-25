@@ -22,7 +22,7 @@
 
 #5
 #tkinterのインポート
-import tkinter 
+import tkinter as tk
 
 import tensorflow as tf
 import numpy as np
@@ -53,78 +53,117 @@ import os
 #import xlrd
 '''
 
+import tkinter.ttk as ttk
 from tkinter import Text, Tk, ttk
 
-#tkinterを起動
-root = tkinter.Tk()
 
-#メインフレームの作成
-frame1 = tkinter.Frame(root,height=500,width=1000)
+#YoutubeAPI系 インポート
+import datetime
+import requests
+import json
+import re
+from apiclient.discovery import build
+
+
+#tkinterを起動
+root = tk.Tk()
 
 #メインウィンドウの設定
 root.title("釣り動画判別ソフト : メインメニュー")
-root.geometry("1000x500")
+root.geometry("1600x900")
 
-"""
+#フレームの作成
+
+frame1 = tk.Frame(root,height=900,width=1600)
+
+frame2 = tk.Frame(root,height=900,width=1600)
+
+cryCount = 1
 def cry_window():
-    root.destroy()
-"""
+
+    global cryCount
+
+    if cryCount % 2 == 0:
+        label_error.pack_forget()
+    else:
+        text_input.pack_forget()
+        btn_go.pack_forget()
+        label_error.pack(padx = 50, pady = 5, expand=1)
+        text_input.pack(padx = 50, pady = 30, expand=1)
+        btn_go.pack(padx = 50, pady = 20, expand=1)
+
+    cryCount += 1
+
+def go_window2():
+    frame1.pack_forget()
+    frame2.pack(padx = 5, pady = 5)
+
+def go_window1():
+    frame2.pack_forget()
+    frame1.pack(padx = 5, pady = 5)
+
+def close_frame1():
+    frame1.destroy()
+
+def close_frame2():
+    frame2.destroy()
+
+def raise_frame(frame):
+    frame.tkraise()
 
 # ラベル表示
-label_title = tkinter.Label(root, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
-label_title.grid()
+label_title = tk.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
 
+label_desc = tk.Label(frame1, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
 
-label_desc = tkinter.Label(root, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
-label_desc.grid()
+label_inputURL = tk.Label(frame1, text="URLを入力↓", font=("MSゴシック", "12", "bold"))
 
-label_inputURL = tkinter.Label(root, text="URLを入力↓", font=("MSゴシック", "12", "bold"))
-label_inputURL.grid()
-
-label_error = tkinter.Label(root, text="URLに誤りがあります！！",font=("MSゴシック", "11", "bold"),
+label_error = tk.Label(frame1, text="URLに誤りがあります！！",font=("MSゴシック", "11", "bold"),
                             foreground='linen',background='red')
-label_error.grid()
 
-"""
-label_title = tkinter.Label(root, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
-"""
-
-
-"""
-label_tikawa = tkinter.Label(root, text="ワ・・・ツール", font=("MSゴシック", "20", "bold"))
-label_tikawa.grid()
-"""
-
-# ボタンの設定(text=ボタンに表示するテキスト)
-btn_go = tkinter.Button(root, text='Go',
+# ボタン, テキストの設定(text=ボタンに表示するテキスト)
+btn_go = tk.Button(frame1, text='Go',
 width = 10,
 height = 3,
 foreground = "Black",
 bg = "Cyan",
+command = go_window2
 )
 
-text_input = tkinter.Text(root, 
+text_input = tk.Text(frame1, 
 width = 85,
 height = 3,
 pady = 3,
-wrap = tkinter.NONE,
+wrap = tk.NONE,
 foreground = "Black",
 bg = "Cyan",
 )
 
-def close_window():
-    root.destroy()
-
-btn_close = tkinter.Button(root, text='泣いちゃった',
+btn_cry = tk.Button(frame1, text='泣いちゃった',
 width = 10,
 height = 2,
 bg = "Red",
-command = close_window
+command = cry_window
+)
+
+# frame2
+label_URLsearch = tk.Label(frame2, text="URL検索", font=("MSゴシック", "10", "bold"))
+
+label_dangerlevel = tk.Label(frame2, text="動画の釣り危険度XX%", font=("MSゴシック", "40", "bold"))
+
+btn_return = tk.Button(frame2, text='最初の画面に戻る',
+width = 15,
+height = 3,
+foreground = "Cyan",
+bg = "Black",
+command = go_window1
 )
 
 
-#ボタンやテキストを配置する位置の設定
 
+#ボタンやテキストを配置する位置の設定(frame1)
+
+"""
 label_title.place(x=350, y=50)
 
 label_desc.place(x=410, y=115)
@@ -140,57 +179,59 @@ text_input.place(x=210, y=255)
 
 btn_go.place(x=450, y=325)
 
-btn_close.place(x=900, y=20)
-
-frame1.pack()
-
-#判別結果ウィンドウの作成
-
-frame2 =tkinter.Frame(root,height=500,width=1000)
-
-
-"""
-#判別結果ウィンドウの設定
-
-root.title("釣り動画判別ソフト : 判別結果")
-root.geometry("1000x500")
-
-#ラベル表示
-label_title = tkinter.Label(root, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
-
-
-frame2.pack()
+btn_cry.place(x=900, y=20)
 """
 
+btn_cry.pack(pady = 30, anchor = tk.NE, expand=1)
+
+label_title.pack(padx = 50, pady = 40, expand=1)
+
+label_desc.pack(padx = 50, pady = 35, expand=1)
+label_inputURL.pack(padx = 50, pady = 5, expand=1)
+#label_error.pack(padx = 50, pady = 10, expand=1)
+text_input.pack(padx = 50, pady = 30, expand=1)
+btn_go.pack(padx = 50, pady = 20, expand=1)
+
+sizegrip1 = ttk.Sizegrip(frame1)
+sizegrip1.pack(padx = 5, pady = 5)
+
+frame1.pack(padx = 5, pady = 5)
+
+#ボタンやテキストを配置する位置の設定(frame2)
 """
-btn1 = tkinter.Button(root, text='チャンネルID検索',
-width = 50,
-height = 2,
-bg = "White",
-)
+label_URLsearch.place(x=100, y=50)
 
-btn2 = tkinter.Button(root, text='ちいかわ',
-width = 50,
-height = 2,
-bg = "White",
-)
+label_dangerlevel.place(x=250, y=70)
 
-btn3 = tkinter.Button(root, text='泣いちゃった',
-width = 50,
-height = 2,
-bg = "White",
-command = cry_window
-)
-
-#btn1.place(x=20, y=120)
-
-#btn2.place(x=20, y=180)
-
-#btn3.place(x=20, y=240)
+btn_return.place(x=350, y=450)
 """
 
+label_URLsearch.pack(padx = 50, pady = 10, expand=1)
+label_dangerlevel.pack(padx = 50, pady = 10, expand=1)
+btn_return.pack(padx = 50, pady = 10, expand=1)
+
+sizegrip2 = ttk.Sizegrip(frame1)
+sizegrip2.pack(padx = 5, pady = 5)
+
+raise_frame(frame1)
+#raise_frame(frame2)
 
 """
+label_URLsearch.grid(row = 0, column = 0, sticky=tkinter.EW)
+label_dangerlevel.grid(row = 1, column = 1, sticky=tkinter.EW)
+btn_return.grid(row = 2, column = 2, sticky=tkinter.EW)
+
+label_dangerlevel.grid_remove()
+"""
+
+"""
+frame1.grid(row=0, column=0)
+frame2.grid(row=0, column=0)
+"""
+
+
+
+'''
 # 足し算サンプル（使えるかもしれんから残しとく）
 a = tf.constant(1234)
 b = tf.constant(5000)
@@ -198,7 +239,7 @@ b = tf.constant(5000)
 add_op = a + b
 
 tf.print(add_op)
-"""
+'''
 
 '''
 # numpytest　ナムパイテスト　後で(10/21)使うはず
@@ -208,17 +249,23 @@ plt.scatter(temp, ice)
 x = np.linspace(0, 20, 100)
 plt.plot(x, np.sin(x))
 plt.show()
-'''
 
-'''
+
 # numpytest ナムパイテスト 複数　配列をランダムで作成
 data = np.random.randint(low=0, high=5, size=10)
 '''
 
+
 print("\n(1)起動！起動！！！！\n")
-#root.mainloop() #なんかわからんけどGUIをループして起動するやつ
+root.mainloop() #なんかわからんけどGUIをループして起動するやつ
 
 print("\n(2)終わりってことだよぉ！(GUI終了)\n")
+
+
+#----------------------------------  ここまでGUI   ------------------------------------------------------------------------------------
+
+
+print("\n(3)【モデルとか、データ定義始め！】\n")
 
 
 #怪しさ単語登録
@@ -276,8 +323,6 @@ def eva_toInt(string):
     return count
 
 
-print("\n(3)【モデルとか、データ定義始め！】\n")
-
 
 #たくさんの項目数、順番で、それぞれ何を意味しているか。　上、英語　下、日本語
 """
@@ -296,6 +341,7 @@ ViewCount, LikeCount, (DislikeCount)
 , チャンネル名, チャンネル登録者数
 , 評価の高いコメント, 評価の低いコメント
 """
+
 test_video_data_x = np.array([
 
             np.array([2000, 1000, 500
@@ -307,29 +353,29 @@ test_video_data_x = np.array([
 
             np.array([100, 2, 60
                         , 2, 60, 60
-                        , eva_toInt("は？？"), eva_toInt("きれそう"),
-                        2022, 4, 4, 0
+                        , eva_toInt("は？？"), eva_toInt("きれそう")
+                        , 2022, 4, 4, 0
                         , eva_toInt("登録よろしく！！"), 5
                         , eva_toInt("引退しろ！！！"), eva_toInt("次郎、今度野球いこうぜ！")]),
 
             np.array([30000, 3000, 30
                         , 10, 1, 480
-                        , eva_toInt("よろしくおねがいします！！"), eva_toInt("趣味は化粧と裁縫とネイルです！( ^)o(^ )"),
-                        2022, 5, 1, 1
+                        , eva_toInt("よろしくおねがいします！！"), eva_toInt("趣味は化粧と裁縫とネイルです！( ^)o(^ )")
+                        , 2022, 5, 1, 1
                         , eva_toInt("カニちゃん(カニザン)のお化粧備忘録チャンネル"), 3000
                         , eva_toInt("動画内の化粧品まとめ:\n<br>SK-2 税込￥29800\n<br>ニベア 税込￥1980"), eva_toInt("私と同じくらいかわいいですね。")]),
 
             np.array([150000, 1500, 15000
                         , 1, 10, 300
-                        , eva_toInt("じゃんけんの勝ち方、、、徹底解説します。"), eva_toInt("明日から勝率１００パー間違いねぇぜ！"),
-                        2022, 4, 1, 1
+                        , eva_toInt("じゃんけんの勝ち方、、、徹底解説します。"), eva_toInt("明日から勝率１００パー間違いねぇぜ！")
+                        , 2022, 4, 1, 1
                         , eva_toInt("令和のギャンブラー田中一郎の明日から使えるヤバい技チャンネル"), 800
                         , eva_toInt("ネタかと思った。\n<br>でも顔がマジやん。。"), eva_toInt("この動画のおかげで彼女できました！田中一郎に感謝！！。")]),
 
             np.array([240000, 4800, 30000
                         , 2, 13, 630
-                        , eva_toInt("Youtuber、やめます！"), eva_toInt("これで終わりだっ・・。\n<br>今までありがとうございました。"),
-                        2022, 7, 7, 1,
+                        , eva_toInt("Youtuber、やめます！"), eva_toInt("これで終わりだっ・・。\n<br>今までありがとうございました。")
+                        , 2022, 7, 7, 1,
                         eva_toInt("ピカル(Pikaru)"), 180000,
                         eva_toInt("この動画は釣り動画、詐欺動画です。ブラウザバックをお勧めします。"), eva_toInt("ごみ！\n\n<br><br><br><br><br><br><br><br>しね！")]),
 
@@ -337,6 +383,203 @@ test_video_data_x = np.array([
 
 #釣り動画＝1 普通動画＝0 # 2 ＝　ネタ動画
 answer_data_y = np.array([0, 0, 0, 1, 1])
+
+
+#-------------------------------------------------------データ定義---------------------------------------------------------
+
+"""
+"""
+
+"""
+YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+
+youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+
+
+def get_channel_videos(channel_id):
+    
+    # get Uploads playlist id
+    res = youtube.channels().list(id=channel_id, 
+                                  part='contentDetails').execute()
+    playlist_id = res['items'][0]['contentDetails']['relatedPlaylists']['uploads']
+    
+    videos = []
+    next_page_token = None
+    
+    while 1:
+        res = youtube.playlistItems().list(playlistId=playlist_id, 
+                                           part='snippet', 
+                                           maxResults=50,
+                                           pageToken=next_page_token).execute()
+        videos += res['items']
+        next_page_token = res.get('nextPageToken')
+        
+        if next_page_token is None:
+            break
+    
+    return videos
+
+
+def get_videos_stats(video_ids):
+    stats = []
+    for i in range(0, len(video_ids), 50):
+        res = youtube.videos().list(id=','.join(video_ids[i:i+50]),
+                                   part='statistics').execute()
+        stats += res['items']
+        
+    return stats
+
+
+videos = get_channel_videos('UCaminwG9MTO4sLYeC3s6udA')
+video_ids = list(map(lambda x:x['snippet']['resourceId']['videoId'], videos))
+stats = get_videos_stats(video_ids)
+
+len(stats)
+
+res = youtube.videos().list(id=videos[0]['snippet']['resourceId']['videoId'],part='statistics').execute()
+res['items']
+
+"""
+
+#['items']['statistics']['likeCount']
+
+#most_disliked = sorted(stats, key=lambda x:int(x['statistics']['likeCount']), reverse=False)
+#most_disliked
+
+#for video in most_disliked:
+#    print(video['id'], video['statistics']['dislikeCount'])
+
+#---------------------------------------------------------- Step 1 to 2 ---------------------------------
+
+YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+
+youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+
+def setVideoDatas():
+
+    dayB = datetime.date.fromisoformat('2022-06-01')
+    dayB = datetime.datetime.strftime(dayB, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+    dayA = datetime.date.today()
+    dayA = datetime.datetime.strftime(dayA, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+
+    search_response = youtube.search().list(
+    part='snippet',
+    order='rating',
+    type='video',
+    regionCode='JP',
+    maxResults=50,
+    channelId='UCaminwG9MTO4sLYeC3s6udA',
+    publishedAfter=dayB,
+    publishedBefore=dayA,
+    ).execute()
+
+
+    video_ids = []
+
+    videoCountForAPI = 0
+    commentCount = 0
+
+    for item in search_response['items'][:50]:
+    
+        videoCountForAPI += 1
+
+        title = item['snippet']['title']
+        description = item['snippet']['description']
+
+        vidDuration = item['contentDetails']['duration']
+
+        url = 'https://www.youtube.com/watch?v=%s' % item["id"]["videoId"]
+        thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
+        thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
+        dateUploaded = item["snippet"]["publishedAt"]
+        channelName = item["snippet"]["channelTitle"]
+        videoId = item['id']['videoId']
+
+        res = youtube.videos().list(id=videoId,part='statistics').execute()
+        print(res['items'])
+
+        video_ids.append(videoId)
+        request = youtube.commentThreads().list(
+            part = "snippet",
+            videoId=videoId,
+            maxResults = 500
+        )
+        response = request.execute()
+
+  
+        print("タイトル = [", title , "]")
+        print("詳細文　＝　[", description , "]")
+        print("チャンネルID = [", channelName , "]")
+        print("VideoURL = [", url , "]")
+        print("投稿時間 = [", dateUploaded , "]")
+        print("サムネURL1 = [", thumbnailUrl1 , "]")
+        print("サムネURL2 = [", thumbnailUrl2 , "]\n")
+        print(videoCountForAPI)
+  
+        commentCount = 0
+        toplevelcomment = "a"
+        toplevelcommentauthor = "aa"
+        fiftyThLevelcomment = "z"
+        fiftyThLevelcommentauthor = "zz"
+
+        for item in response["items"]:
+
+            comment = item["snippet"]["topLevelComment"]
+
+            author = comment["snippet"]["authorDisplayName"]
+
+            if commentCount == 0:
+                toplevelcomment = comment
+                toplevelcommentauthor = author
+
+            comment_text = comment["snippet"]["textDisplay"]
+            if commentCount == 49:
+                fiftyThLevelcomment = comment_text
+                fiftyThLevelcommentauthor = author
+
+            commentCount += 1
+
+            print("[",author,"]  " , comment_text, "コメ目 → ",commentCount)
+
+
+        print("\n")
+
+        vidMinutes = re.findall(r'T.*M',vidDuration)
+        vidMinutesAfter = vidMinutes[1:-1]
+        vidSeconds = re.findall(r'M.*S',vidDuration)
+        vidSecondsAfter = vidSeconds[1:-1]
+        vidSecondsAfterAll = 60 * vidMinutesAfter + vidSecondsAfter
+
+        vidViewCount = res['items']['statistics']['viewCount']
+        vidLikeCount = res['items']['statistics']['likeCount']
+        vidDislikeCount = res['items']['statistics']['dislikeCount']
+        subscriberCount = 0
+        if res['items']['statistics']['hiddenSubscriberCount']:
+            subscriberCount = vidViewCount
+        else:
+            subscriberCount = res['items']['statistics']['subscriberCount']
+
+        test_video_data_x[videoCountForAPI-1] = np.array(vidViewCount, vidLikeCount, vidDislikeCount
+                                                        , (vidLikeCount*100)/vidViewCount, 1, (vidDislikeCount*100)/vidViewCount
+                                                        , eva_toInt(title), eva_toInt(description)
+                                                        , dateUploaded.Year, dateUploaded.Month, dateUploaded.Day, dateUploaded.hour
+                                                        , eva_toInt(channelName), subscriberCount
+                                                        , eva_toInt(toplevelcomment), eva_toInt(fiftyThLevelcomment)),
+
+
+setVideoDatas()
+print(test_video_data_x)
+
+
+
+#----------------------------------  YoutubeAPIここまで？ -------------------------------------------------------------------------------
+"""
+"""
+
+
+
 
 
 scaler = preprocessing.StandardScaler()
@@ -477,3 +720,4 @@ model.save(path) #モデルを保存
 
 
 print("\n(7)終わりってことだよぉ！(すべての最後―終わり―)\n")
+
