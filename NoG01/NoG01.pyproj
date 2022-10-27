@@ -24,6 +24,9 @@
     <Compile Include="NoG01.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="pictures\" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="pictures\pic1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

@@ -228,10 +228,10 @@ btn_return.place(x=350, y=450)
 #2画面目
 label_URLsearch.pack(padx = 10, pady = 10, expand=1)
 label_dangerlevel.pack(padx = 50, pady = 10, expand=1)
-label_thumbnail.pack(padx = 50, pady = 50)
+label_thumbnail.pack(padx = 50, pady = 10)
 btn_return.pack(padx = 50, pady = 10, expand=1)
 
-sizegrip2 = ttk.Sizegrip(frame1)
+sizegrip2 = ttk.Sizegrip(frame2)
 sizegrip2.pack(padx = 5, pady = 5)
 
 raise_frame(frame1)
