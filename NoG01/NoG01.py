@@ -76,9 +76,11 @@ root.geometry("1600x900")
 
 #フレームの作成
 
-frame1 = tk.Frame(root,height=900,width=1600)
+frame1 = tk.Frame(root,height=100000,width=100000)
 
 frame2 = tk.Frame(root,height=900,width=1600)
+
+#frame3 = tk.Frame(root,height=1080,width=1920,bg="Red")
 
 cryCount = 1
 def cry_window():
@@ -99,14 +101,38 @@ def cry_window():
     cryCount += 1
 
 def go_window2():
-    frame1.pack_forget()
-    frame2.pack(padx = 5, pady = 5)
+    #frame1.pack_forget()
+    #frame2.pack(padx = 5, pady = 5)
+
+
+    if text_input.get("1.0","end").count('https://www.youtube.com/watch?v') >= 2:
+        text_input.pack_forget()
+        btn_go.pack_forget()
+        label_error.pack(padx = 50, pady = 5, expand=1)
+        text_input.pack(padx = 50, pady = 30, expand=1)
+        btn_go.pack(padx = 50, pady = 20, expand=1)
+
+        messagebox.showinfo("Error", "URLが重複している可能性があります。")
+
+    elif "https://www.youtube.com/watch?v" in text_input.get("1.0","end"):
+        frame1.pack_forget()
+        frame2.pack(padx = 5, pady = 5)
+
+    else:
+        text_input.pack_forget()
+        btn_go.pack_forget()
+        label_error.pack(padx = 50, pady = 5, expand=1)
+        text_input.pack(padx = 50, pady = 30, expand=1)
+        btn_go.pack(padx = 50, pady = 20, expand=1)
+
+        messagebox.showinfo("Error", "URLに誤りがあります。")
 
 
 def go_window1():
     frame2.pack_forget()
     frame1.pack(padx = 5, pady = 5)
 
+"""
 def close_frame1():
     frame1.destroy()
 
@@ -115,6 +141,7 @@ def close_frame2():
 
 def raise_frame(frame):
     frame.tkraise()
+"""
 
 # ラベル表示
 label_title = tk.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
@@ -214,7 +241,7 @@ btn_go.pack(padx = 50, pady = 20, expand=1)
 sizegrip1 = ttk.Sizegrip(frame1)
 sizegrip1.pack(padx = 5, pady = 5)
 
-frame1.pack(padx = 5, pady = 5)
+frame1.pack(ipadx = 500, ipady = 500)
 
 #ボタンやテキストを配置する位置の設定(frame2)
 """
@@ -234,7 +261,7 @@ btn_return.pack(padx = 50, pady = 10, expand=1)
 sizegrip2 = ttk.Sizegrip(frame2)
 sizegrip2.pack(padx = 5, pady = 5)
 
-raise_frame(frame1)
+#raise_frame(frame1)
 #raise_frame(frame2)
 
 """
