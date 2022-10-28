@@ -22,6 +22,7 @@
 
 #5
 #tkinterのインポート
+from cgitb import text
 import tkinter as tk
 
 import tensorflow as tf
@@ -117,6 +118,7 @@ def go_window2():
     elif "https://www.youtube.com/watch?v" in text_input.get("1.0","end"):
         frame1.pack_forget()
         frame2.pack(padx = 5, pady = 5)
+        label_error.pack_forget()
 
     else:
         text_input.pack_forget()
@@ -126,6 +128,7 @@ def go_window2():
         btn_go.pack(padx = 50, pady = 20, expand=1)
 
         messagebox.showinfo("Error", "URLに誤りがあります。")
+        text_input.delete("1.0","end")
 
 
 def go_window1():
