@@ -58,7 +58,7 @@ import os
 '''
 
 import tkinter.ttk as ttk
-from tkinter import Text, Tk, ttk
+from tkinter import Label, Text, Tk, ttk
 from tkinter import messagebox
 
 from PIL import ImageTk, Image 
@@ -80,7 +80,7 @@ root.geometry("1920x1080")
 root.state("zoomed")
 
 #フレームの作成
-
+#frameの定義
 frame1 = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
 frame1.propagate(False)
 
@@ -95,6 +95,12 @@ frame4.propagate(False)
 
 frame5 = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
 frame5.propagate(False)
+
+frameX = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
+frameX.propagate(False)
+
+
+#関数定義
 
 cryCount = True
 def cry_window():
@@ -190,6 +196,11 @@ def go_window5to1():
     label_error.pack_forget()
     label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
 
+def go_windowXto1():
+    frame1.pack_forget()
+    frameX.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+
 
 def go_windowX():
     if box_a.get()=="URL検索":
@@ -252,6 +263,9 @@ def raise_frame(frame):
     frame.tkraise()
 """
 
+
+#frame1
+
 # ラベル表示
 label_title = tk.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
 
@@ -285,11 +299,12 @@ command = go_window2
 
 label_horizon1 = tk.Label(frame1,bg="#42b33d")
 
+
 btn_cry = tk.Button(label_horizon1, text='泣いちゃった',
 width = 10,
 height = 2,
 bg = "Red",
-command = cry_window
+command = go_windowXto1
 )
 
 btn_go4 =  tk.Button(label_horizon1, text='旬の釣り動画検索',
@@ -327,6 +342,7 @@ bg = "Cyan",
 
 
 # frame2
+
 label_URLsearch = tk.Label(frame2, text="URL検索", font=("MSゴシック", "15", "bold"))
 
 label_dangerlevel = tk.Label(frame2, text="動画の釣り危険度XX%", font=("MSゴシック", "40", "bold"))
@@ -353,6 +369,7 @@ command = go_window1
 )
 
 #frame3
+
 label_channelIDsearch = tk.Label(frame3, text="チャンネルID検索", font=("MSゴシック", "15", "bold"))
 
 label_channeldangerlevel = tk.Label(frame3, text="チャンネルの釣り危険度XX%", font=("MSゴシック", "40", "bold"))
@@ -386,6 +403,7 @@ command = go_window3to1
 )
 
 #frame4
+
 label_trendyvideo = tk.Label(frame4, text="旬の釣り動画検索", font=("MSゴシック", "15", "bold"))
 
 label_trendyvideodangerlevel = tk.Label(frame4, text="動画の危険度XX%", font=("MSゴシック", "40", "bold"))
@@ -404,6 +422,7 @@ command = go_window4to1
 )
 
 #frame5
+
 label_historydisplay = tk.Label(frame5, text="履歴表示画面", font=("MSゴシック", "15", "bold"))
 
 label_moviehistoryhorizon = tk.Label(frame5)
@@ -463,7 +482,10 @@ counttree.insert(parent='', index="end", iid=6 ,values=("7"))
 counttree.insert(parent='', index="end", iid=7 ,values=("8"))
 counttree.insert(parent='', index="end", iid=8 ,values=("9"))
 counttree.insert(parent='', index="end", iid=9 ,values=("10"))
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1edf3c5ed47f55f37ad56bc81d7a882e583dea9e
 
 #チャンネルID検索履歴
 # 列の識別名を指定
@@ -510,9 +532,12 @@ counttree1.insert(parent='', index="end", iid=6 ,values=("7"))
 counttree1.insert(parent='', index="end", iid=7 ,values=("8"))
 counttree1.insert(parent='', index="end", iid=8 ,values=("9"))
 counttree1.insert(parent='', index="end", iid=9 ,values=("10"))
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 1edf3c5ed47f55f37ad56bc81d7a882e583dea9e
 
 #危険度ランキング
 # 列の識別名を指定
@@ -547,6 +572,90 @@ bg = "Black",
 command = go_window5to1
 )
 
+
+#frameXのボタンの定義
+
+
+#横並びに配置するための入れ物(text)を定義する
+label_horizonX = tk.Label(frameX,bg="#42b33d")
+label_horizonY = tk.Label(frameX,bg="#42b33d")
+label_horizonX = tk.Label(frameX,bg="#42b33d")
+label_horizonY = tk.Label(frameX,bg="#42b33d")
+
+
+#labelの定義
+#label_desc = tk.Label(frame1, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
+#label_title = tk.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
+label_chennelID = tk.Label(label_horizonX,text="学習させるチャンネルIDを挿入してください​",font=("MSゴシック","40","bold"))
+
+label_DetaCount = tk.Label(label_horizonY,text="動画数を設定してください",font=("MSゴシック","40","bold"))
+
+label_DetaInputURL = tk.Label(frameX, text="動画URLを入力↓", font=("MSゴシック", "12", "bold"))
+
+
+
+#ドロップダウンボックス
+
+Detamodule = ('複数のデータで学習', '特定のデータで学習')
+ 
+chennel_deta = combobox = ttk.Combobox(frameX, value=Detamodule, width=80, height=120, state="readonly", cursor="dot")
+chennel_deta.option_add("*TCombobox*Listbox.Font", 30)
+chennel_deta.current(0)
+
+
+
+# ボタン, テキストの設定(text=ボタンに表示するテキスト)
+"""
+btn_go = tk.Button(frame1, text='Go',
+width = 10,
+height = 3,
+foreground = "Black",
+bg = "Cyan",
+command = go_window2
+)
+"""
+
+
+
+chennelID_input = tk.Text(label_horizonX, 
+width = 50,
+height = 3,
+pady = 3,
+wrap = tk.NONE,
+foreground = "Black",
+bg = "Cyan",
+)
+
+DateCount_input = tk.Text(label_horizonY, 
+width = 50,
+height = 3,
+pady = 3,
+wrap = tk.NONE,
+foreground = "Black",
+bg = "Cyan",
+)
+
+Machine_Learning = tk.Button(frameX, text='学習させる',
+width = 40,
+height = 6,
+foreground = "Black",
+bg = "Cyan",
+#データをAIに学習させる関数を作る
+#command = 
+)
+
+date_save = tk.Button(frameX, text='データを保存',
+width = 40,
+height = 6,
+foreground = "Black",
+bg = "Cyan",
+#データをSQLに送信する関数を作る
+#command = 
+)
+
+
+
+
 #ボタンやテキストを配置する位置の設定(frame1)
 
 """
@@ -567,6 +676,9 @@ btn_go.place(x=450, y=325)
 
 btn_cry.place(x=900, y=20)
 """
+
+
+#1画面目
 
 #btn_cry.pack(pady = 0, anchor = tk.NE, expand=1)
 
@@ -664,6 +776,18 @@ btn_return4.pack(padx = 50, pady = 30, expand=1)
 sizegrip5 = ttk.Sizegrip(frame5)
 sizegrip5.pack(padx = 5, pady = 5)
 
+#X画面目
+label_chennelID.pack(padx = 10, pady = 0, side = tk.TOP)
+chennelID_input.pack(padx = 10, pady = 20, side = tk.BOTTOM)
+label_horizonX.pack(padx = 50, pady = 10, expand=1)
+
+label_DetaCount.pack(padx = 10, pady = 0, side = tk.TOP)
+DateCount_input.pack(padx = 10, pady = 20, side = tk.BOTTOM)
+label_horizonY.pack(padx = 50, pady = 10, expand=1)
+
+Machine_Learning.pack(padx = 50, pady = 40, expand=1)
+
+date_save.pack(padx = 50, pady = 40, expand=1,anchor='e')
 
 #raise_frame(frame1)
 #raise_frame(frame2)
