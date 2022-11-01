@@ -441,6 +441,29 @@ moviehistorytreecount = 0
 #moviehistorytree.insert(parent='', index='end', iid=3, values=("https://www.youtube.com/watch?v=dddd",'77%'))
 #moviehistorytree.insert(parent='', index='end', iid=4, values=("https://www.youtube.com/watch?v=eeee",'XX%'))
 
+#項番の設定（URL検索履歴）
+# 列の識別名を指定
+column = ('count')
+# Treeviewの生成
+counttree = ttk.Treeview(label_moviehistoryhorizon, columns=column)
+# 列の設定
+counttree.column('#0',width=0, stretch='no')
+counttree.column('count', anchor='center', width=20)
+# 列の見出し設定
+counttree.heading('#0',text='')
+counttree.heading('count', text='',anchor='center')
+# レコードの追加
+counttree.insert(parent='', index="end", iid=0 ,values=("1"))
+counttree.insert(parent='', index="end", iid=1 ,values=("2"))
+counttree.insert(parent='', index="end", iid=2 ,values=("3"))
+counttree.insert(parent='', index="end", iid=3 ,values=("4"))
+counttree.insert(parent='', index="end", iid=4 ,values=("5"))
+counttree.insert(parent='', index="end", iid=5 ,values=("6"))
+counttree.insert(parent='', index="end", iid=6 ,values=("7"))
+counttree.insert(parent='', index="end", iid=7 ,values=("8"))
+counttree.insert(parent='', index="end", iid=8 ,values=("9"))
+counttree.insert(parent='', index="end", iid=9 ,values=("10"))
+
 
 #チャンネルID検索履歴
 # 列の識別名を指定
@@ -464,6 +487,30 @@ channelhistorytreecount = 0
 #channelhistorytree.insert(parent='', index='end', iid=2, values=("ピカル","https://www.youtube.com/c/cccc",'80%'))
 #channelhistorytree.insert(parent='', index='end', iid=3, values=("らファえル","https://www.youtube.com/c/dddd",'77%'))
 #channelhistorytree.insert(parent='', index='end', iid=4, values=("XX","https://www.youtube.com/c/eeee",'XX%'))
+
+#項番の設定（チャンネルID検索履歴）
+# 列の識別名を指定
+column = ('count')
+# Treeviewの生成
+counttree1 = ttk.Treeview(label_channelhistoryhorizon, columns=column)
+# 列の設定
+counttree1.column('#0',width=0, stretch='no')
+counttree1.column('count', anchor='center', width=20)
+# 列の見出し設定
+counttree1.heading('#0',text='')
+counttree1.heading('count', text='',anchor='center')
+# レコードの追加
+counttree1.insert(parent='', index="end", iid=0 ,values=("1"))
+counttree1.insert(parent='', index="end", iid=1 ,values=("2"))
+counttree1.insert(parent='', index="end", iid=2 ,values=("3"))
+counttree1.insert(parent='', index="end", iid=3 ,values=("4"))
+counttree1.insert(parent='', index="end", iid=4 ,values=("5"))
+counttree1.insert(parent='', index="end", iid=5 ,values=("6"))
+counttree1.insert(parent='', index="end", iid=6 ,values=("7"))
+counttree1.insert(parent='', index="end", iid=7 ,values=("8"))
+counttree1.insert(parent='', index="end", iid=8 ,values=("9"))
+counttree1.insert(parent='', index="end", iid=9 ,values=("10"))
+
 
 
 
@@ -597,10 +644,12 @@ sizegrip4.pack(padx = 5, pady = 5)
 label_historydisplay.pack(padx=0, pady=0)
 
 moviehistorytree.pack(padx=0, pady=0, side = tk.RIGHT)
+counttree.pack(padx=0, pady=0, side = tk.RIGHT)
 label_moviehistory.pack(padx=0, pady=0, side = tk.RIGHT)
 label_moviehistoryhorizon.pack(padx = 0, pady = 10, expand=1)
 
 channelhistorytree.pack(padx=0, pady=0, side = tk.RIGHT)
+counttree1.pack(padx=0, pady=0, side = tk.RIGHT)
 label_channelhistory.pack(padx=0, pady=0, side = tk.RIGHT)
 label_channelhistoryhorizon.pack(padx = 0, pady = 10, expand=1)
 
