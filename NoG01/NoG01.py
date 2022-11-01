@@ -22,8 +22,11 @@
 
 #5
 #tkinterのインポート
+from cProfile import label
 from cgitb import text
+from pickle import FRAME
 import tkinter as tk
+
 
 import tensorflow as tf
 import numpy as np
@@ -65,7 +68,7 @@ import datetime
 import requests
 import json
 import re
-#from apiclient.discovery import build
+from apiclient.discovery import build
 
 
 #tkinterを起動
@@ -73,33 +76,42 @@ root = tk.Tk()
 
 #メインウィンドウの設定
 root.title("釣り動画判別ソフト : メインメニュー")
-root.geometry("1600x900")
+root.geometry("1920x1080")
+root.state("zoomed")
 
 #フレームの作成
 
-frame1 = tk.Frame(root,height=100000,width=100000)
+frame1 = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
+frame1.propagate(False)
 
-frame2 = tk.Frame(root,height=900,width=1600)
+frame2 = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
+frame2.propagate(False)
 
-#frame3 = tk.Frame(root,height=1080,width=1920,bg="Red")
+frame3 = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
+frame3.propagate(False)
 
-cryCount = 1
+frame4 = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
+frame4.propagate(False)
+
+frame5 = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
+frame5.propagate(False)
+
+cryCount = True
 def cry_window():
 
     global cryCount
 
-    if cryCount % 2 == 0:
+    if cryCount == False:
         label_error.pack_forget()
+        label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
     else:
-        text_input.pack_forget()
-        btn_go.pack_forget()
-        label_error.pack(padx = 50, pady = 5, expand=1)
-        text_input.pack(padx = 50, pady = 30, expand=1)
-        btn_go.pack(padx = 50, pady = 20, expand=1)
+        label_errorfake.pack_forget()
+        label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+        
 
         messagebox.showinfo("確認", text_input.get("1.0", "end"))
+    cryCount = not cryCount
 
-    cryCount += 1
 
 def go_window2():
     #frame1.pack_forget()
@@ -113,7 +125,7 @@ def go_window2():
         text_input.pack(padx = 50, pady = 30, expand=1)
         btn_go.pack(padx = 50, pady = 20, expand=1)
 
-        messagebox.showinfo("Error", "URLが重複している可能性があります。")
+        messagebox.showerror("Error", "URLが重複している可能性があります。")
 
     elif "https://www.youtube.com/watch?v" in text_input.get("1.0","end"):
         frame1.pack_forget()
@@ -127,14 +139,108 @@ def go_window2():
         text_input.pack(padx = 50, pady = 30, expand=1)
         btn_go.pack(padx = 50, pady = 20, expand=1)
 
-        messagebox.showinfo("Error", "URLに誤りがあります。")
+        messagebox.showerror("Error", "URLに誤りがあります。")
         text_input.delete("1.0","end")
 
+def go_window3():
+    frame1.pack_forget()
+    frame3.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+
+def go_window4():
+    frame1.pack_forget()
+    frame4.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+
+def go_window5():
+    frame1.pack_forget()
+    frame5.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
 
 def go_window1():
     frame2.pack_forget()
-    frame1.pack(padx = 5, pady = 5)
+    frame1.pack(padx = 0, pady = 0)
+    global cryCount
+    cryCount = True
+    label_error.pack_forget()
+    label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
 
+def go_window3to1():
+    frame3.pack_forget()
+    frame1.pack(ipadx = 0, ipady = 0)
+    global cryCount
+    cryCount = True
+    label_error.pack_forget()
+    label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+    
+
+def go_window4to1():
+    frame4.pack_forget()
+    frame1.pack(ipadx = 0, ipady = 0)
+    global cryCount
+    cryCount = True
+    label_error.pack_forget()
+    label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
+def go_window5to1():
+    frame5.pack_forget()
+    frame1.pack(ipadx = 0, ipady = 0)
+    global cryCount
+    cryCount = True
+    label_error.pack_forget()
+    label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
+
+def go_windowX():
+    if box_a.get()=="URL検索":
+         if text_input.get("1.0","end").count('https://www.youtube.com/watch?v') >= 2:
+            label_errorfake.pack_forget()
+            label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
+            messagebox.showerror("Error", "URLが重複している可能性があります。")
+         elif "https://www.youtube.com/watch?v" in text_input.get("1.0","end"):
+            frame1.pack_forget()
+            frame2.pack(padx = 0 , pady = 0)
+            label_error.pack_forget()
+            label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
+            global moviehistorytree
+            global moviehistorytreecount
+            moviehistorytree.insert(parent='', index=0, iid= moviehistorytreecount,values=(text_input.get("1.0","end"), 'XX%'))
+            moviehistorytreecount += 1
+
+
+         else:
+            label_errorfake.pack_forget() 
+            label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)          
+
+            messagebox.showerror("Error", "URLに誤りがあります。")
+            text_input.delete("1.0","end")
+    elif box_a.get()=="チャンネルID検索":
+        if text_input.get("1.0","end").count('https://www.youtube.com/c') >= 2:
+            label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+            label_errorfake.pack_forget()
+
+            messagebox.showerror("Error", "URLが重複している可能性があります。")
+        elif "https://www.youtube.com/c" in text_input.get("1.0","end"):
+            frame1.pack_forget()
+            frame3.pack(padx = 0, pady = 0)
+            label_error.pack_forget()
+            label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
+            global channelhistorytree
+            global channelhistorytreecount
+            moviehistorytree.insert(parent='', index=0, iid= channelhistorytreecount,values=("XXX",text_input.get("1.0","end"), 'XX%'))
+            channelhistorytreecount += 1
+
+        else:
+            label_errorfake.pack_forget()
+            label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
+            messagebox.showerror("Error", "URLに誤りがあります。")
+            text_input.delete("1.0","end")
+    else:
+        messagebox.showerror("Error", "予期せぬエラーが発生しました")
 """
 def close_frame1():
     frame1.destroy()
@@ -149,20 +255,65 @@ def raise_frame(frame):
 # ラベル表示
 label_title = tk.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
 
-label_desc = tk.Label(frame1, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
+#label_desc = tk.Label(frame1, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
 
 label_inputURL = tk.Label(frame1, text="URLを入力↓", font=("MSゴシック", "12", "bold"))
 
-label_error = tk.Label(frame1, text="URLに誤りがあります！！",font=("MSゴシック", "11", "bold"),
+label_error = tk.Label(frame1, text="URLに誤りがあります！！",font=("MSゴシック", "10", "bold"),
                             foreground='linen',background='red')
 
+label_errorfake = tk.Label(frame1,bg="#42b33d")
+
+#ドロップダウンボックス
+
+module = ('URL検索', 'チャンネルID検索')
+ 
+box_a = combobox = ttk.Combobox(frame1, value=module, width=80, height=120, state="readonly", cursor="dot")
+box_a.option_add("*TCombobox*Listbox.Font", 30)
+box_a.current(0)
+
 # ボタン, テキストの設定(text=ボタンに表示するテキスト)
+"""
 btn_go = tk.Button(frame1, text='Go',
 width = 10,
 height = 3,
 foreground = "Black",
 bg = "Cyan",
 command = go_window2
+)
+"""
+
+label_horizon1 = tk.Label(frame1,bg="#42b33d")
+
+btn_cry = tk.Button(label_horizon1, text='泣いちゃった',
+width = 10,
+height = 2,
+bg = "Red",
+command = cry_window
+)
+
+btn_go4 =  tk.Button(label_horizon1, text='旬の釣り動画検索',
+width = 15,
+height = 2,
+foreground = "Yellow",
+bg = "Purple",
+command = go_window4
+)
+
+btn_go5 =  tk.Button(label_horizon1, text='履歴の表示',
+width = 10,
+height = 2,
+foreground = "Cyan",
+bg = "Green",
+command = go_window5
+) 
+
+btn_go = tk.Button(frame1, text='Go',
+width = 10,
+height = 3,
+foreground = "Black",
+bg = "Cyan",
+command = go_windowX
 )
 
 text_input = tk.Text(frame1, 
@@ -174,15 +325,9 @@ foreground = "Black",
 bg = "Cyan",
 )
 
-btn_cry = tk.Button(frame1, text='泣いちゃった',
-width = 10,
-height = 2,
-bg = "Red",
-command = cry_window
-)
 
 # frame2
-label_URLsearch = tk.Label(frame2, text="URL検索", font=("MSゴシック", "10", "bold"))
+label_URLsearch = tk.Label(frame2, text="URL検索", font=("MSゴシック", "15", "bold"))
 
 label_dangerlevel = tk.Label(frame2, text="動画の釣り危険度XX%", font=("MSゴシック", "40", "bold"))
 
@@ -207,7 +352,153 @@ bg = "Black",
 command = go_window1
 )
 
+#frame3
+label_channelIDsearch = tk.Label(frame3, text="チャンネルID検索", font=("MSゴシック", "15", "bold"))
 
+label_channeldangerlevel = tk.Label(frame3, text="チャンネルの釣り危険度XX%", font=("MSゴシック", "40", "bold"))
+
+label_channeldangervideo = tk.Label(frame3, text="釣り危険度の高い動画", font=("MSゴシック", "15", "bold"))
+
+image1 = image1.resize((200,200))
+
+label_horizon = tk.Label(frame3, bg="#42b33d")
+
+test2 = ImageTk.PhotoImage(image1)
+label_thumbnail2 = tk.Label(label_horizon, image=test2)
+label_thumbnail2.image = test2
+
+#image1 = image1.resize((150,150))
+test3 = ImageTk.PhotoImage(image1)
+label_thumbnail3 = tk.Label(label_horizon, image=test3)
+label_thumbnail3.image = test3
+
+#image1 = image1.resize((100,100))
+test4= ImageTk.PhotoImage(image1)
+label_thumbnail4 = tk.Label(label_horizon, image=test4)
+label_thumbnail4.image = test4
+
+btn_return2 = tk.Button(frame3, text='最初の画面に戻る',
+width = 15,
+height = 3,
+foreground = "Blue",
+bg = "White",
+command = go_window3to1
+)
+
+#frame4
+label_trendyvideo = tk.Label(frame4, text="旬の釣り動画検索", font=("MSゴシック", "15", "bold"))
+
+label_trendyvideodangerlevel = tk.Label(frame4, text="動画の危険度XX%", font=("MSゴシック", "40", "bold"))
+
+image1 = image1.resize((600,400))
+test5= ImageTk.PhotoImage(image1)
+label_thumbnail5 = tk.Label(frame4, image=test5)
+label_thumbnail5.image = test5
+
+btn_return3 = tk.Button(frame4, text='最初の画面に戻る',
+width = 15,
+height = 3,
+foreground = "Cyan",
+bg = "Black",
+command = go_window4to1
+)
+
+#frame5
+label_historydisplay = tk.Label(frame5, text="履歴表示画面", font=("MSゴシック", "15", "bold"))
+
+label_moviehistoryhorizon = tk.Label(frame5)
+
+label_channelhistoryhorizon = tk.Label(frame5)
+
+label_videodangerlevelrankinghorizon = tk.Label(frame5)
+
+label_moviehistory = tk.Label(label_moviehistoryhorizon, text="直近の検索動画", font=("MSゴシック", "30", "bold"))
+
+label_channelhistory = tk.Label(label_channelhistoryhorizon, text="直近の検索チャンネル", font=("MSゴシック", "30", "bold"))
+
+label_videodangerlevelranking = tk.Label(label_videodangerlevelrankinghorizon, text="釣り危険度ランキング", font=("MSゴシック", "30", "bold"))
+
+
+#表の挿入
+#URL検索履歴
+# 列の識別名を指定
+column = ('MovieUrl', 'MovieDangerLevel')
+# Treeviewの生成
+moviehistorytree = ttk.Treeview(label_moviehistoryhorizon, columns=column)
+# 列の設定
+moviehistorytree.column('#0',width=0, stretch='no')
+moviehistorytree.column('MovieUrl', anchor='w', width=400)
+moviehistorytree.column('MovieDangerLevel',anchor='w', width=100)
+# 列の見出し設定
+moviehistorytree.heading('#0',text='')
+moviehistorytree.heading('MovieUrl', text='動画URL',anchor='center')
+moviehistorytree.heading('MovieDangerLevel', text='動画の危険度', anchor='center')
+# レコードの追加
+moviehistorytreecount = 0
+#moviehistorytree.insert(parent='', index=, iid=0 ,values=("https://www.youtube.com/watch?v=aaaa", '50%'))
+#moviehistorytree.insert(parent='', index='end', iid=1 ,values=("https://www.youtube.com/watch?v=bbbb",'25%'))
+#moviehistorytree.insert(parent='', index='end', iid=2, values=("https://www.youtube.com/watch?v=cccc",'80%'))
+#moviehistorytree.insert(parent='', index='end', iid=3, values=("https://www.youtube.com/watch?v=dddd",'77%'))
+#moviehistorytree.insert(parent='', index='end', iid=4, values=("https://www.youtube.com/watch?v=eeee",'XX%'))
+
+
+#チャンネルID検索履歴
+# 列の識別名を指定
+column = ('ChannelName', 'ChannelId', 'ChannelDangerLevel')
+# Treeviewの生成
+channelhistorytree = ttk.Treeview(label_channelhistoryhorizon, columns=column)
+# 列の設定
+channelhistorytree.column('#0',width=0, stretch='no')
+channelhistorytree.column('ChannelName', anchor='w', width=100)
+channelhistorytree.column('ChannelId',anchor='w', width=400)
+channelhistorytree.column('ChannelDangerLevel',anchor='w', width=100)
+# 列の見出し設定
+channelhistorytree.heading('#0',text='')
+channelhistorytree.heading('ChannelName', text='チャンネル名',anchor='center')
+channelhistorytree.heading('ChannelId', text='チャンネルID', anchor='center')
+channelhistorytree.heading('ChannelDangerLevel', text='チャンネル危険度', anchor='center')
+# レコードの追加
+channelhistorytreecount = 0
+#channelhistorytree.insert(parent='', index='end', iid=0 ,values=("プロたん","https://www.youtube.com/c/aaaa", '50%'))
+#channelhistorytree.insert(parent='', index='end', iid=1 ,values=("非課金TV","https://www.youtube.com/c/bbbb",'25%'))
+#channelhistorytree.insert(parent='', index='end', iid=2, values=("ピカル","https://www.youtube.com/c/cccc",'80%'))
+#channelhistorytree.insert(parent='', index='end', iid=3, values=("らファえル","https://www.youtube.com/c/dddd",'77%'))
+#channelhistorytree.insert(parent='', index='end', iid=4, values=("XX","https://www.youtube.com/c/eeee",'XX%'))
+
+
+
+#危険度ランキング
+# 列の識別名を指定
+column = ('DangerLevelRanking', 'MovieTitle','MovieUrl', 'MovieDangerLevel')
+# Treeviewの生成
+dangerlevelrankingtree = ttk.Treeview(label_videodangerlevelrankinghorizon, columns=column)
+# 列の設定
+dangerlevelrankingtree.column('#0',width=0, stretch='no')
+dangerlevelrankingtree.column('DangerLevelRanking', anchor='center', width=100)
+dangerlevelrankingtree.column('MovieTitle', anchor='w', width=100)
+dangerlevelrankingtree.column('MovieUrl',anchor='w', width=400)
+dangerlevelrankingtree.column('MovieDangerLevel',anchor='w', width=100)
+# 列の見出し設定
+dangerlevelrankingtree.heading('#0',text='')
+dangerlevelrankingtree.heading('DangerLevelRanking', text='順位',anchor='center')
+dangerlevelrankingtree.heading('MovieTitle', text='動画タイトル', anchor='center')
+dangerlevelrankingtree.heading('MovieUrl', text='動画URL',anchor='center')
+dangerlevelrankingtree.heading('MovieDangerLevel', text='動画の危険度', anchor='center')
+# レコードの追加
+dangerlevelrankingtree.insert(parent='', index='end', iid=0 ,values=("1位", "a","https://www.youtube.com/watch?v", '90%'))
+dangerlevelrankingtree.insert(parent='', index='end', iid=1 ,values=("2位", "a","https://www.youtube.com/watch?v",'87%'))
+dangerlevelrankingtree.insert(parent='', index='end', iid=2, values=("3位", "a","https://www.youtube.com/watch?v",'80%'))
+dangerlevelrankingtree.insert(parent='', index='end', iid=3, values=("4位", "a","https://www.youtube.com/watch?v",'77%'))
+dangerlevelrankingtree.insert(parent='', index='end', iid=4, values=("5位", "a","https://www.youtube.com/watch?v",'71%'))
+
+
+btn_return4 = tk.Button(frame5, text='最初の画面に戻る',
+width = 15,
+height = 3,
+foreground = "Cyan",
+bg = "Black",
+command = go_window5to1
+)
 
 #ボタンやテキストを配置する位置の設定(frame1)
 
@@ -230,21 +521,36 @@ btn_go.place(x=450, y=325)
 btn_cry.place(x=900, y=20)
 """
 
-btn_cry.pack(pady = 30, anchor = tk.NE, expand=1)
+#btn_cry.pack(pady = 0, anchor = tk.NE, expand=1)
+
+#btn_go4.pack(pady = 0, anchor = tk.NE, expand=1)
+btn_cry.pack(padx = 10, pady = 0, side = tk.RIGHT)
+btn_go4.pack(padx = 10, pady = 0, side = tk.RIGHT)
+btn_go5.pack(padx = 10, pady = 0, side = tk.RIGHT)
+label_horizon1.pack(padx = 50, pady = 10, expand=1)
 
 label_title.pack(padx = 50, pady = 40, expand=1)
 
-label_desc.pack(padx = 50, pady = 35, expand=1)
-label_inputURL.pack(padx = 50, pady = 5, expand=1)
+box_a.pack(padx = 10, pady = 0, expand=1)
+
+#label_desc.pack(padx = 50, pady = 35, expand=1)
+label_inputURL.pack(padx = 10, pady = 5, expand=1)
+
+label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
 #label_error.pack(padx = 50, pady = 10, expand=1)
-text_input.pack(padx = 50, pady = 30, expand=1)
+text_input.pack(padx = 50, pady = 20, expand=1)
 btn_go.pack(padx = 50, pady = 20, expand=1)
+
 
 #自動リサイズできるお
 sizegrip1 = ttk.Sizegrip(frame1)
 sizegrip1.pack(padx = 5, pady = 5)
 
-frame1.pack(ipadx = 500, ipady = 500)
+#frame1.pack(ipadx = 300, ipady = 220)
+frame1.pack(padx = 0, pady = 0)
+#ipadyを大きくするとバグる（多分画面の大きさの問題）
+
 
 #ボタンやテキストを配置する位置の設定(frame2)
 """
@@ -263,6 +569,52 @@ btn_return.pack(padx = 50, pady = 10, expand=1)
 
 sizegrip2 = ttk.Sizegrip(frame2)
 sizegrip2.pack(padx = 5, pady = 5)
+
+#3画面目
+label_channelIDsearch.pack(padx = 10, pady = 10, expand=1, side = tk.TOP)
+label_channeldangerlevel.pack(padx = 50, pady = 10, expand=1, side = tk.TOP)
+label_thumbnail2.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+label_thumbnail3.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+label_thumbnail4.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+label_horizon.pack(padx = 50, pady = 10, expand=1)
+btn_return2.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
+label_channeldangervideo.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
+
+
+sizegrip3 = ttk.Sizegrip(frame3)
+sizegrip3.pack(padx = 5, pady = 5)
+
+#4画面目
+label_trendyvideo.pack(padx = 10, pady = 10, expand=1)
+label_trendyvideodangerlevel.pack(padx = 50, pady = 10, expand=1)
+label_thumbnail5.pack(padx = 50, pady = 10)
+btn_return3.pack(padx = 50, pady = 10, expand=1)
+
+sizegrip4 = ttk.Sizegrip(frame4)
+sizegrip4.pack(padx = 5, pady = 5)
+
+#5画面目
+label_historydisplay.pack(padx=0, pady=0)
+
+moviehistorytree.pack(padx=0, pady=0, side = tk.RIGHT)
+label_moviehistory.pack(padx=0, pady=0, side = tk.RIGHT)
+label_moviehistoryhorizon.pack(padx = 0, pady = 10, expand=1)
+
+channelhistorytree.pack(padx=0, pady=0, side = tk.RIGHT)
+label_channelhistory.pack(padx=0, pady=0, side = tk.RIGHT)
+label_channelhistoryhorizon.pack(padx = 0, pady = 10, expand=1)
+
+
+dangerlevelrankingtree.pack(padx=0, pady=0, side = tk.RIGHT)
+label_videodangerlevelranking.pack(padx=0, pady=0, side = tk.RIGHT)
+label_videodangerlevelrankinghorizon.pack(padx = 0, pady = 10, expand=1)
+
+btn_return4.pack(padx = 50, pady = 30, expand=1)
+
+
+sizegrip5 = ttk.Sizegrip(frame5)
+sizegrip5.pack(padx = 5, pady = 5)
+
 
 #raise_frame(frame1)
 #raise_frame(frame2)
