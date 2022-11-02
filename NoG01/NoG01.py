@@ -209,6 +209,21 @@ def go_windowX():
             label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
 
             messagebox.showerror("Error", "URLが重複している可能性があります。")
+         elif "nishikawaokiro" in text_input.get("1.0","end") or "reookiro" in text_input.get("1.0","end"):
+            okiro = False
+            while okiro == False:
+                okiro = messagebox.askyesno("okiro","起きる？")
+                if okiro == False:
+                    for x in range(100):
+                        messagebox.showerror("okiro","起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ")
+                else:
+                    None
+
+            frame1.pack_forget()
+            frameX.pack(padx = 0 , pady = 0)
+            label_error.pack_forget()
+            label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
          elif "https://www.youtube.com/watch?v" in text_input.get("1.0","end"):
             frame1.pack_forget()
             frame2.pack(padx = 0 , pady = 0)
@@ -233,6 +248,12 @@ def go_windowX():
             label_errorfake.pack_forget()
 
             messagebox.showerror("Error", "URLが重複している可能性があります。")
+        elif "nishikawaokiro" in text_input.get("1.0","end") or "reookiro" in text_input.get("1.0","end"):
+            frame1.pack_forget()
+            frameX.pack(padx = 0 , pady = 0)
+            label_error.pack_forget()
+            label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
         elif "https://www.youtube.com/c" in text_input.get("1.0","end"):
             frame1.pack_forget()
             frame3.pack(padx = 0, pady = 0)
@@ -482,10 +503,7 @@ counttree.insert(parent='', index="end", iid=6 ,values=("7"))
 counttree.insert(parent='', index="end", iid=7 ,values=("8"))
 counttree.insert(parent='', index="end", iid=8 ,values=("9"))
 counttree.insert(parent='', index="end", iid=9 ,values=("10"))
-<<<<<<< HEAD
 
-=======
->>>>>>> 1edf3c5ed47f55f37ad56bc81d7a882e583dea9e
 
 #チャンネルID検索履歴
 # 列の識別名を指定
@@ -532,12 +550,7 @@ counttree1.insert(parent='', index="end", iid=6 ,values=("7"))
 counttree1.insert(parent='', index="end", iid=7 ,values=("8"))
 counttree1.insert(parent='', index="end", iid=8 ,values=("9"))
 counttree1.insert(parent='', index="end", iid=9 ,values=("10"))
-<<<<<<< HEAD
 
-
-
-=======
->>>>>>> 1edf3c5ed47f55f37ad56bc81d7a882e583dea9e
 
 #危険度ランキング
 # 列の識別名を指定
