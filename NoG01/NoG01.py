@@ -99,6 +99,15 @@ frame5.propagate(False)
 frameX = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
 frameX.propagate(False)
 
+frameX1 = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
+frameX1.propagate(False)
+
+frameX2 = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
+frameX2.propagate(False)
+
+frameX3 = tk.Frame(root,height=1080,width=1920, bg="#42b33d")
+frameX3.propagate(False)
+
 
 #関数定義
 
@@ -196,10 +205,38 @@ def go_window5to1():
     label_error.pack_forget()
     label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
 
-def go_windowXto1():
+
+
+#frame1からframeX
+def go_window1toX():
     frame1.pack_forget()
     frameX.pack(padx = 0, pady = 0)
     label_error.pack_forget()
+
+#frameXからframe1
+def go_windowXto1():
+    frameX.pack_forget()
+    frame1.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+
+#frameX1からframeX
+def go_windowXtoX1():
+    frameX1.pack_forget()
+    frameX.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+
+#frameX2からframeX
+def go_windowXtoX2():
+    frameX2.pack_forget()
+    frameX.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+
+#frameX3からframeX
+def go_windowXtoX3():
+    frameX3.pack_forget()
+    frameX.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+
 
 
 def go_windowX():
@@ -209,6 +246,20 @@ def go_windowX():
             label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
 
             messagebox.showerror("Error", "URLが重複している可能性があります。")
+         elif "nishikawaokiro" in text_input.get("1.0","end") or "reookiro" in text_input.get("1.0","end"):
+            okiro = False
+            while okiro == False:
+                okiro = messagebox.askyesno("okiro","起きる？")
+                if okiro == False:
+                    for x in range(100):
+                        messagebox.showerror("okiro","起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ起きろ")
+                else:
+                    None
+
+            frame1.pack_forget()
+            frameX.pack(padx = 0 , pady = 0)
+            label_error.pack_forget()
+            label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
          elif "https://www.youtube.com/watch?v" in text_input.get("1.0","end"):
             frame1.pack_forget()
             frame2.pack(padx = 0 , pady = 0)
@@ -304,7 +355,7 @@ btn_cry = tk.Button(label_horizon1, text='泣いちゃった',
 width = 10,
 height = 2,
 bg = "Red",
-command = go_windowXto1
+command = go_window1toX
 )
 
 btn_go4 =  tk.Button(label_horizon1, text='旬の釣り動画検索',
@@ -563,35 +614,11 @@ command = go_window5to1
 )
 
 
-#frameXのボタンの定義
+#frameX
 
 
 #横並びに配置するための入れ物(text)を定義する
 label_horizonX = tk.Label(frameX,bg="#42b33d")
-label_horizonY = tk.Label(frameX,bg="#42b33d")
-label_horizonX = tk.Label(frameX,bg="#42b33d")
-label_horizonY = tk.Label(frameX,bg="#42b33d")
-
-
-#labelの定義
-#label_desc = tk.Label(frame1, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
-#label_title = tk.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
-label_chennelID = tk.Label(label_horizonX,text="学習させるチャンネルIDを挿入してください​",font=("MSゴシック","40","bold"))
-
-label_DetaCount = tk.Label(label_horizonY,text="動画数を設定してください",font=("MSゴシック","40","bold"))
-
-label_DetaInputURL = tk.Label(frameX, text="動画URLを入力↓", font=("MSゴシック", "12", "bold"))
-
-
-
-#ドロップダウンボックス
-
-Detamodule = ('複数のデータで学習', '特定のデータで学習')
- 
-chennel_deta = combobox = ttk.Combobox(frameX, value=Detamodule, width=80, height=120, state="readonly", cursor="dot")
-chennel_deta.option_add("*TCombobox*Listbox.Font", 30)
-chennel_deta.current(0)
-
 
 
 # ボタン, テキストの設定(text=ボタンに表示するテキスト)
@@ -605,44 +632,37 @@ command = go_window2
 )
 """
 
-
-
-chennelID_input = tk.Text(label_horizonX, 
+use1 = tk.Button(label_horizonX, text='Go機能1',
 width = 50,
-height = 3,
-pady = 3,
-wrap = tk.NONE,
+height = 10,
 foreground = "Black",
 bg = "Cyan",
+command = go_windowXtoX1
 )
 
-DateCount_input = tk.Text(label_horizonY, 
+use2 = tk.Button(label_horizonX, text='Go機能2',
 width = 50,
+height = 10,
+foreground = "Black",
+bg = "Cyan",
+command = go_windowXtoX2
+)
+
+use3 = tk.Button(label_horizonX, text='Go機能3',
+width = 50,
+height = 10,
+foreground = "Black",
+bg = "Cyan",
+command = go_windowXtoX3
+)
+
+back = tk.Button(frameX, text='最初に戻る',
+width = 10,
 height = 3,
-pady = 3,
-wrap = tk.NONE,
 foreground = "Black",
 bg = "Cyan",
+command = go_windowXto1
 )
-
-Machine_Learning = tk.Button(frameX, text='学習させる',
-width = 40,
-height = 6,
-foreground = "Black",
-bg = "Cyan",
-#データをAIに学習させる関数を作る
-#command = 
-)
-
-date_save = tk.Button(frameX, text='データを保存',
-width = 40,
-height = 6,
-foreground = "Black",
-bg = "Cyan",
-#データをSQLに送信する関数を作る
-#command = 
-)
-
 
 
 
@@ -767,17 +787,12 @@ sizegrip5 = ttk.Sizegrip(frame5)
 sizegrip5.pack(padx = 5, pady = 5)
 
 #X画面目
-label_chennelID.pack(padx = 10, pady = 0, side = tk.TOP)
-chennelID_input.pack(padx = 10, pady = 20, side = tk.BOTTOM)
+use1.pack(padx = 10, pady = 0, side = tk.LEFT)
+use2.pack(padx = 10, pady = 0, side = tk.LEFT)
+use3.pack(padx = 10, pady = 0, side = tk.LEFT)
 label_horizonX.pack(padx = 50, pady = 10, expand=1)
 
-label_DetaCount.pack(padx = 10, pady = 0, side = tk.TOP)
-DateCount_input.pack(padx = 10, pady = 20, side = tk.BOTTOM)
-label_horizonY.pack(padx = 50, pady = 10, expand=1)
-
-Machine_Learning.pack(padx = 50, pady = 40, expand=1)
-
-date_save.pack(padx = 50, pady = 40, expand=1,anchor='e')
+back.pack(padx = 50, pady = 40, expand=1, anchor='e')
 
 #raise_frame(frame1)
 #raise_frame(frame2)
