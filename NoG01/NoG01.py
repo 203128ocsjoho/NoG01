@@ -219,20 +219,38 @@ def go_windowXto1():
     frame1.pack(padx = 0, pady = 0)
     label_error.pack_forget()
 
-#frameX1からframeX
+#frameXからframeX1
 def go_windowXtoX1():
+    frameX.pack_forget()
+    frameX1.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+
+#frameXからframeX2
+def go_windowXtoX2():
+    frameX.pack_forget()
+    frameX2.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+    
+    #frameXからframeX3
+def go_windowXtoX3():
+    frameX.pack_forget()
+    frameX3.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+
+#frameX1からframeX
+def go_backX1():
     frameX1.pack_forget()
     frameX.pack(padx = 0, pady = 0)
     label_error.pack_forget()
 
 #frameX2からframeX
-def go_windowXtoX2():
+def go_backX2():
     frameX2.pack_forget()
     frameX.pack(padx = 0, pady = 0)
     label_error.pack_forget()
 
 #frameX3からframeX
-def go_windowXtoX3():
+def go_backX3():
     frameX3.pack_forget()
     frameX.pack(padx = 0, pady = 0)
     label_error.pack_forget()
@@ -260,10 +278,6 @@ def go_windowX():
             frameX.pack(padx = 0 , pady = 0)
             label_error.pack_forget()
             label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
-<<<<<<< HEAD
-
-=======
->>>>>>> a05110bd6ede183053ad64ce5a6a04e1e27aefc3
          elif "https://www.youtube.com/watch?v" in text_input.get("1.0","end"):
             frame1.pack_forget()
             frame2.pack(padx = 0 , pady = 0)
@@ -649,7 +663,7 @@ width = 50,
 height = 10,
 foreground = "Black",
 bg = "Cyan",
-command = go_windowXtoX1
+command = go_windowX1
 )
 
 use2 = tk.Button(label_horizonX, text='Go機能2',
@@ -657,7 +671,7 @@ width = 50,
 height = 10,
 foreground = "Black",
 bg = "Cyan",
-command = go_windowXtoX2
+command = go_windowX2
 )
 
 use3 = tk.Button(label_horizonX, text='Go機能3',
@@ -665,7 +679,7 @@ width = 50,
 height = 10,
 foreground = "Black",
 bg = "Cyan",
-command = go_windowXtoX3
+command = go_windowX3
 )
 
 back = tk.Button(frameX, text='最初に戻る',
