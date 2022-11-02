@@ -663,7 +663,7 @@ width = 50,
 height = 10,
 foreground = "Black",
 bg = "Cyan",
-command = go_windowX1
+command = go_windowXtoX1
 )
 
 use2 = tk.Button(label_horizonX, text='Go機能2',
@@ -671,7 +671,7 @@ width = 50,
 height = 10,
 foreground = "Black",
 bg = "Cyan",
-command = go_windowX2
+command = go_windowXtoX2
 )
 
 use3 = tk.Button(label_horizonX, text='Go機能3',
@@ -679,7 +679,7 @@ width = 50,
 height = 10,
 foreground = "Black",
 bg = "Cyan",
-command = go_windowX3
+command = go_windowXtoX3
 )
 
 back = tk.Button(frameX, text='最初に戻る',
