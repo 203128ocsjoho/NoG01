@@ -86,7 +86,7 @@ try:
     connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                 user="yuyuyu",        #ユーザ
                 password="yuyuyu123",  #パスワード
-                host="localhost",       #ホスト名
+                host="60.66.192.16",       #ホスト名
                 port="5432",            #ポート
                 dbname="postgres"))    #データベース名
 
@@ -1548,7 +1548,7 @@ def setVideoDatas():
 
 
 setVideoDatas()
-answer_data_y[len(answer_challenge)-1] = 1
+answer_data_y[len(answer_data_y)-1] = 1
 print(test_video_data_x)
 
 print("(4)【モデル定義終わり！】\n")
