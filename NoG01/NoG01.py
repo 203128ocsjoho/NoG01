@@ -691,6 +691,140 @@ command = go_windowXto1
 )
 
 
+#frameX1
+label_horizonX1 = tk.Label(frameX1,bg="#42b33d")
+label_horizonY1 = tk.Label(frameX1,bg="#42b33d")
+
+label_URLinput = tk.Label(label_horizonX1, text="動画URLを入力してください", font=("MSゴシック", "20", "bold"))
+
+label_SuspiciousDegree = tk.Label(label_horizonY1, text="怪しさ度を入力してください", font=("MSゴシック", "20", "bold"))
+
+URL_input = tk.Text(label_horizonX1, 
+width = 85,
+height = 3,
+pady = 3,
+wrap = tk.NONE,
+foreground = "Black",
+bg = "Cyan",
+)
+
+SuspiciousDegree_input = tk.Text(label_horizonY1, 
+width = 85,
+height = 3,
+pady = 3,
+wrap = tk.NONE,
+foreground = "Black",
+bg = "Cyan",
+)
+
+save_date = tk.Button(frameX1, text='保存します',
+width = 100,
+height = 15,
+foreground = "Black",
+bg = "Cyan",
+command = go_windowX
+)
+
+back_windowX1 = tk.Button(frameX1, text='機能一覧へ',
+width = 10,
+height = 3,
+foreground = "Black",
+bg = "Cyan",
+command = go_backX1
+)
+
+
+
+#frameX2
+label_channelID = tk.Label(frameX2, text="チャンネルIDを入力してください", font=("MSゴシック", "15", "bold"))
+
+text_channelIDinput = tk.Text(frameX2, 
+width = 50,
+height = 3,
+pady = 3,
+wrap = tk.NONE,
+foreground = "Black",
+bg = "Cyan",
+)
+
+label_horizonX21 = tk.Label(frameX2,bg="#42b33d")
+
+label_moviecounttext = tk.Label(label_horizonX21, text="取得する動画の数を入力する", font=("MSゴシック", "15", "bold"))
+
+label_daystext = tk.Label(label_horizonX21, text="日付を設定(yyyy/mm/dd)", font=("MSゴシック", "15", "bold"))
+
+
+
+label_horizonX2 = tk.Label(frameX2,bg="#42b33d")
+text_daysinput = tk.Text(label_horizonX2, 
+width = 50,
+height = 3,
+pady = 3,
+wrap = tk.NONE,
+foreground = "Black",
+bg = "Cyan",
+)
+
+moviecountinput = tk.Text(label_horizonX2, 
+width = 50,
+height = 3,
+pady = 3,
+wrap = tk.NONE,
+foreground = "Black",
+bg = "Cyan",
+)
+
+
+datasave = tk.Button(frameX2, text='データを保存',
+width = 150,
+height = 35,
+foreground = "Black",
+bg = "Cyan",
+)
+
+
+backX2 = tk.Button(frameX2, text='機能一覧へ',
+width = 20,
+height = 8,
+foreground = "Black",
+bg = "Cyan",
+command = go_backX2
+)
+
+
+
+
+#frameX3
+label_learninghorizon = tk.Label(frameX3,bg="#42b33d")
+
+
+label_learningcount = tk.Label(label_learninghorizon, text="回数を指定", font=("MSゴシック", "15", "bold"))
+
+text_inputlearningcount = tk.Text(label_learninghorizon, 
+width = 50,
+height = 3,
+pady = 3,
+wrap = tk.NONE,
+foreground = "Black",
+bg = "Cyan",
+)
+
+
+learning = tk.Button(frameX3, text=' 学習させる',
+width = 100,
+height = 20,
+foreground = "Black",
+bg = "Cyan",
+)
+
+
+backX3 = tk.Button(frameX3, text='機能一覧へ',
+width = 20,
+height = 8,
+foreground = "Black",
+bg = "Cyan",
+command = go_backX3
+)
 
 #ボタンやテキストを配置する位置の設定(frame1)
 
@@ -819,6 +953,49 @@ use3.pack(padx = 10, pady = 0, side = tk.LEFT)
 label_horizonX.pack(padx = 50, pady = 10, expand=1)
 
 back.pack(padx = 50, pady = 40, expand=1, anchor='e')
+
+#X1画面目
+label_URLinput.pack(padx = 10, pady = 10, side = tk.LEFT)
+URL_input.pack(padx = 10, pady = 10, side = tk.LEFT)
+label_horizonX1.pack(padx = 50, pady = 40, expand=1)
+
+label_SuspiciousDegree.pack(padx = 10, pady = 0, side = tk.LEFT)
+SuspiciousDegree_input.pack(padx = 10, pady = 0, side = tk.LEFT)
+label_horizonY1.pack(padx = 50, pady = 10, expand=1)
+
+save_date.pack (padx = 50, pady = 40, expand=1)
+
+back_windowX1.pack (padx = 50, pady = 40, expand=1, anchor='e')
+
+
+
+#X2画面目
+label_channelID.pack(padx = 50, pady = 40, expand=1)
+
+text_channelIDinput.pack(padx = 0, pady = 0, expand=1)
+
+label_daystext.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
+label_moviecounttext.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
+label_horizonX21.pack(padx = 50, pady = 20, expand=1)
+
+text_daysinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
+moviecountinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
+label_horizonX2.pack(padx = 20, pady = 10, expand=1)
+
+datasave.pack(padx = 50, pady = 0, expand=1)
+backX2.pack(padx = 50, pady = 0, expand=1,  anchor='e')
+
+
+
+
+#X3画面目
+text_inputlearningcount.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
+label_learningcount.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
+label_learninghorizon.pack(padx = 50, pady = 40, expand=1)
+
+learning.pack(padx = 0, pady = 0, expand=1)
+backX3.pack(padx = 50, pady = 0, expand=1, anchor='e')
+
 
 #raise_frame(frame1)
 #raise_frame(frame2)
