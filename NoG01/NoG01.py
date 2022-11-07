@@ -1673,6 +1673,16 @@ def DoStudy():
 
     model.save(path)
 
+    loss, accuracy = model.evaluate(x_test,y_test)
+    print("\n\n誤差: [",loss,"], 精度: [",accuracy, "*100%]")
+
+    print("\n\n現在の予測 x_test: \n", model.predict(x_test[:999]))
+    print("\n\n現在の予測 x_train: \n", model.predict(x_train[:9]))
+
+    print("\n\ny_test: \n", y_test[:999])
+    print("\n\ny_train: \n", y_train[:9])
+
+
 
 # もう一回学習するかコマンド入力させる関数
 def yes_no_input():
@@ -1685,14 +1695,7 @@ def yes_no_input():
         return False
 
 
-loss, accuracy = model.evaluate(x_test,y_test)
-print("\n\n誤差: [",loss,"], 精度: [",accuracy, "*100%]")
 
-print("\n\n現在の予測 x_test: \n", model.predict(x_test[:999]))
-print("\n\n現在の予測 x_train: \n", model.predict(x_train[:9]))
-
-print("\n\ny_test: \n", y_test[:999])
-print("\n\ny_train: \n", y_train[:9])
 
 
 #cursor.close()
