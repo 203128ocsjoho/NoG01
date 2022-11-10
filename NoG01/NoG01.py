@@ -83,6 +83,8 @@ from psycopg2 import Error
 
 YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
 
+youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+
 
 
 try:
@@ -391,12 +393,12 @@ def savemovieinfo():
     global YOUTUBE_API_KEY
     global URL_input
     global SuspiciousDegree_input
-    global isint
+    global cursor
 
     URL = URL_input.get("1.0","end")
     if isint(SuspiciousDegree_input.get("1.0","end")):
         SuspiciousDegree = int(SuspiciousDegree_input.get("1.0","end"))
-        messagebox.showerror("Error", "数字ok")
+        messagebox.showinfo("Error", "数字ok")
     else:
         print("elsereturn")
         messagebox.showerror("Error", "数字を入力してくれ")
@@ -406,27 +408,34 @@ def savemovieinfo():
         messagebox.showerror("Error", "URLまたは数字が違います")
         return
     else:
-        messagebox.showerror("Error", "urlok")
-    videoid = URL.replace('https://www.youtube.com/watch?v=','')
+        messagebox.showinfo("Error", "urlok")
+    videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
     print(videoid)
     suspiciousDegree = SuspiciousDegree_input.get("1.0","end")
 
     param = {
-            'part': 
-            'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
+            'part': 'snippet,contentDetails,statistics',
             'id': videoid, 
-            'key': YOUTUBE_API_KEY
+            'key': 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
             }
 
-    target_url = 'https://www.googleapis.com/youtube/v3/videos?' + \
-    (urllib.parse.urlencode(param))
+    target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
     videos_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url)))
     print("videos_body = ", videos_body)
 
+    print(target_url)
+
+    print("forに入りたい")
     for item in videos_body['items']:
-        #vidDuration = isodate.parse_duration(videos_body['items']['contentDetails']['duration'])
+        print("aa", "for文に入りま")
+
+        vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
 
         title = item['snippet']['title'].replace('\'', '')
+
+        vidViewCount = int(item['statistics']['viewCount'])
+        vidLikeCount = int(item['statistics']['likeCount'])
+
         description = item['snippet']['description'].replace('\'', '')
         vidSecondsAfterAll = int(vidDuration.total_seconds())
         channelName = item["snippet"]["channelTitle"]
@@ -452,15 +461,15 @@ def savemovieinfo():
 
         BestGoodCount = 0
         WorstGoodCount = 0
-        for item in response["items"]:
+        for itemc in response["items"]:
 
-            comment = item["snippet"]["topLevelComment"]
+            comment = itemc["snippet"]["topLevelComment"]
 
             author = comment["snippet"]["authorDisplayName"]
 
             likeCount = comment["snippet"]["likeCount"]
 
-            replyCount = item["snippet"]["totalReplyCount"]
+            replyCount = itemc["snippet"]["totalReplyCount"]
 
             comment_text = comment["snippet"]["textDisplay"]
 
@@ -481,8 +490,7 @@ def savemovieinfo():
 
 
 
-        vidViewCount = int(item['statistics']['viewCount'])
-        vidLikeCount = int(item['statistics']['likeCount'])
+        
         vidCommentsCount = int(item['statistics']['commentCount'])
         #vidDislikeCount = int(item['statistics']['dislikeCount'])
         subscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
@@ -490,7 +498,7 @@ def savemovieinfo():
        
 
         
-        vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
+        #vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
 
         messagebox.showinfo("aa", "DBmade")
 
@@ -515,6 +523,7 @@ def savemovieinfo():
         cursor.execute("COMMIT;")
 
         messagebox.showinfo("おあり", "gg")
+    messagebox.showinfo("a", "おわりってことだお")
 
 
 """
@@ -1441,8 +1450,6 @@ res['items']
 #---------------------------------------------------------- Step 1 to 2 ---------------------------------
 
 
-
-youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 def setVideoDatas():
 
