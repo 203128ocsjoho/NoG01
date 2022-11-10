@@ -387,6 +387,7 @@ def isint(str):  # 整数値を表しているかどうかを判定
         return True
 
 
+
 def savemovieinfo():
 
 
@@ -524,6 +525,27 @@ def savemovieinfo():
 
         messagebox.showinfo("おあり", "gg")
     messagebox.showinfo("a", "おわりってことだお")
+
+def TakeCh():
+    chid =text_channelIDinput.get("1.0","end").replace('\n','').replace('%0a','')
+
+    if len(chid) == 25:
+        None
+    else:
+        print(len(chid))
+        messagebox.showerror("Error", "IDが違うぞ☆")
+        return None
+
+    if isint(moviecountinput.get("1.0","end")):
+        moviecount = int(moviecountinput.get("1.0","end"))
+        messagebox.showinfo("Error", "数字ok")
+    else:
+        print("elsereturn")
+        messagebox.showerror("Error", "数字を入力してくれ")
+        return None
+
+    setVideoDatas( text_channelIDinput.get(), moviecountinput.get(), befor_daysinput.get(), after_daysinput.get() )
+
 
 
 """
@@ -953,7 +975,17 @@ label_daystext = tk.Label(label_horizonX21, text="日付を設定(yyyy/mm/dd)", 
 
 
 label_horizonX2 = tk.Label(frameX2,bg="#42b33d")
-text_daysinput = tk.Text(label_horizonX2, 
+
+befor_daysinput = tk.Text(label_horizonX2, 
+width = 50,
+height = 3,
+pady = 3,
+wrap = tk.NONE,
+foreground = "Black",
+bg = "Cyan",
+)
+
+after_daysinput = tk.Text(label_horizonX2, 
 width = 50,
 height = 3,
 pady = 3,
@@ -972,11 +1004,14 @@ bg = "Cyan",
 )
 
 
+
+
 datasave = tk.Button(frameX2, text='データを保存',
 width = 150,
 height = 35,
 foreground = "Black",
 bg = "Cyan",
+command = TakeCh
 )
 
 
@@ -1165,7 +1200,8 @@ label_daystext.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
 label_moviecounttext.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
 label_horizonX21.pack(padx = 50, pady = 20, expand=1)
 
-text_daysinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
+befor_daysinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
+after_daysinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
 moviecountinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
 label_horizonX2.pack(padx = 20, pady = 10, expand=1)
 
@@ -1451,7 +1487,7 @@ res['items']
 
 
 
-def setVideoDatas():
+def setVideoDatas(ID, number, dateB1, dateA1 ):
 
     global test_video_data_x
     global searchVideosNumbers
@@ -1462,10 +1498,10 @@ def setVideoDatas():
 
     print("globalglobal", test_video_data_x)
 
-    dayB = datetime.date.fromisoformat('2022-06-01')
+    dayB = datetime.date.fromisoformat(dateB1)
     dayB = datetime.datetime.strftime(dayB, '%Y-%m-%dT%H:%M:%S.%fZ')
 
-    dayA = datetime.date.today()
+    dayA = datetime.date.fromisoformat(dateA1)
     dayA = datetime.datetime.strftime(dayA, '%Y-%m-%dT%H:%M:%S.%fZ')
 
     search_response = youtube.search().list(
@@ -1475,8 +1511,8 @@ def setVideoDatas():
     order='rating',
     type='video',
     regionCode='JP',
-    maxResults=searchVideosNumbers,
-    channelId='UCl4e200EZm7NXq_iaYSXfeg',#UCaminwG9MTO4sLYeC3s6udA
+    maxResults=number,
+    channelId=ID,
     publishedAfter=dayB,
     publishedBefore=dayA,
     ).execute()
@@ -1700,7 +1736,7 @@ def setVideoDatas():
         answer_data_y = np.append(answer_data_y, 0)
 
 
-setVideoDatas()
+setVideoDatas('UCl4e200EZm7NXq_iaYSXfeg', 50, '2022-06-01', '2022-11-10')
 answer_data_y[len(answer_data_y)-1] = 1
 print(test_video_data_x)
 
