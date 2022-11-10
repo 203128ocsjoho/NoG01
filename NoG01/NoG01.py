@@ -81,6 +81,10 @@ from psycopg2 import Error
 
 
 
+YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+
+
+
 try:
     #接続
     connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
@@ -370,6 +374,149 @@ def go_windowX():
             text_input.delete("1.0","end")
     else:
         messagebox.showerror("Error", "予期せぬエラーが発生しました")
+
+
+def isint(str):  # 整数値を表しているかどうかを判定
+    try:
+        int(str, 10)  # 文字列を実際にint関数で変換してみる
+    except ValueError:
+        return False
+    else:
+        return True
+
+
+def savemovieinfo():
+
+
+    global YOUTUBE_API_KEY
+    global URL_input
+    global SuspiciousDegree_input
+    global isint
+
+    URL = URL_input.get("1.0","end")
+    if isint(SuspiciousDegree_input.get("1.0","end")):
+        SuspiciousDegree = int(SuspiciousDegree_input.get("1.0","end"))
+        messagebox.showerror("Error", "数字ok")
+    else:
+        print("elsereturn")
+        messagebox.showerror("Error", "数字を入力してくれ")
+        return None
+    
+    if ("https://www.youtube.com/watch?v=" not in URL) or (SuspiciousDegree > 100) or (SuspiciousDegree < 0):
+        messagebox.showerror("Error", "URLまたは数字が違います")
+        return
+    else:
+        messagebox.showerror("Error", "urlok")
+    videoid = URL.replace('https://www.youtube.com/watch?v=','')
+    print(videoid)
+    suspiciousDegree = SuspiciousDegree_input.get("1.0","end")
+
+    param = {
+            'part': 
+            'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
+            'id': videoid, 
+            'key': YOUTUBE_API_KEY
+            }
+
+    target_url = 'https://www.googleapis.com/youtube/v3/videos?' + \
+    (urllib.parse.urlencode(param))
+    videos_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url)))
+    print("videos_body = ", videos_body)
+
+    for item in videos_body['items']:
+        #vidDuration = isodate.parse_duration(videos_body['items']['contentDetails']['duration'])
+
+        title = item['snippet']['title'].replace('\'', '')
+        description = item['snippet']['description'].replace('\'', '')
+        vidSecondsAfterAll = int(vidDuration.total_seconds())
+        channelName = item["snippet"]["channelTitle"]
+        vidSubscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
+        vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
+        dateUploaded = isodate.parse_datetime(item["snippet"]["publishedAt"])
+        commentCount = 0
+        toplevelcomment = "いいね（デフォルト）"
+        #toplevelcommentauthor = "笑（デフォルト）"
+        toplevelcommentlikecount = 3
+        toplevelcommentreplycount = 3
+        lastLevelcomment = "z"
+        #lastLevelcommentauthor = "zz"
+        lastLevelcommentlikecount = 1
+        lastLevelcommentreplycount = 1
+
+        request = youtube.commentThreads().list(
+            part = "snippet",
+            videoId=videoid,
+            maxResults = 500
+        )
+        response = request.execute()
+
+        BestGoodCount = 0
+        WorstGoodCount = 0
+        for item in response["items"]:
+
+            comment = item["snippet"]["topLevelComment"]
+
+            author = comment["snippet"]["authorDisplayName"]
+
+            likeCount = comment["snippet"]["likeCount"]
+
+            replyCount = item["snippet"]["totalReplyCount"]
+
+            comment_text = comment["snippet"]["textDisplay"]
+
+            
+            if (likeCount >= BestGoodCount):
+                toplevelcomment = comment_text
+                toplevelcommentauthor = author
+                toplevelcommentlikecount = likeCount
+                toplevelcommentreplycount = replyCount
+
+            if (likeCount <= WorstGoodCount):
+                lastLevelcomment = comment_text
+                lastLevelcommentauthor = author
+                lastLevelcommentlikecount = likeCount
+                lastLevelcommentreplycount = replyCount
+
+            commentCount += 1
+
+
+
+        vidViewCount = int(item['statistics']['viewCount'])
+        vidLikeCount = int(item['statistics']['likeCount'])
+        vidCommentsCount = int(item['statistics']['commentCount'])
+        #vidDislikeCount = int(item['statistics']['dislikeCount'])
+        subscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
+        vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
+       
+
+        
+        vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
+
+        messagebox.showinfo("aa", "DBmade")
+
+        cursor.execute("INSERT INTO icebox VALUES("\
+                            "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
+                            ", {VideoLength}, '{ChannelName}', {ChannelSubscribersCount}"\
+                            ", {DateYear}, {DateMonth}, {DateDay}, {DateHour}"\
+                            ", '{GoodComment}', {GoodCommentGoodCount}, {GoodCommentReplyCount}"\
+                            ", '{BadComment}', {BadCommentGoodCount}, {BadCommentReplyCount}"\
+                            ", {SuspiciousDegree}, '{URL}') ON CONFLICT DO NOTHING".format(
+                                VideoId=videoid, Title=title, Description=description
+                                , ViewCount=vidViewCount, LikeCount=vidLikeCount
+                                , VideoLength=vidSecondsAfterAll, ChannelName=channelName
+                                , ChannelSubscribersCount=subscriberCount
+                                , DateYear=dateUploaded.year, DateMonth=dateUploaded.month
+                                , DateDay=dateUploaded.day, DateHour=dateUploaded.hour
+                                , GoodComment=toplevelcomment, GoodCommentGoodCount=toplevelcommentlikecount, GoodCommentReplyCount=toplevelcommentreplycount
+                                , BadComment=lastLevelcomment, BadCommentGoodCount=lastLevelcommentlikecount, BadCommentReplyCount=lastLevelcommentreplycount
+                                , SuspiciousDegree=suspiciousDegree, URL="https://www.youtube.com/watch?v="+videoid
+                                )
+                           )
+        cursor.execute("COMMIT;")
+
+        messagebox.showinfo("おあり", "gg")
+
+
 """
 def close_frame1():
     frame1.destroy()
@@ -763,7 +910,7 @@ width = 100,
 height = 15,
 foreground = "Black",
 bg = "Cyan",
-command = go_windowX
+command = savemovieinfo
 )
 
 back_windowX1 = tk.Button(frameX1, text='機能一覧へ',
@@ -1294,7 +1441,6 @@ res['items']
 #---------------------------------------------------------- Step 1 to 2 ---------------------------------
 
 
-YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
 
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
@@ -1561,7 +1707,6 @@ print("(4)【モデル定義終わり！】\n")
 
 
 
-
 scaler = preprocessing.StandardScaler()
 scaler.fit(test_video_data_x)
 x=scaler.transform(test_video_data_x)
@@ -1621,13 +1766,6 @@ else:
     model.save(path)
 
 
-def isint(str):  # 整数値を表しているかどうかを判定
-    try:
-        int(str, 10)  # 文字列を実際にint関数で変換してみる
-    except ValueError:
-        return False
-    else:
-        return True
 
 study_times_str = "0" # グローバル変数 何回学習するか String
 study_times_int = 0 # グローバル変数 何回学習するか Integer
@@ -1709,7 +1847,6 @@ while(yes_no_input()):
 
 
 model.save(path) #モデルを保存
-
 
 print("\n(7)終わりってことだよぉ！(すべての最後―終わり―)\n")
 
