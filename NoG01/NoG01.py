@@ -971,6 +971,12 @@ foreground = "Black",
 bg = "Cyan",
 )
 
+module = ('2', '')
+ 
+box_a = combobox = ttk.Combobox(frame1, value=module, width=80, height=120, state="readonly", cursor="dot")
+box_a.option_add("*TCombobox*Listbox.Font", 30)
+box_a.current(0)
+
 
 datasave = tk.Button(frameX2, text='データを保存',
 width = 150,
@@ -978,6 +984,8 @@ height = 35,
 foreground = "Black",
 bg = "Cyan",
 )
+
+
 
 
 backX2 = tk.Button(frameX2, text='機能一覧へ',
