@@ -828,13 +828,14 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
                 toplevelcommentauthor = author
                 toplevelcommentlikecount = likeCount
                 toplevelcommentreplycount = replyCount
+                BestGoodCount = likeCount
 
             if (likeCount <= WorstGoodCount):
                 lastLevelcomment = comment_text
                 lastLevelcommentauthor = author
                 lastLevelcommentlikecount = likeCount
                 lastLevelcommentreplycount = replyCount
-
+                WorstGoodCount = likeCount
             commentCount += 1
 
             print("[",author,"]  " , comment_text, "コメ目 → ",commentCount)
