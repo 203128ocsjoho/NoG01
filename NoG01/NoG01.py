@@ -966,11 +966,12 @@ foreground = "Black",
 bg = "Cyan",
 )
 
-label_horizonX21 = tk.Label(frameX2,bg="#42b33d")
 
-label_moviecounttext = tk.Label(label_horizonX21, text="取得する動画の数を入力する", font=("MSゴシック", "15", "bold"))
+label_moviecounttext = tk.Label(frameX2, text="取得する動画の数を入力する", font=("MSゴシック", "15", "bold"))
 
-label_daystext = tk.Label(label_horizonX21, text="日付を設定(yyyy/mm/dd)", font=("MSゴシック", "15", "bold"))
+label_beforedaystext = tk.Label(frameX2, text="開始日付を設定(yyyy/mm/dd)", font=("MSゴシック", "15", "bold"))
+
+label_afterdaystext = tk.Label(frameX2, text="終了日付を設定(yyyy/mm/dd)", font=("MSゴシック", "15", "bold"))
 
 
 
@@ -994,7 +995,7 @@ foreground = "Black",
 bg = "Cyan",
 )
 
-moviecountinput = tk.Text(label_horizonX2, 
+moviecountinput = tk.Text(frameX2, 
 width = 50,
 height = 3,
 pady = 3,
@@ -1003,18 +1004,61 @@ foreground = "Black",
 bg = "Cyan",
 )
 
-module = ('2', '')
+beforebox_horizon = tk.Label(frameX2,bg="#42b33d")
+
+module_beforeyear = []
+for i in range(30):
+    module_beforeyear.append(1998 + i)
  
-box_a = combobox = ttk.Combobox(frame1, value=module, width=80, height=120, state="readonly", cursor="dot")
-box_a.option_add("*TCombobox*Listbox.Font", 30)
-box_a.current(0)
+beforebox_year = combobox = ttk.Combobox(beforebox_horizon, value=module_beforeyear, width=80, height=120, state="readonly", cursor="dot")
+beforebox_year.option_add("*TCombobox*Listbox.Font", 30)
+beforebox_year.current(0)
+
+"""
+scrollbar = ttk.Scrollbar(
+    frameX2,
+    orient=tk.VERTICAL,
+    command=beforebox_year.yview)
+beforebox_year['yscrollcommand'] = scrollbar.set
+scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+"""
+
+module_beforemonth = ('01', '02','03','04','05','06','07','08','09','10','11','12')
+
+beforebox_month = combobox = ttk.Combobox(beforebox_horizon, value=module_beforemonth, width=80, height=120, state="readonly", cursor="dot")
+beforebox_month.option_add("*TCombobox*Listbox.Font", 30)
+beforebox_month.current(0)
+
+module_beforeday = ('01', '02')
+ 
+beforebox_day = combobox = ttk.Combobox(beforebox_horizon, value=module_beforeday, width=80, height=120, state="readonly", cursor="dot")
+beforebox_day.option_add("*TCombobox*Listbox.Font", 30)
+beforebox_day.current(0)
 
 
+afterbox_horizon = tk.Label(frameX2,bg="#42b33d")
 
+module = ('2010', '2011')
+ 
+afterbox_year = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
+afterbox_year.option_add("*TCombobox*Listbox.Font", 30)
+afterbox_year.current(0)
+
+module = ('01', '02','03','04','05','06','07','08','09','10','11','12')
+ 
+afterbox_month = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
+afterbox_month.option_add("*TCombobox*Listbox.Font", 30)
+afterbox_month.current(0)
+
+module = ('01', '02')
+ 
+afterbox_day = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
+afterbox_day.option_add("*TCombobox*Listbox.Font", 30)
+afterbox_day.current(0)
 
 datasave = tk.Button(frameX2, text='データを保存',
-width = 150,
-height = 35,
+width = 100,
+height = 15,
 foreground = "Black",
 bg = "Cyan",
 command = TakeCh
@@ -1204,14 +1248,26 @@ label_channelID.pack(padx = 50, pady = 40, expand=1)
 
 text_channelIDinput.pack(padx = 0, pady = 0, expand=1)
 
-label_daystext.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
-label_moviecounttext.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
-label_horizonX21.pack(padx = 50, pady = 20, expand=1)
+label_moviecounttext.pack(padx = 50, pady = 40, expand=1)
 
-befor_daysinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
-after_daysinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
-moviecountinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
-label_horizonX2.pack(padx = 20, pady = 10, expand=1)
+
+#befor_daysinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
+#after_daysinput.pack(padx = 50, pady = 0, expand=1, side = tk.RIGHT)
+moviecountinput.pack(padx = 50, pady = 0, expand=1)
+
+label_beforedaystext.pack(padx = 50, pady = 40, expand=1)
+
+beforebox_year.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+beforebox_month.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+beforebox_day.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+beforebox_horizon.pack(padx = 20, pady = 10, expand=1)
+
+label_afterdaystext.pack(padx = 50, pady = 40, expand=1)
+
+afterbox_year.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+afterbox_month.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+afterbox_day.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+afterbox_horizon.pack(padx = 20, pady = 10, expand=1)
 
 datasave.pack(padx = 50, pady = 0, expand=1)
 backX2.pack(padx = 50, pady = 0, expand=1,  anchor='e')
@@ -1495,7 +1551,7 @@ res['items']
 
 
 
-def setVideoDatas(ID, number, dateB1, dateA1 ):
+def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
     global test_video_data_x
     global searchVideosNumbers
@@ -1506,11 +1562,13 @@ def setVideoDatas(ID, number, dateB1, dateA1 ):
 
     print("globalglobal", test_video_data_x)
 
-    dayB = datetime.date.fromisoformat(dateB1)
-    dayB = datetime.datetime.strftime(dayB, '%Y-%m-%dT%H:%M:%S.%fZ')
+    #dayB = datetime.date.fromisoformat(dateB1)
+    tb = datetime.date(yb, mb, db)
+    dayB = datetime.datetime.strftime(tb, '%Y-%m-%dT%H:%M:%S.%fZ')
 
-    dayA = datetime.date.fromisoformat(dateA1)
-    dayA = datetime.datetime.strftime(dayA, '%Y-%m-%dT%H:%M:%S.%fZ')
+    #dayA = datetime.date.fromisoformat(dateA1)
+    ta = datetime.date(ya, ma, da)
+    dayA = datetime.datetime.strftime(ta, '%Y-%m-%dT%H:%M:%S.%fZ')
 
     search_response = youtube.search().list(
     part='snippet',
