@@ -526,10 +526,414 @@ def savemovieinfo():
         messagebox.showinfo("おあり", "gg")
     messagebox.showinfo("a", "おわりってことだお")
 
+
+
+
+#怪しさ単語登録
+suspicious_words = ["?", "？", "違う", "悪", "謎", "わからない", "分からない", "何故", "なぜ", "なんで", "引退"
+                   , "釣り", "詐欺", "ブラウザバック", "ごみ", "ゴミ", "しね",  "はあ" ,"はぁ", "だる", "飽き", "いい", "いらない", "不必要"
+                   , "とは", "重要な", "お知らせ", "ベスト", "最", "について。"]
+
+#好印象単語登録
+unsuspicious_words = ["正し", "義", "善", "良", "わかる", "分かる", "理由が", "りゆうが", "なるほど", "継続", "これからも", "待", "評価"
+                   , "必要と", "ありがとう", "有難う", "有り難う", "神"
+                   , "まとめ", "考察", "歴代", "便利", "解説", "紹介", "その", "第", "回", "10", "１０", "十", "について、", "について解", "について紹"]
+
+count = 5 #怪しさカウント
+count_count = 1 #カウントを何回やったかのカウント
+video_count = 1 #何ビデオ目のカウントをやっているかのカウント
+#文字を評価値の数字にする何かプロセス
+def eva_toInt(string):
+    
+    count = 5 #怪しさカウント初期化
+    global count_count
+    global video_count
+
+    #実装予定
+
+    for a_suspicious_word in suspicious_words:
+
+        # 釣り動画らしい、怪しい単語が含まれていると、怪しさカウントをプラス１する。
+        if string != None and a_suspicious_word in string:
+            count += 1
+            print("怪しい単語発見(video_count = ", str(video_count), ", 何カウント目 = ", str(count_count), ", +1)")
+
+        # 何の単語も含まれていないと、何もせず次のループへ。
+        else:
+            None
+
+
+    for a_unsuspicious_word in unsuspicious_words:
+
+        # 釣り動画らしくない、怪しくない単語が含まれていると、怪しさカウントをマイナス１する。
+        if(string != None and a_unsuspicious_word in string):
+            count -= 1
+            print("好印象単語発見(video_count = ", str(video_count), ", 何カウント目 = ", str(count_count), ", -1)")
+
+        # 何の単語も含まれていないと、何もせず次のループへ。
+        else:
+            None
+ 
+    print("video_count = ", str(video_count), ", 何カウント目 = ", str(count_count), ", 怪しさ = ", str(count), " → 次のカウントする変数へ。\n")
+    
+    count_count += 1
+
+    if (count_count % 5 == 1):
+        video_count += 1
+
+    return count
+
+
+
+#たくさんの項目数、順番で、それぞれ何を意味しているか。　上、英語　下、日本語
+"""
+ViewCount, LikeCount
+, LikeRate([LikeCount*100]/ViewCount), VideoLength(sec)
+, Title, Description
+, DateYear, DateMonth, DateDay, DateHour
+, ChannelName, ChannelSubscribersCount
+, GoodComment, LikeCountofGoodComment, ReplyCountofGoodComment
+, BadComment, LikeCountofBadComment, ReplyCountofBadComment
+"""
+"""
+再生数, グッド数
+, グッド率([グッド数*100]/再生数), 動画時間（秒）
+, タイトル名, 詳細文
+, 投稿年, 投稿月, 投稿日, 投稿時間
+, チャンネル名, チャンネル登録者数
+, （比較的）評価の高いコメント, （比較的）グッドコメントのグッド数, （比較的）グッドコメントの返信数
+, （比較的）評価の低いコメント, （比較的）バッドコメントのグッド数, （比較的）バッドコメントの返信数
+"""
+
+
+
+
+test_video_data_x = np.array([[2000, 1000
+                        , 50, 300
+                        , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
+                        , 2022, 4, 1, 12
+                        , eva_toInt("＾＾"), 800
+                        , eva_toInt("大丈夫？？"), 5, 2
+                        , eva_toInt("なにこれ？"), 0, 1
+                        ]])
+
+
+test_video_data_x = np.concatenate((test_video_data_x, np.array([[100, 2
+                        , 2, 60
+                        , eva_toInt("は？？"), eva_toInt("きれそう")
+                        , 2022, 4, 4, 5
+                        , eva_toInt("登録よろしく！！"), 5
+                        , eva_toInt("引退しろ！！！"), 2, 1
+                        , eva_toInt("次郎、今度野球いこうぜ！"), 1, 2
+                                                                ]])
+                                    ))
+
+
+print("OwO", test_video_data_x)
+
+test_video_data_x = np.concatenate((test_video_data_x, np.array([[30000, 3000
+                        , 10, 480
+                        , eva_toInt("よろしくおねがいします！！"), eva_toInt("趣味は化粧と裁縫とネイルです！( ^)o(^ )")
+                        , 2022, 5, 1, 12
+                        , eva_toInt("カニちゃん(カニザン)のお化粧備忘録チャンネル"), 3000
+                        , eva_toInt("動画内の化粧品まとめ:\n<br>SK-2 税込￥29800\n<br>ニベア 税込￥1980"), 88, 5
+                        , eva_toInt("私と同じくらいかわいいですね。"), 0, 8
+                                                                ]])
+                                    ))
+                        
+
+test_video_data_x = np.concatenate((test_video_data_x, np.array([[150000, 1500
+                        , 1, 300
+                        , eva_toInt("じゃんけんの勝ち方、、、徹底解説します。"), eva_toInt("明日から勝率１００パー間違いねぇぜ！")
+                        , 2022, 4, 1, 9
+                        , eva_toInt("令和のギャンブラー田中一郎の明日から使えるヤバい技チャンネル"), 800
+                        , eva_toInt("ネタかと思った。\n<br>でも顔がマジやん。。"), 111, 5
+                        , eva_toInt("この動画のおかげで彼女できました！田中一郎に感謝！！。"), 3, 8
+                                                                ]])
+                                    ))
+
+test_video_data_x = np.concatenate((test_video_data_x, np.array([[240000, 4800
+                        , 2, 630
+                        , eva_toInt("Youtuber、やめます！"), eva_toInt("これで終わりだっ・・。\n<br>今までありがとうございました。")
+                        , 2022, 7, 7, 3
+                        , eva_toInt("ピカル(Pikaru)"), 180000
+                        , eva_toInt("この動画は釣り動画、詐欺動画です。ブラウザバックをお勧めします。"), 155, 5
+                        , eva_toInt("ごみ！\n\n<br><br><br><br><br><br><br><br>しね！"), 5, 5
+                                                                ]])
+                                    ))
+
+
+print("^O^", test_video_data_x)
+
+
+#釣り動画＝1 普通動画＝0 # 2 ＝　ネタ動画
+answer_data_y = np.array([0, 0, 0, 1, 1])
+#answer_data_y = np.array([0])
+
+'''
+for item in range(searchVideosNumbers):
+    answer_data_y = np.append(answer_data_y, 0)
+    print(answer_data_y)
+'''
+
+
+def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
+
+    global test_video_data_x
+   
+
+    global cursor
+
+    global answer_data_y
+
+    print("globalglobal", test_video_data_x)
+
+    #dayB = datetime.date.fromisoformat(dateB1)
+    tb = datetime.date(yb, mb, db)
+    dayB = datetime.datetime.strftime(tb, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+    #dayA = datetime.date.fromisoformat(dateA1)
+    ta = datetime.date(ya, ma, da)
+    dayA = datetime.datetime.strftime(ta, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+    search_response = youtube.search().list(
+    part='snippet',
+    #part='id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
+    #fields='items(id,snippet(title,description,publishedAt),contentDetails(duration),statistics(viewCount,likeCount,dislikeCount,commentCount))'
+    order='rating',
+    type='video',
+    regionCode='JP',
+    maxResults=number,
+    channelId=ID,
+    publishedAfter=dayB,
+    publishedBefore=dayA,
+    ).execute()
+
+
+    video_ids = []
+
+    videoCountForAPI = 0
+    commentCount = 0
+
+    for item in search_response['items'][:number]:
+    
+        videoCountForAPI += 1
+
+        title = item['snippet']['title'].replace('\'', '')
+        description = item['snippet']['description'].replace('\'', '')
+
+        videoId = item["id"]["videoId"]
+        url = 'https://www.youtube.com/watch?v=%s' % videoId
+        thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
+        thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
+        dateUploaded = isodate.parse_datetime(item["snippet"]["publishedAt"])
+        channelName = item["snippet"]["channelTitle"]
+        videoId = item['id']['videoId']
+
+        param = {
+            'part': 
+            'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
+            'id': videoId, 
+            'key': YOUTUBE_API_KEY
+            }
+
+        target_url = 'https://www.googleapis.com/youtube/v3/videos?' + \
+        (urllib.parse.urlencode(param))
+        videos_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url)))
+        print("videos_body = ", videos_body)
+        for item in videos_body['items']:
+
+            vidViewCount = int(item['statistics']['viewCount'])
+            vidLikeCount = int(item['statistics']['likeCount'])
+            vidCommentsCount = int(item['statistics']['commentCount'])
+            #vidDislikeCount = int(item['statistics']['dislikeCount'])
+            vidSubscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
+            vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
+
+            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
+
+            res = youtube.videos().list(id=videoId,part='statistics').execute()
+
+
+        '''
+        param2 = {
+            'part': 
+            'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
+            'id': "UCaminwG9MTO4sLYeC3s6udA",
+            }
+
+        target_url2 = 'https://www.googleapis.com/youtube/v3/channels' + \
+        (urllib.parse.urlencode(param2))
+        channel_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url2)))
+
+        for item in channel_body['items']:
+
+            #vidSubscriberCount = int(item['statistics']['subscriberCount'])
+            vidHiddenSubscriberCount = int(item['statistics']['hiddenSubscriberCount'])
+
+            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
+
+            res = youtube.videos().list(id=videoId,part='statistics').execute()
+
+        '''
+
+        print(res['items'])
+
+        video_ids.append(videoId)
+        request = youtube.commentThreads().list(
+            part = "snippet",
+            videoId=videoId,
+            maxResults = 500
+        )
+        response = request.execute()
+
+  
+        print("タイトル = [", title , "]")
+        print("詳細文　＝　[", description , "]")
+        print("チャンネルID = [", channelName , "]")
+        print("VideoURL = [", url , "]")
+        print("投稿時間 = [", dateUploaded , "]")
+        print("サムネURL1 = [", thumbnailUrl1 , "]")
+        print("サムネURL2 = [", thumbnailUrl2 , "]\n")
+        print("videoCountForAPI = [",videoCountForAPI, "]\n")
+  
+        commentCount = 0
+        toplevelcomment = "いいね（デフォルト）"
+        #toplevelcommentauthor = "笑（デフォルト）"
+        toplevelcommentlikecount = 3
+        toplevelcommentreplycount = 3
+        lastLevelcomment = "z"
+        #lastLevelcommentauthor = "zz"
+        lastLevelcommentlikecount = 1
+        lastLevelcommentreplycount = 1
+
+
+        BestGoodCount = 0
+        WorstGoodCount = 0
+        for item in response["items"]:
+
+            comment = item["snippet"]["topLevelComment"]
+
+            author = comment["snippet"]["authorDisplayName"]
+
+            likeCount = comment["snippet"]["likeCount"]
+
+            replyCount = item["snippet"]["totalReplyCount"]
+
+            comment_text = comment["snippet"]["textDisplay"]
+
+            
+            if (likeCount >= BestGoodCount):
+                toplevelcomment = comment_text
+                toplevelcommentauthor = author
+                toplevelcommentlikecount = likeCount
+                toplevelcommentreplycount = replyCount
+
+            if (likeCount <= WorstGoodCount):
+                lastLevelcomment = comment_text
+                lastLevelcommentauthor = author
+                lastLevelcommentlikecount = likeCount
+                lastLevelcommentreplycount = replyCount
+
+            commentCount += 1
+
+            print("[",author,"]  " , comment_text, "コメ目 → ",commentCount)
+
+
+        print("\n")
+
+        '''
+        vidMinutes = re.findall(r'T.*M',vidDuration)
+        vidMinutesAfter = vidMinutes[1:-1]
+        vidSeconds = re.findall(r'M.*S',vidDuration)
+        vidSecondsAfter = vidSeconds[1:-1]
+        vidSecondsAfterAll = 60 * vidMinutesAfter + vidSecondsAfter
+        '''
+        vidSecondsAfterAll = int(vidDuration.total_seconds())
+
+        #vidViewCount = res['items']['viewCount']
+        #vidLikeCount = res['items']['likeCount']
+        #vidDislikeCount = res['items']['dislikeCount']
+        subscriberCount = 0
+        print(str(vidHiddenSubscriberCount) + "vidHiddenSubscriberCount")
+        print(str(vidSubscriberCount) + "vidSubscriberCount")
+        if vidHiddenSubscriberCount:
+            subscriberCount = vidViewCount
+        else:
+            subscriberCount = vidSubscriberCount
+
+            ''', vidDislikeCount'''
+            ''', (vidDislikeCount*100)/vidViewCount'''
+
+            print(dateUploaded)
+            dateUploaded
+
+        if (vidSubscriberCount==0):
+            subscriberCount = vidViewCount / 2
+
+
+        '''
+        forprint = np.array([np.array([vidViewCount, vidLikeCount
+                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
+                                    , eva_toInt(title), eva_toInt(description)
+                                    , dateUploaded.year, dateUploaded.month, dateUploaded.day, dateUploaded.hour
+                                    , eva_toInt(channelName), subscriberCount
+                                    , eva_toInt(toplevelcomment), eva_toInt(lastLevelcomment)
+                                    ])])
+
+        print("testetetetetetet", forprint)
+        '''
+        
+
+        
+        cursor.execute("INSERT INTO icebox VALUES("\
+                        "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
+                        ", {VideoLength}, '{ChannelName}', {ChannelSubscribersCount}"\
+                        ", {DateYear}, {DateMonth}, {DateDay}, {DateHour}"\
+                        ", '{GoodComment}', {GoodCommentGoodCount}, {GoodCommentReplyCount}"\
+                        ", '{BadComment}', {BadCommentGoodCount}, {BadCommentReplyCount}"\
+                        ", {SuspiciousDegree}, '{URL}') ON CONFLICT DO NOTHING".format(
+                            VideoId=videoId, Title=title, Description=description
+                            , ViewCount=vidViewCount, LikeCount=vidLikeCount
+                            , VideoLength=vidSecondsAfterAll, ChannelName=channelName
+                            , ChannelSubscribersCount=subscriberCount
+                            , DateYear=dateUploaded.year, DateMonth=dateUploaded.month
+                            , DateDay=dateUploaded.day, DateHour=dateUploaded.hour
+                            , GoodComment=toplevelcomment, GoodCommentGoodCount=toplevelcommentlikecount, GoodCommentReplyCount=toplevelcommentreplycount
+                            , BadComment=lastLevelcomment, BadCommentGoodCount=lastLevelcommentlikecount, BadCommentReplyCount=lastLevelcommentreplycount
+                            , SuspiciousDegree="50.111", URL="https://www.youtube.com/watch?v="+videoId
+                            )
+                       )
+
+        '''
+        " SET Title=excluded.Title, Description=excluded.Description, ViewCount=excluded.'upd', LikeCount=excluded.'upd'"\
+                        ", VideoLength=excluded.'upd', ChannelName=excluded.'upd', ChannelSubscribersCount=excluded.'upd'"\
+                        ", GoodComment=excluded.'upd', BadComment=excluded.'upd', DateYear=excluded.upd', DateMonth=excluded.'upd', DateDay=excluded.'upd', DateHour=excluded.'upd';"
+        '''
+        
+
+        cursor.execute("COMMIT;")
+
+
+        test_video_data_x = np.concatenate((test_video_data_x, np.array([[vidViewCount, vidLikeCount
+                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
+                                    , eva_toInt(title), eva_toInt(description)
+                                    , dateUploaded.year, dateUploaded.month, dateUploaded.day, dateUploaded.hour
+                                    , eva_toInt(channelName), subscriberCount
+                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
+                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
+                                                                        ]])
+                                        ))
+
+        answer_data_y = np.append(answer_data_y, 0)
+
+
+
 def TakeCh():
+    global setVideoDatas
     chid =text_channelIDinput.get("1.0","end").replace('\n','').replace('%0a','')
 
-    if len(chid) == 25:
+    if len(chid) == 24:
         None
     else:
         print(len(chid))
@@ -539,14 +943,16 @@ def TakeCh():
     if isint(moviecountinput.get("1.0","end")):
         moviecount = int(moviecountinput.get("1.0","end"))
         messagebox.showinfo("Error", "数字ok")
+
     else:
         print("elsereturn")
         messagebox.showerror("Error", "数字を入力してくれ")
         return None
 
-    setVideoDatas( text_channelIDinput.get(), moviecountinput.get(), year_b.get(), month_b.get(), day_b.get(), year_a.get(), manth_a.get(), day_a.get() )
+   
+    setVideoDatas(chid, moviecount, int(year_b.get()), int(manth_b.get()), int(day_b.get()), int(year_a.get()), int(manth_a.get()), int(day_a.get()))
 
-
+    
 
 """
 def close_frame1():
@@ -1034,7 +1440,9 @@ manth_b = combobox = ttk.Combobox(beforebox_horizon, value=module_beforemonth, w
 manth_b.option_add("*TCombobox*Listbox.Font", 30)
 manth_b.current(0)
 
-module_beforeday = ('01', '02')
+module_beforeday = []
+for i in range(30):
+  module_beforeday.append(1 + i)
  
 day_b = combobox = ttk.Combobox(beforebox_horizon, value=module_beforeday, width=80, height=120, state="readonly", cursor="dot")
 day_b.option_add("*TCombobox*Listbox.Font", 30)
@@ -1043,9 +1451,11 @@ day_b.current(0)
 
 afterbox_horizon = tk.Label(frameX2,bg="#42b33d")
 
-module = ('2010', '2011')
+module_afteryear = []
+for i in range(30):
+    module_afteryear.append(1998 + i)
  
-year_a = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
+year_a = combobox = ttk.Combobox(afterbox_horizon, value=module_afteryear, width=80, height=120, state="readonly", cursor="dot")
 year_a.option_add("*TCombobox*Listbox.Font", 30)
 year_a.current(0)
 
@@ -1055,9 +1465,12 @@ manth_a = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, heig
 manth_a.option_add("*TCombobox*Listbox.Font", 30)
 manth_a.current(0)
 
-module = ('01', '02')
+
+module_afterday = []
+for i in range(30):
+  module_afterday.append(1 + i)
  
-day_a = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
+day_a = combobox = ttk.Combobox(afterbox_horizon, value=module_afterday, width=80, height=120, state="readonly", cursor="dot")
 day_a.option_add("*TCombobox*Listbox.Font", 30)
 day_a.current(0)
 
@@ -1338,154 +1751,6 @@ print(box_a)
 
 print("\n(3)【モデルとか、データ定義始め！】\n")
 
-searchVideosNumbers = 50
-
-#怪しさ単語登録
-suspicious_words = ["?", "？", "違う", "悪", "謎", "わからない", "分からない", "何故", "なぜ", "なんで", "引退"
-                   , "釣り", "詐欺", "ブラウザバック", "ごみ", "ゴミ", "しね",  "はあ" ,"はぁ", "だる", "飽き", "いい", "いらない", "不必要"
-                   , "とは", "重要な", "お知らせ", "ベスト", "最", "について。"]
-
-#好印象単語登録
-unsuspicious_words = ["正し", "義", "善", "良", "わかる", "分かる", "理由が", "りゆうが", "なるほど", "継続", "これからも", "待", "評価"
-                   , "必要と", "ありがとう", "有難う", "有り難う", "神"
-                   , "まとめ", "考察", "歴代", "便利", "解説", "紹介", "その", "第", "回", "10", "１０", "十", "について、", "について解", "について紹"]
-
-count = 5 #怪しさカウント
-count_count = 1 #カウントを何回やったかのカウント
-video_count = 1 #何ビデオ目のカウントをやっているかのカウント
-#文字を評価値の数字にする何かプロセス
-def eva_toInt(string):
-    
-    count = 5 #怪しさカウント初期化
-    global count_count
-    global video_count
-
-    #実装予定
-
-    for a_suspicious_word in suspicious_words:
-
-        # 釣り動画らしい、怪しい単語が含まれていると、怪しさカウントをプラス１する。
-        if string != None and a_suspicious_word in string:
-            count += 1
-            print("怪しい単語発見(video_count = ", str(video_count), ", 何カウント目 = ", str(count_count), ", +1)")
-
-        # 何の単語も含まれていないと、何もせず次のループへ。
-        else:
-            None
-
-
-    for a_unsuspicious_word in unsuspicious_words:
-
-        # 釣り動画らしくない、怪しくない単語が含まれていると、怪しさカウントをマイナス１する。
-        if(string != None and a_unsuspicious_word in string):
-            count -= 1
-            print("好印象単語発見(video_count = ", str(video_count), ", 何カウント目 = ", str(count_count), ", -1)")
-
-        # 何の単語も含まれていないと、何もせず次のループへ。
-        else:
-            None
- 
-    print("video_count = ", str(video_count), ", 何カウント目 = ", str(count_count), ", 怪しさ = ", str(count), " → 次のカウントする変数へ。\n")
-    
-    count_count += 1
-
-    if (count_count % 5 == 1):
-        video_count += 1
-
-    return count
-
-
-
-#たくさんの項目数、順番で、それぞれ何を意味しているか。　上、英語　下、日本語
-"""
-ViewCount, LikeCount
-, LikeRate([LikeCount*100]/ViewCount), VideoLength(sec)
-, Title, Description
-, DateYear, DateMonth, DateDay, DateHour
-, ChannelName, ChannelSubscribersCount
-, GoodComment, LikeCountofGoodComment, ReplyCountofGoodComment
-, BadComment, LikeCountofBadComment, ReplyCountofBadComment
-"""
-"""
-再生数, グッド数
-, グッド率([グッド数*100]/再生数), 動画時間（秒）
-, タイトル名, 詳細文
-, 投稿年, 投稿月, 投稿日, 投稿時間
-, チャンネル名, チャンネル登録者数
-, （比較的）評価の高いコメント, （比較的）グッドコメントのグッド数, （比較的）グッドコメントの返信数
-, （比較的）評価の低いコメント, （比較的）バッドコメントのグッド数, （比較的）バッドコメントの返信数
-"""
-
-
-
-
-test_video_data_x = np.array([[2000, 1000
-                        , 50, 300
-                        , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
-                        , 2022, 4, 1, 12
-                        , eva_toInt("＾＾"), 800
-                        , eva_toInt("大丈夫？？"), 5, 2
-                        , eva_toInt("なにこれ？"), 0, 1
-                        ]])
-
-
-test_video_data_x = np.concatenate((test_video_data_x, np.array([[100, 2
-                        , 2, 60
-                        , eva_toInt("は？？"), eva_toInt("きれそう")
-                        , 2022, 4, 4, 5
-                        , eva_toInt("登録よろしく！！"), 5
-                        , eva_toInt("引退しろ！！！"), 2, 1
-                        , eva_toInt("次郎、今度野球いこうぜ！"), 1, 2
-                                                                ]])
-                                    ))
-
-
-print("OwO", test_video_data_x)
-
-test_video_data_x = np.concatenate((test_video_data_x, np.array([[30000, 3000
-                        , 10, 480
-                        , eva_toInt("よろしくおねがいします！！"), eva_toInt("趣味は化粧と裁縫とネイルです！( ^)o(^ )")
-                        , 2022, 5, 1, 12
-                        , eva_toInt("カニちゃん(カニザン)のお化粧備忘録チャンネル"), 3000
-                        , eva_toInt("動画内の化粧品まとめ:\n<br>SK-2 税込￥29800\n<br>ニベア 税込￥1980"), 88, 5
-                        , eva_toInt("私と同じくらいかわいいですね。"), 0, 8
-                                                                ]])
-                                    ))
-                        
-
-test_video_data_x = np.concatenate((test_video_data_x, np.array([[150000, 1500
-                        , 1, 300
-                        , eva_toInt("じゃんけんの勝ち方、、、徹底解説します。"), eva_toInt("明日から勝率１００パー間違いねぇぜ！")
-                        , 2022, 4, 1, 9
-                        , eva_toInt("令和のギャンブラー田中一郎の明日から使えるヤバい技チャンネル"), 800
-                        , eva_toInt("ネタかと思った。\n<br>でも顔がマジやん。。"), 111, 5
-                        , eva_toInt("この動画のおかげで彼女できました！田中一郎に感謝！！。"), 3, 8
-                                                                ]])
-                                    ))
-
-test_video_data_x = np.concatenate((test_video_data_x, np.array([[240000, 4800
-                        , 2, 630
-                        , eva_toInt("Youtuber、やめます！"), eva_toInt("これで終わりだっ・・。\n<br>今までありがとうございました。")
-                        , 2022, 7, 7, 3
-                        , eva_toInt("ピカル(Pikaru)"), 180000
-                        , eva_toInt("この動画は釣り動画、詐欺動画です。ブラウザバックをお勧めします。"), 155, 5
-                        , eva_toInt("ごみ！\n\n<br><br><br><br><br><br><br><br>しね！"), 5, 5
-                                                                ]])
-                                    ))
-
-
-print("^O^", test_video_data_x)
-
-
-#釣り動画＝1 普通動画＝0 # 2 ＝　ネタ動画
-answer_data_y = np.array([0, 0, 0, 1, 1])
-#answer_data_y = np.array([0])
-
-'''
-for item in range(searchVideosNumbers):
-    answer_data_y = np.append(answer_data_y, 0)
-    print(answer_data_y)
-'''
 
 
 #-------------------------------------------------------データ定義---------------------------------------------------------
@@ -1556,255 +1821,7 @@ res['items']
 
 
 
-def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
-    global test_video_data_x
-    global searchVideosNumbers
-
-    global cursor
-
-    global answer_data_y
-
-    print("globalglobal", test_video_data_x)
-
-    #dayB = datetime.date.fromisoformat(dateB1)
-    tb = datetime.date(yb, mb, db)
-    dayB = datetime.datetime.strftime(tb, '%Y-%m-%dT%H:%M:%S.%fZ')
-
-    #dayA = datetime.date.fromisoformat(dateA1)
-    ta = datetime.date(ya, ma, da)
-    dayA = datetime.datetime.strftime(ta, '%Y-%m-%dT%H:%M:%S.%fZ')
-
-    search_response = youtube.search().list(
-    part='snippet',
-    #part='id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
-    #fields='items(id,snippet(title,description,publishedAt),contentDetails(duration),statistics(viewCount,likeCount,dislikeCount,commentCount))'
-    order='rating',
-    type='video',
-    regionCode='JP',
-    maxResults=number,
-    channelId=ID,
-    publishedAfter=dayB,
-    publishedBefore=dayA,
-    ).execute()
-
-
-    video_ids = []
-
-    videoCountForAPI = 0
-    commentCount = 0
-
-    for item in search_response['items'][:searchVideosNumbers]:
-    
-        videoCountForAPI += 1
-
-        title = item['snippet']['title'].replace('\'', '')
-        description = item['snippet']['description'].replace('\'', '')
-
-        videoId = item["id"]["videoId"]
-        url = 'https://www.youtube.com/watch?v=%s' % videoId
-        thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
-        thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
-        dateUploaded = isodate.parse_datetime(item["snippet"]["publishedAt"])
-        channelName = item["snippet"]["channelTitle"]
-        videoId = item['id']['videoId']
-
-        param = {
-            'part': 
-            'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
-            'id': videoId, 
-            'key': YOUTUBE_API_KEY
-            }
-
-        target_url = 'https://www.googleapis.com/youtube/v3/videos?' + \
-        (urllib.parse.urlencode(param))
-        videos_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url)))
-        print("videos_body = ", videos_body)
-        for item in videos_body['items']:
-
-            vidViewCount = int(item['statistics']['viewCount'])
-            vidLikeCount = int(item['statistics']['likeCount'])
-            vidCommentsCount = int(item['statistics']['commentCount'])
-            #vidDislikeCount = int(item['statistics']['dislikeCount'])
-            vidSubscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
-            vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
-
-            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
-
-            res = youtube.videos().list(id=videoId,part='statistics').execute()
-
-
-        '''
-        param2 = {
-            'part': 
-            'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
-            'id': "UCaminwG9MTO4sLYeC3s6udA",
-            }
-
-        target_url2 = 'https://www.googleapis.com/youtube/v3/channels' + \
-        (urllib.parse.urlencode(param2))
-        channel_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url2)))
-
-        for item in channel_body['items']:
-
-            #vidSubscriberCount = int(item['statistics']['subscriberCount'])
-            vidHiddenSubscriberCount = int(item['statistics']['hiddenSubscriberCount'])
-
-            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
-
-            res = youtube.videos().list(id=videoId,part='statistics').execute()
-
-        '''
-
-        print(res['items'])
-
-        video_ids.append(videoId)
-        request = youtube.commentThreads().list(
-            part = "snippet",
-            videoId=videoId,
-            maxResults = 500
-        )
-        response = request.execute()
-
-  
-        print("タイトル = [", title , "]")
-        print("詳細文　＝　[", description , "]")
-        print("チャンネルID = [", channelName , "]")
-        print("VideoURL = [", url , "]")
-        print("投稿時間 = [", dateUploaded , "]")
-        print("サムネURL1 = [", thumbnailUrl1 , "]")
-        print("サムネURL2 = [", thumbnailUrl2 , "]\n")
-        print("videoCountForAPI = [",videoCountForAPI, "]\n")
-  
-        commentCount = 0
-        toplevelcomment = "いいね（デフォルト）"
-        #toplevelcommentauthor = "笑（デフォルト）"
-        toplevelcommentlikecount = 3
-        toplevelcommentreplycount = 3
-        lastLevelcomment = "z"
-        #lastLevelcommentauthor = "zz"
-        lastLevelcommentlikecount = 1
-        lastLevelcommentreplycount = 1
-
-
-        BestGoodCount = 0
-        WorstGoodCount = 0
-        for item in response["items"]:
-
-            comment = item["snippet"]["topLevelComment"]
-
-            author = comment["snippet"]["authorDisplayName"]
-
-            likeCount = comment["snippet"]["likeCount"]
-
-            replyCount = item["snippet"]["totalReplyCount"]
-
-            comment_text = comment["snippet"]["textDisplay"]
-
-            
-            if (likeCount >= BestGoodCount):
-                toplevelcomment = comment_text
-                toplevelcommentauthor = author
-                toplevelcommentlikecount = likeCount
-                toplevelcommentreplycount = replyCount
-
-            if (likeCount <= WorstGoodCount):
-                lastLevelcomment = comment_text
-                lastLevelcommentauthor = author
-                lastLevelcommentlikecount = likeCount
-                lastLevelcommentreplycount = replyCount
-
-            commentCount += 1
-
-            print("[",author,"]  " , comment_text, "コメ目 → ",commentCount)
-
-
-        print("\n")
-
-        '''
-        vidMinutes = re.findall(r'T.*M',vidDuration)
-        vidMinutesAfter = vidMinutes[1:-1]
-        vidSeconds = re.findall(r'M.*S',vidDuration)
-        vidSecondsAfter = vidSeconds[1:-1]
-        vidSecondsAfterAll = 60 * vidMinutesAfter + vidSecondsAfter
-        '''
-        vidSecondsAfterAll = int(vidDuration.total_seconds())
-
-        #vidViewCount = res['items']['viewCount']
-        #vidLikeCount = res['items']['likeCount']
-        #vidDislikeCount = res['items']['dislikeCount']
-        subscriberCount = 0
-        print(str(vidHiddenSubscriberCount) + "vidHiddenSubscriberCount")
-        print(str(vidSubscriberCount) + "vidSubscriberCount")
-        if vidHiddenSubscriberCount:
-            subscriberCount = vidViewCount
-        else:
-            subscriberCount = vidSubscriberCount
-
-            ''', vidDislikeCount'''
-            ''', (vidDislikeCount*100)/vidViewCount'''
-
-            print(dateUploaded)
-            dateUploaded
-
-        if (vidSubscriberCount==0):
-            subscriberCount = vidViewCount / 2
-
-
-        '''
-        forprint = np.array([np.array([vidViewCount, vidLikeCount
-                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , eva_toInt(title), eva_toInt(description)
-                                    , dateUploaded.year, dateUploaded.month, dateUploaded.day, dateUploaded.hour
-                                    , eva_toInt(channelName), subscriberCount
-                                    , eva_toInt(toplevelcomment), eva_toInt(lastLevelcomment)
-                                    ])])
-
-        print("testetetetetetet", forprint)
-        '''
-        
-
-        
-        cursor.execute("INSERT INTO icebox VALUES("\
-                        "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
-                        ", {VideoLength}, '{ChannelName}', {ChannelSubscribersCount}"\
-                        ", {DateYear}, {DateMonth}, {DateDay}, {DateHour}"\
-                        ", '{GoodComment}', {GoodCommentGoodCount}, {GoodCommentReplyCount}"\
-                        ", '{BadComment}', {BadCommentGoodCount}, {BadCommentReplyCount}"\
-                        ", {SuspiciousDegree}, '{URL}') ON CONFLICT DO NOTHING".format(
-                            VideoId=videoId, Title=title, Description=description
-                            , ViewCount=vidViewCount, LikeCount=vidLikeCount
-                            , VideoLength=vidSecondsAfterAll, ChannelName=channelName
-                            , ChannelSubscribersCount=subscriberCount
-                            , DateYear=dateUploaded.year, DateMonth=dateUploaded.month
-                            , DateDay=dateUploaded.day, DateHour=dateUploaded.hour
-                            , GoodComment=toplevelcomment, GoodCommentGoodCount=toplevelcommentlikecount, GoodCommentReplyCount=toplevelcommentreplycount
-                            , BadComment=lastLevelcomment, BadCommentGoodCount=lastLevelcommentlikecount, BadCommentReplyCount=lastLevelcommentreplycount
-                            , SuspiciousDegree="50.111", URL="https://www.youtube.com/watch?v="+videoId
-                            )
-                       )
-
-        '''
-        " SET Title=excluded.Title, Description=excluded.Description, ViewCount=excluded.'upd', LikeCount=excluded.'upd'"\
-                        ", VideoLength=excluded.'upd', ChannelName=excluded.'upd', ChannelSubscribersCount=excluded.'upd'"\
-                        ", GoodComment=excluded.'upd', BadComment=excluded.'upd', DateYear=excluded.upd', DateMonth=excluded.'upd', DateDay=excluded.'upd', DateHour=excluded.'upd';"
-        '''
-        
-
-        cursor.execute("COMMIT;")
-
-
-        test_video_data_x = np.concatenate((test_video_data_x, np.array([[vidViewCount, vidLikeCount
-                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , eva_toInt(title), eva_toInt(description)
-                                    , dateUploaded.year, dateUploaded.month, dateUploaded.day, dateUploaded.hour
-                                    , eva_toInt(channelName), subscriberCount
-                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
-                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
-                                                                        ]])
-                                        ))
-
-        answer_data_y = np.append(answer_data_y, 0)
 
 
 setVideoDatas('UCl4e200EZm7NXq_iaYSXfeg', 50, 2022, 6, 1, 2022, 11, 11)
