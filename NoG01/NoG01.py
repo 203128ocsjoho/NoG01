@@ -544,7 +544,7 @@ def TakeCh():
         messagebox.showerror("Error", "数字を入力してくれ")
         return None
 
-    setVideoDatas( text_channelIDinput.get(), moviecountinput.get(), befor_daysinput.get(), after_daysinput.get() )
+    setVideoDatas( text_channelIDinput.get(), moviecountinput.get(), year_b.get(), month_b.get(), day_b.get(), year_a.get(), manth_a.get(), day_a.get() )
 
 
 
@@ -977,6 +977,7 @@ label_afterdaystext = tk.Label(frameX2, text="終了日付を設定(yyyy/mm/dd)"
 
 label_horizonX2 = tk.Label(frameX2,bg="#42b33d")
 
+"""
 befor_daysinput = tk.Text(label_horizonX2, 
 width = 50,
 height = 3,
@@ -994,6 +995,7 @@ wrap = tk.NONE,
 foreground = "Black",
 bg = "Cyan",
 )
+"""
 
 moviecountinput = tk.Text(frameX2, 
 width = 50,
@@ -1006,14 +1008,17 @@ bg = "Cyan",
 
 beforebox_horizon = tk.Label(frameX2,bg="#42b33d")
 
+
+
 module_beforeyear = []
 for i in range(30):
     module_beforeyear.append(1998 + i)
- 
-beforebox_year = combobox = ttk.Combobox(beforebox_horizon, value=module_beforeyear, width=80, height=120, state="readonly", cursor="dot")
-beforebox_year.option_add("*TCombobox*Listbox.Font", 30)
-beforebox_year.current(0)
 
+ 
+year_b = combobox = ttk.Combobox(beforebox_horizon, value=module_beforeyear, width=80, height=120, state="readonly", cursor="dot")
+year_b.option_add("*TCombobox*Listbox.Font", 30)
+year_b.current(0)
+print(module_beforeyear)
 """
 scrollbar = ttk.Scrollbar(
     frameX2,
@@ -1025,36 +1030,36 @@ scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
 
 module_beforemonth = ('01', '02','03','04','05','06','07','08','09','10','11','12')
 
-beforebox_month = combobox = ttk.Combobox(beforebox_horizon, value=module_beforemonth, width=80, height=120, state="readonly", cursor="dot")
-beforebox_month.option_add("*TCombobox*Listbox.Font", 30)
-beforebox_month.current(0)
+manth_b = combobox = ttk.Combobox(beforebox_horizon, value=module_beforemonth, width=80, height=120, state="readonly", cursor="dot")
+manth_b.option_add("*TCombobox*Listbox.Font", 30)
+manth_b.current(0)
 
 module_beforeday = ('01', '02')
  
-beforebox_day = combobox = ttk.Combobox(beforebox_horizon, value=module_beforeday, width=80, height=120, state="readonly", cursor="dot")
-beforebox_day.option_add("*TCombobox*Listbox.Font", 30)
-beforebox_day.current(0)
+day_b = combobox = ttk.Combobox(beforebox_horizon, value=module_beforeday, width=80, height=120, state="readonly", cursor="dot")
+day_b.option_add("*TCombobox*Listbox.Font", 30)
+day_b.current(0)
 
 
 afterbox_horizon = tk.Label(frameX2,bg="#42b33d")
 
 module = ('2010', '2011')
  
-afterbox_year = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
-afterbox_year.option_add("*TCombobox*Listbox.Font", 30)
-afterbox_year.current(0)
+year_a = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
+year_a.option_add("*TCombobox*Listbox.Font", 30)
+year_a.current(0)
 
 module = ('01', '02','03','04','05','06','07','08','09','10','11','12')
  
-afterbox_month = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
-afterbox_month.option_add("*TCombobox*Listbox.Font", 30)
-afterbox_month.current(0)
+manth_a = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
+manth_a.option_add("*TCombobox*Listbox.Font", 30)
+manth_a.current(0)
 
 module = ('01', '02')
  
-afterbox_day = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
-afterbox_day.option_add("*TCombobox*Listbox.Font", 30)
-afterbox_day.current(0)
+day_a = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
+day_a.option_add("*TCombobox*Listbox.Font", 30)
+day_a.current(0)
 
 datasave = tk.Button(frameX2, text='データを保存',
 width = 100,
@@ -1257,16 +1262,16 @@ moviecountinput.pack(padx = 50, pady = 0, expand=1)
 
 label_beforedaystext.pack(padx = 50, pady = 40, expand=1)
 
-beforebox_year.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
-beforebox_month.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
-beforebox_day.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+year_b.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+manth_b.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+day_b.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
 beforebox_horizon.pack(padx = 20, pady = 10, expand=1)
 
 label_afterdaystext.pack(padx = 50, pady = 40, expand=1)
 
-afterbox_year.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
-afterbox_month.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
-afterbox_day.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+year_a.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+manth_a.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+day_a.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
 afterbox_horizon.pack(padx = 20, pady = 10, expand=1)
 
 datasave.pack(padx = 50, pady = 0, expand=1)
@@ -1326,7 +1331,7 @@ print("\n(1)起動！起動！！！！\n")
 root.mainloop() #なんかわからんけどGUIをループして起動するやつ
 
 print("\n(2)終わりってことだよぉ！(GUI終了)\n")
-
+print(box_a)
 
 #----------------------------------  ここまでGUI   ------------------------------------------------------------------------------------
 
@@ -1802,7 +1807,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
         answer_data_y = np.append(answer_data_y, 0)
 
 
-setVideoDatas('UCl4e200EZm7NXq_iaYSXfeg', 50, '2022-06-01', '2022-11-10')
+setVideoDatas('UCl4e200EZm7NXq_iaYSXfeg', 50, 2022, 6, 1, 2022, 11, 11)
 answer_data_y[len(answer_data_y)-1] = 1
 print(test_video_data_x)
 
