@@ -405,12 +405,21 @@ def savemovieinfo():
         messagebox.showerror("Error", "数字を入力してくれ")
         return None
     
-    if ("https://www.youtube.com/watch?v=" not in URL) or (SuspiciousDegree > 100) or (SuspiciousDegree < 0):
+    if ("https://www.youtube.com/watch?v=" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
+        messagebox.showinfo("ok", "urlok")
+        videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
+    elif("https://youtu.be/" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
+        messagebox.showinfo("ok", "短縮urlok")
+        videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
+    else:
         messagebox.showerror("Error", "URLまたは数字が違います")
         return
-    else:
-        messagebox.showinfo("Error", "urlok")
-    videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
+
+    if len(videoid) != 11:
+        messagebox.showerror("Error", "URLの文字数にエラーがあります")
+        return
+
+    #videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
     print(videoid)
     suspiciousDegree = SuspiciousDegree_input.get("1.0","end")
 
@@ -1442,6 +1451,7 @@ manth_b.option_add("*TCombobox*Listbox.Font", 30)
 manth_b.current(0)
 
 module_beforeday = []
+
 for i in range(30):
   module_beforeday.append(1 + i)
  
