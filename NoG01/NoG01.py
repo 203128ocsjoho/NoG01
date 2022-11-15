@@ -627,12 +627,19 @@ def savemovieinfo():
     
     if ("https://www.youtube.com/watch?v=" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
         messagebox.showinfo("ok", "urlok")
+<<<<<<< HEAD
         videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
 
     elif("https://youtu.be/" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
         messagebox.showinfo("ok", "短縮urlok")
         videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
 
+=======
+        videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('/n','').replace('%0a','')
+    elif("https://youtu.be/" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
+        messagebox.showinfo("ok", "短縮urlok")
+        videoid = URL.replace('https://youtu.be/','').replace('/n','').replace('%0a','')
+>>>>>>> ああああああああ
     else:
         messagebox.showerror("Error", "URLまたは数字が違います")
         return
@@ -641,7 +648,10 @@ def savemovieinfo():
         messagebox.showerror("Error", "URLの文字数にエラーがあります")
         return
 
+<<<<<<< HEAD
     #videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
+=======
+>>>>>>> ああああああああ
    
     print(videoid)
     suspiciousDegree = SuspiciousDegree_input.get("1.0","end")
@@ -1780,7 +1790,6 @@ manth_b.option_add("*TCombobox*Listbox.Font", 30)
 manth_b.current(0)
 
 module_beforeday = []
-
 for i in range(30):
   module_beforeday.append(1 + i)
  
