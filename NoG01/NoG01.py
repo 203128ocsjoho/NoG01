@@ -405,13 +405,21 @@ def savemovieinfo():
         print("elsereturn")
         messagebox.showerror("Error", "数字を入力してくれ")
         return None
+
     
     if ("https://www.youtube.com/watch?v=" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
         messagebox.showinfo("ok", "urlok")
+<<<<<<< HEAD
         videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
     elif("https://youtu.be/" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
         messagebox.showinfo("ok", "短縮urlok")
         videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
+=======
+        videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('/n','').replace('%0a','')
+    elif("https://youtu.be/" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
+        messagebox.showinfo("ok", "短縮urlok")
+        videoid = URL.replace('https://youtu.be/','').replace('/n','').replace('%0a','')
+>>>>>>> 回りだしたあの子と僕の未来が～
     else:
         messagebox.showerror("Error", "URLまたは数字が違います")
         return
@@ -420,7 +428,11 @@ def savemovieinfo():
         messagebox.showerror("Error", "URLの文字数にエラーがあります")
         return
 
+<<<<<<< HEAD
     #videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
+=======
+   
+>>>>>>> 回りだしたあの子と僕の未来が～
     print(videoid)
     suspiciousDegree = SuspiciousDegree_input.get("1.0","end")
 
@@ -994,7 +1006,18 @@ def takeSQL():
                         , eva_toInt("なにこれ？"), 0, 1
                         ]])
 
-    labelSQL = np.array([0])
+    SQLdetas = np.concatenate((SQLdetas, np.array([[150000, 1500
+                        , 1, 300
+                        , eva_toInt("じゃんけんの勝ち方、、、徹底解説します。"), eva_toInt("明日から勝率１００パー間違いねぇぜ！")
+                        , 2022, 4, 1, 9
+                        , eva_toInt("令和のギャンブラー田中一郎の明日から使えるヤバい技チャンネル"), 800
+                        , eva_toInt("ネタかと思った。\n<br>でも顔がマジやん。。"), 111, 5
+                        , eva_toInt("この動画のおかげで彼女できました！田中一郎に感謝！！。"), 3, 8
+                                                                ]])
+                                    ))
+    
+
+    labelSQL = np.array([0 ,1])
 
     for row in cursor:
         VideoID = row[0]
@@ -1018,7 +1041,10 @@ def takeSQL():
         SuspiciousDegree = float(row[18])
         URL = row[19]
 
-        
+        if SuspiciousDegree >= 0.8:
+            SuspiciousDegree = 1
+        else:
+            SuspiciousDegree = 0
 
         
         SQLdetas = np.concatenate((SQLdetas, np.array([[ViewCount, LikeCount
