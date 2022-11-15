@@ -25,6 +25,7 @@
 from argparse import ONE_OR_MORE
 from cgitb import text
 from multiprocessing.connection import answer_challenge
+from pickle import FLOAT
 import tkinter as tk
 
 import tensorflow as tf
@@ -962,7 +963,97 @@ def TakeCh():
    
     setVideoDatas(chid, moviecount, int(year_b.get()), int(manth_b.get()), int(day_b.get()), int(year_a.get()), int(manth_a.get()), int(day_a.get()))
 
+def takeSQL():
+
+    global x_train, x_test, y_train, y_test
+
+    global count_count
+    count_count = 0
+    global video_count
+    video_count = 0
+
+    global cursor
+
+    if isint(text_inputlearningcount.get("1.0","end")):
+        dostudyCount = int(text_inputlearningcount.get("1.0","end"))
+        messagebox.showinfo("Error", "数字ok")
+
+    else:
+        print("elsereturn")
+        messagebox.showerror("Error", "数字を入力してくれ")
+        return None
+
+    cursor.execute('SELECT * FROM icebox')
     
+    SQLdetas = np.array([[2000, 1000
+                        , 50, 300
+                        , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
+                        , 2022, 4, 1, 12
+                        , eva_toInt("＾＾"), 800
+                        , eva_toInt("大丈夫？？"), 5, 2
+                        , eva_toInt("なにこれ？"), 0, 1
+                        ]])
+
+    labelSQL = np.array([0])
+
+    for row in cursor:
+        VideoID = row[0]
+        Title = row[1]
+        Description = row[2]
+        ViewCount = int(row[3])
+        LikeCount = int(row[4])
+        VideoLength = int(row[5])
+        ChannelName = row[6]
+        ChannelSubscribersCount = int(row[7])
+        DateYear = int(row[8])
+        DateMonth = int(row[9])
+        DateDay = int(row[10])
+        DateHour = int(row[11])
+        GoodComment = row[12]
+        GoodCommentGoodCount = int(row[13])
+        GoodCommentReplyCount = int(row[14])
+        BadComment = row[15]
+        BadCommentGoodCount = int(row[16])
+        BadCommentReplyCount = int(row[17])
+        SuspiciousDegree = float(row[18])
+        URL = row[19]
+
+        
+
+        
+        SQLdetas = np.concatenate((SQLdetas, np.array([[ViewCount, LikeCount
+                                    , (LikeCount*100)/ViewCount, VideoLength
+                                    , eva_toInt(Title), eva_toInt(Description)
+                                    , DateYear, DateMonth, DateDay, DateHour
+                                    , eva_toInt(ChannelName), ChannelSubscribersCount
+                                    , eva_toInt(GoodComment), GoodCommentGoodCount, GoodCommentReplyCount
+                                    , eva_toInt(BadComment), BadCommentGoodCount, BadCommentReplyCount
+                                                                        ]])
+                                        ))
+
+        
+
+        labelSQL = np.append(labelSQL, SuspiciousDegree)
+
+
+    scaler = preprocessing.StandardScaler()
+    scaler.fit(SQLdetas)
+    x=scaler.transform(SQLdetas)
+    #print(x)
+
+    y = np_utils.to_categorical(labelSQL)
+    #print(y)
+
+    x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2)
+
+    
+
+    DoStudy(dostudyCount)
+
+        
+   
+        
+
 
 """
 def close_frame1():
@@ -1528,6 +1619,7 @@ width = 100,
 height = 20,
 foreground = "Black",
 bg = "Cyan",
+command = takeSQL
 )
 
 
@@ -1752,7 +1844,7 @@ data = np.random.randint(low=0, high=5, size=10)
 
 
 print("\n(1)起動！起動！！！！\n")
-root.mainloop() #なんかわからんけどGUIをループして起動するやつ
+
 
 print("\n(2)終わりってことだよぉ！(GUI終了)\n")
 print(box_a)
@@ -1833,11 +1925,12 @@ res['items']
 
 
 
-
+"""
 
 setVideoDatas('UCl4e200EZm7NXq_iaYSXfeg', 50, 2022, 6, 1, 2022, 11, 11)
 answer_data_y[len(answer_data_y)-1] = 1
 print(test_video_data_x)
+"""
 
 print("(4)【モデル定義終わり！】\n")
 
@@ -1923,7 +2016,7 @@ def checkIfInt(): # 入力された学習回数が数字で入力されたか確
         checkIfInt()
 
 # 学習させるための関数（繰り返しできるように作った）
-def DoStudy():
+def DoStudy(count):
 
     global study_times_str
     global study_times_int
@@ -1933,11 +2026,15 @@ def DoStudy():
 
     model = load_model(path)
 
-    study_times_str = input("\n\n何回学習する...？ [input number and enter, 数字(整数自然数値)を入力！]: ")
+    study_times_str = ""
+
+    if count is None:
+
+        study_times_str = input("\n\n何回学習する...？ [input number and enter, 数字(整数自然数値)を入力！]: ") 
     
-    checkIfInt()
+        checkIfInt()
     
-    study_times_int = int(study_times_str)
+    study_times_int = int(study_times_str) if count is None else count
 
     history = model.fit(x_train, y_train, epochs=study_times_int, batch_size=10) #batch_sizeは8(2^3)でもいいかも？
 
@@ -1976,12 +2073,13 @@ def yes_no_input():
 
 
 
-
+root.mainloop() #なんかわからんけどGUIをループして起動するやつ
 
 #cursor.close()
 #connector.close()
 
 DoStudy() # 一回目の学習を行う
+
 
 # 二回目以降は、選択させる。
 while(yes_no_input()):
