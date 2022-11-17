@@ -62,6 +62,7 @@ from tkinter import Text, Tk, ttk
 from tkinter import messagebox
 
 from PIL import ImageTk, Image 
+from io import BytesIO
 
 #YoutubeAPI系 インポート
 import datetime
@@ -229,6 +230,7 @@ def go_window1():
     cryCount = True
     label_error.pack_forget()
     label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+    label_thumbnail.pack_forget()
 
 def go_window3to1():
     frame3.pack_forget()
@@ -306,15 +308,29 @@ def go_backX3():
     label_error.pack_forget()
 
 
-
+#frame1からframe2かframe3
 def go_windowX():
+    global moviehistorytree
+    global moviehistorytreecount
+
+    global label_thumbnail
+
+    global YOUTUBE_API_KEY
+    global URL_input
+    global SuspiciousDegree_input
+    global cursor
+
+    URL = text_input.get("1.0","end")
+
     if box_a.get()=="URL検索":
-         if text_input.get("1.0","end").count('https://www.youtube.com/watch?v') >= 2:
+        if text_input.get("1.0","end").count('https://www.youtube.com/watch?v') >= 2:
             label_errorfake.pack_forget()
             label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
 
             messagebox.showerror("Error", "URLが重複している可能性があります。")
-         elif "nishikawaokiro" in text_input.get("1.0","end") or "reookiro" in text_input.get("1.0","end"):
+            return
+
+        elif "nishikawaokiro" in text_input.get("1.0","end") or "reookiro" in text_input.get("1.0","end"):
             okiro = False
             while okiro == False:
                 okiro = messagebox.askyesno("okiro","起きる？")
@@ -328,24 +344,164 @@ def go_windowX():
             frameX.pack(padx = 0 , pady = 0)
             label_error.pack_forget()
             label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
-         elif "https://www.youtube.com/watch?v" in text_input.get("1.0","end"):
+            return
+
+        elif "https://www.youtube.com/watch?v" in text_input.get("1.0","end"):
             frame1.pack_forget()
             frame2.pack(padx = 0 , pady = 0)
             label_error.pack_forget()
             label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
 
-            global moviehistorytree
-            global moviehistorytreecount
             moviehistorytree.insert(parent='', index=0, iid= moviehistorytreecount,values=(text_input.get("1.0","end"), 'XX%'))
             moviehistorytreecount += 1
 
+            videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
 
-         else:
+        elif "https://youtu.be/" in text_input.get("1.0","end"):
+            messagebox.showinfo("ok","短縮URLです")
+            frame1.pack_forget()
+            frame2.pack(padx = 0 , pady = 0)
+            label_error.pack_forget()
+            label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
+            moviehistorytree.insert(parent='', index=0, iid= moviehistorytreecount,values=(text_input.get("1.0","end"), 'XX%'))
+            moviehistorytreecount += 1
+
+            videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
+    
+        else:
             label_errorfake.pack_forget() 
             label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)          
 
             messagebox.showerror("Error", "URLに誤りがあります。")
             text_input.delete("1.0","end")
+            return
+
+        #11/17追加
+
+
+        if len(videoid) != 11:
+            messagebox.showerror("Error", "URLの文字数にエラーがあります")
+            return
+
+        #videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
+   
+        print(videoid)
+
+        param = {
+                'part': 'snippet,contentDetails,statistics',
+                'id': videoid, 
+                'key': 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+                }
+
+        target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
+        videos_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url)))
+        print("videos_body = ", videos_body)
+
+        print(target_url)
+
+        print("forに入りたい")
+        for item in videos_body['items']:
+            print("aa", "for文に入りま")
+
+            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
+
+            title = item['snippet']['title'].replace('\'', '')
+
+            #label_title = tk.Label(frame2, text="タイトル　→→　" + title, font=("MSゴシック", "15", "bold"))
+            #label_title.pack(padx = 50, pady = 10, after=label_dangerlevel)
+
+            label_title.configure(text="タイトル　→→　" + title)
+
+
+            thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
+            thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
+
+            response1 = requests.get(thumbnailUrl1)
+            response2 = requests.get(thumbnailUrl2)
+
+            img1 = Image.open(BytesIO(response1.content))
+            img2 = Image.open(BytesIO(response2.content))
+
+            img2resize = img2.resize((1000,750))
+
+            thumbnail1 = ImageTk.PhotoImage(img1)
+            thumbnail2 = ImageTk.PhotoImage(img2resize)
+
+
+            label_thumbnail = tk.Label(frame2, image=thumbnail2)
+
+            label_thumbnail.image = thumbnail2
+
+            label_thumbnail.pack(padx = 50, pady = 10, after=label_title)
+            
+            vidViewCount = int(item['statistics']['viewCount'])
+            vidLikeCount = int(item['statistics']['likeCount'])
+
+            description = item['snippet']['description'].replace('\'', '')
+            vidSecondsAfterAll = int(vidDuration.total_seconds())
+            channelName = item["snippet"]["channelTitle"]
+            vidSubscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
+            vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
+            dateUploaded = isodate.parse_datetime(item["snippet"]["publishedAt"])
+            commentCount = 0
+            toplevelcomment = "いいね（デフォルト）"
+            #toplevelcommentauthor = "笑（デフォルト）"
+            toplevelcommentlikecount = 3
+            toplevelcommentreplycount = 3
+            lastLevelcomment = "z"
+            #lastLevelcommentauthor = "zz"
+            lastLevelcommentlikecount = 1
+            lastLevelcommentreplycount = 1
+
+            request = youtube.commentThreads().list(
+                part = "snippet",
+                videoId=videoid,
+                maxResults = 500
+            )
+            response = request.execute()
+
+            BestGoodCount = 0
+            WorstGoodCount = 0
+            for itemc in response["items"]:
+
+                comment = itemc["snippet"]["topLevelComment"]
+
+                author = comment["snippet"]["authorDisplayName"]
+
+                likeCount = comment["snippet"]["likeCount"]
+
+                replyCount = itemc["snippet"]["totalReplyCount"]
+
+                comment_text = comment["snippet"]["textDisplay"]
+
+            
+                if (likeCount >= BestGoodCount):
+                    toplevelcomment = comment_text
+                    toplevelcommentauthor = author
+                    toplevelcommentlikecount = likeCount
+                    toplevelcommentreplycount = replyCount
+
+                if (likeCount <= WorstGoodCount):
+                    lastLevelcomment = comment_text
+                    lastLevelcommentauthor = author
+                    lastLevelcommentlikecount = likeCount
+                    lastLevelcommentreplycount = replyCount
+
+                commentCount += 1
+
+
+
+        
+            vidCommentsCount = int(item['statistics']['commentCount'])
+            #vidDislikeCount = int(item['statistics']['dislikeCount'])
+            subscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
+            vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
+
+        #AIに予測させる
+        
+
+
     elif box_a.get()=="チャンネルID検索":
         if text_input.get("1.0","end").count('https://www.youtube.com/c') >= 2:
             label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
@@ -409,17 +565,12 @@ def savemovieinfo():
     
     if ("https://www.youtube.com/watch?v=" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
         messagebox.showinfo("ok", "urlok")
-<<<<<<< HEAD
         videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
+
     elif("https://youtu.be/" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
         messagebox.showinfo("ok", "短縮urlok")
         videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
-=======
-        videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('/n','').replace('%0a','')
-    elif("https://youtu.be/" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
-        messagebox.showinfo("ok", "短縮urlok")
-        videoid = URL.replace('https://youtu.be/','').replace('/n','').replace('%0a','')
->>>>>>> 回りだしたあの子と僕の未来が～
+
     else:
         messagebox.showerror("Error", "URLまたは数字が違います")
         return
@@ -428,11 +579,8 @@ def savemovieinfo():
         messagebox.showerror("Error", "URLの文字数にエラーがあります")
         return
 
-<<<<<<< HEAD
     #videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
-=======
    
->>>>>>> 回りだしたあの子と僕の未来が～
     print(videoid)
     suspiciousDegree = SuspiciousDegree_input.get("1.0","end")
 
@@ -1172,7 +1320,9 @@ bg = "Cyan",
 
 label_URLsearch = tk.Label(frame2, text="URL検索", font=("MSゴシック", "15", "bold"))
 
-label_dangerlevel = tk.Label(frame2, text="動画の釣り危険度XX%", font=("MSゴシック", "40", "bold"))
+label_dangerlevel = tk.Label(frame2, text="動画の釣り危険度" + "XX%", font=("MSゴシック", "40", "bold"))
+
+label_title = tk.Label(frame2, text="", font=("MSゴシック", "10", "bold"))
 
 path_thumbnail = "pictures"
 if os.path.isdir(path_thumbnail):
@@ -1714,7 +1864,8 @@ btn_return.place(x=350, y=450)
 #2画面目
 label_URLsearch.pack(padx = 10, pady = 10, expand=1)
 label_dangerlevel.pack(padx = 50, pady = 10, expand=1)
-label_thumbnail.pack(padx = 50, pady = 10)
+label_title.pack(padx = 50, pady = 10, after=label_dangerlevel)
+#label_thumbnail.pack(padx = 50, pady = 10)
 btn_return.pack(padx = 50, pady = 10, expand=1)
 
 sizegrip2 = ttk.Sizegrip(frame2)
@@ -2042,7 +2193,7 @@ def checkIfInt(): # 入力された学習回数が数字で入力されたか確
         checkIfInt()
 
 # 学習させるための関数（繰り返しできるように作った）
-def DoStudy(count):
+def DoStudy(count=0):
 
     global study_times_str
     global study_times_int
@@ -2054,7 +2205,7 @@ def DoStudy(count):
 
     study_times_str = ""
 
-    if count is None:
+    if count == 0:
 
         study_times_str = input("\n\n何回学習する...？ [input number and enter, 数字(整数自然数値)を入力！]: ") 
     
