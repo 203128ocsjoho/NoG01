@@ -347,27 +347,29 @@ def go_windowX():
             return
 
         elif "https://www.youtube.com/watch?v" in text_input.get("1.0","end"):
+
+            videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
+            if len(videoid) != 11:
+                messagebox.showerror("Error", "URLの文字数にエラーがあります")
+                return
+
             frame1.pack_forget()
             frame2.pack(padx = 0 , pady = 0)
             label_error.pack_forget()
             label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
 
-            moviehistorytree.insert(parent='', index=0, iid= moviehistorytreecount,values=(text_input.get("1.0","end"), 'XX%'))
-            moviehistorytreecount += 1
+        elif "https://youtu.be/" in text_input.get("1.0","end"):
 
             videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
+            if len(videoid) != 11:
+                messagebox.showerror("Error", "URLの文字数にエラーがあります")
+                return
 
-        elif "https://youtu.be/" in text_input.get("1.0","end"):
             messagebox.showinfo("ok","短縮URLです")
             frame1.pack_forget()
             frame2.pack(padx = 0 , pady = 0)
             label_error.pack_forget()
             label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
-
-            moviehistorytree.insert(parent='', index=0, iid= moviehistorytreecount,values=(text_input.get("1.0","end"), 'XX%'))
-            moviehistorytreecount += 1
-
-            videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
     
         else:
             label_errorfake.pack_forget() 
@@ -444,6 +446,12 @@ def go_windowX():
             vidSubscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
             vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
             dateUploaded = isodate.parse_datetime(item["snippet"]["publishedAt"])
+
+            dateYear = dateUploaded.year
+            dateMonth=dateUploaded.month
+            dateDay=dateUploaded.day
+            dateHour=dateUploaded.hour
+
             commentCount = 0
             toplevelcomment = "いいね（デフォルト）"
             #toplevelcommentauthor = "笑（デフォルト）"
@@ -497,9 +505,63 @@ def go_windowX():
             #vidDislikeCount = int(item['statistics']['dislikeCount'])
             subscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
             vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
-
         #AIに予測させる
-        
+        global model
+        global URL_test
+        URL_test = np.array([[vidViewCount, vidLikeCount
+                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
+                                    , eva_toInt(title), eva_toInt(description)
+                                    , dateYear, dateMonth, dateDay, dateHour
+                                    , eva_toInt(channelName), subscriberCount
+                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
+                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
+                                                                        ]])
+
+        scaler = preprocessing.StandardScaler()
+        scaler.fit(URL_test)
+        x=scaler.transform(URL_test)
+        #print(x)
+
+        #x_train, x_test = train_test_split(x,test_size=0)
+
+        #SuspiciousDegree=suspiciousDegree, URL="https://www.youtube.com/watch?v="+videoid
+        URL_predict = model.predict(x)
+        print("URL_predict = ", URL_predict)
+        anzenn = URL_predict[0][0]
+        anzenn = anzenn * 100
+        suspiciousDegree = URL_predict[0][1]
+        suspiciousDegree = suspiciousDegree * 100
+        print(anzenn)
+        print(suspiciousDegree)
+        global label_dangerlevel
+
+        label_dangerlevel.configure(text="動画の釣り危険度" + str(suspiciousDegree) + "%")
+
+        moviehistorytree.insert(parent='', index=0, iid= moviehistorytreecount,values=(text_input.get("1.0","end"), str(suspiciousDegree) + '%'))
+        moviehistorytreecount += 1
+
+
+        global cursor
+
+        cursor.execute("INSERT INTO correctresult VALUES("\
+                            "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
+                            ", {VideoLength}, '{ChannelName}', {ChannelSubscribersCount}"\
+                            ", {DateYear}, {DateMonth}, {DateDay}, {DateHour}"\
+                            ", '{GoodComment}', {GoodCommentGoodCount}, {GoodCommentReplyCount}"\
+                            ", '{BadComment}', {BadCommentGoodCount}, {BadCommentReplyCount}"\
+                            ", {SuspiciousDegree}, '{URL}') ON CONFLICT DO NOTHING".format(
+                                VideoId=videoid, Title=title, Description=description
+                                , ViewCount=vidViewCount, LikeCount=vidLikeCount
+                                , VideoLength=vidSecondsAfterAll, ChannelName=channelName
+                                , ChannelSubscribersCount=subscriberCount
+                                , DateYear=dateUploaded.year, DateMonth=dateUploaded.month
+                                , DateDay=dateUploaded.day, DateHour=dateUploaded.hour
+                                , GoodComment=toplevelcomment, GoodCommentGoodCount=toplevelcommentlikecount, GoodCommentReplyCount=toplevelcommentreplycount
+                                , BadComment=lastLevelcomment, BadCommentGoodCount=lastLevelcommentlikecount, BadCommentReplyCount=lastLevelcommentreplycount
+                                , SuspiciousDegree=suspiciousDegree, URL="https://www.youtube.com/watch?v="+videoid
+                                )
+                           )
+        cursor.execute("COMMIT;")
 
 
     elif box_a.get()=="チャンネルID検索":
@@ -1320,7 +1382,7 @@ bg = "Cyan",
 
 label_URLsearch = tk.Label(frame2, text="URL検索", font=("MSゴシック", "15", "bold"))
 
-label_dangerlevel = tk.Label(frame2, text="動画の釣り危険度" + "XX%", font=("MSゴシック", "40", "bold"))
+label_dangerlevel = tk.Label(frame2, text="", font=("MSゴシック", "40", "bold"))
 
 label_title = tk.Label(frame2, text="", font=("MSゴシック", "10", "bold"))
 
