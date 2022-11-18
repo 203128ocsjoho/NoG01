@@ -360,7 +360,7 @@ def go_windowX():
 
         elif "https://youtu.be/" in text_input.get("1.0","end"):
 
-            videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
+            videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
             if len(videoid) != 11:
                 messagebox.showerror("Error", "URLの文字数にエラーがあります")
                 return
