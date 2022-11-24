@@ -320,6 +320,9 @@ def go_windowX():
     global SuspiciousDegree_input
     global cursor
 
+    global test_video_data_x
+    global setVideoDatas
+
     URL = text_input.get("1.0","end")
 
     if box_a.get()=="URL検索":
@@ -576,7 +579,12 @@ def go_windowX():
             label_error.pack_forget()
             label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
 
-        elif "https://www.youtube.com/c" in text_input.get("1.0","end"):
+        elif "https://www.youtube.com/channel/" in text_input.get("1.0","end"):
+            ch = URL.replace('https://www.youtube.com/channel/','').replace('\n','').replace('%0a','')
+            if len(ch) != 24:
+                messagebox.showerror("Error", "URLの文字数にエラーがあります")
+                return
+
             frame1.pack_forget()
             frame3.pack(padx = 0, pady = 0)
             label_error.pack_forget()
@@ -586,6 +594,7 @@ def go_windowX():
             global channelhistorytreecount
             moviehistorytree.insert(parent='', index=0, iid= channelhistorytreecount,values=("XXX",text_input.get("1.0","end"), 'XX%'))
             channelhistorytreecount += 1
+        
 
         else:
             label_errorfake.pack_forget()
@@ -593,8 +602,106 @@ def go_windowX():
 
             messagebox.showerror("Error", "URLに誤りがあります。")
             text_input.delete("1.0","end")
+            return
+
+        #11/22足した
+        """
+        elif "https://www.youtube.com/c" in text_input.get("1.0","end"):
+
+            videoid = URL.replace('https://www.youtube.com/c','').replace('\n','').replace('%0a','')
+            if len(videoid) != 11:
+                messagebox.showerror("Error", "URLの文字数にエラーがあります")
+                return
+
+            frame1.pack_forget()
+            frame3.pack(padx = 0 , pady = 0)
+            label_error.pack_forget()
+            label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+
+        elif "https://youtu.be/" in text_input.get("1.0","end"):
+
+            videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
+            if len(videoid) != 11:
+                messagebox.showerror("Error", "URLの文字数にエラーがあります")
+                return
+
+            messagebox.showinfo("ok","短縮URLです")
+            frame1.pack_forget()
+            frame2.pack(padx = 0 , pady = 0)
+            label_error.pack_forget()
+            label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+        """
+        
+
+
+        #11/22日チャンネル検索機能追加
+        import datetime
+        global video_ids
+        
+        today = datetime.datetime.now()
+
+        #beforデータ
+        ChyearA = today.year
+        ChmonthA = today.month
+        ChdayA = today.day
+
+        #afterデータ
+        ChyearB = ChyearA
+        ChmonthB = ChmonthA-1
+        ChdayB = ChdayA
+        if ChmonthB == 0:
+           ChyearB-=1
+           ChmonthB = 12
+
+        ans = np.array([["ch", 0, 0]])
+
+        a = np.array([[0,0],[0,0]])
+
+        for i in range(12):
+            setVideoDatas(ch, 50, ChyearB, ChmonthB, ChdayB, ChyearA, ChmonthA, ChdayA)
+            ChmonthA-=1
+            if ChmonthA == 0:
+                ChyearA-=1
+                ChmonthA = 12
+            else:
+                None
+
+            ChmonthB-=1
+            if ChmonthB == 0:
+                ChyearB-=1
+                ChmonthB = 12
+
+        count = 0
+        print(video_ids)
+
+        for vid in test_video_data_x:
+            URL_test2 = np.array([vid])
+            scaler = preprocessing.StandardScaler()
+            scaler.fit(URL_test2)
+            videoX=scaler.transform(URL_test2)
+            URL_predict = model.predict(videoX)
+            print("URL_predict = ", URL_predict)
+            vidID = video_ids[count]
+            anzenn = URL_predict[0][0]
+            anzenn = anzenn * 100
+            suspiciousDegree = URL_predict[0][1]
+            suspiciousDegree = suspiciousDegree * 100
+            count+=1                           
+            dtype = [('vidID','S30'), ('anzenn', float), ('suspic', float)]
+            ans = np.concatenate(( ans, np.array ([[ vidID, anzenn, suspiciousDegree ]]) ))
+            a = np.array(ans, dtype=dtype)
+            np.sort(a, order='suspic')
+
+            
+            print("a = ", a)
+
+        video_ids = []
+
     else:
         messagebox.showerror("Error", "予期せぬエラーが発生しました")
+        
+       
+
 
 
 def isint(str):  # 整数値を表しているかどうかを判定
@@ -627,11 +734,18 @@ def savemovieinfo():
     
     if ("https://www.youtube.com/watch?v=" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
         messagebox.showinfo("ok", "urlok")
+
         videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
 
     elif("https://youtu.be/" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
         messagebox.showinfo("ok", "短縮urlok")
         videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
+
+
+        videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('/n','').replace('%0a','')
+    elif("https://youtu.be/" in URL) and (SuspiciousDegree <= 100) and (SuspiciousDegree >= 0):
+        messagebox.showinfo("ok", "短縮urlok")
+        videoid = URL.replace('https://youtu.be/','').replace('/n','').replace('%0a','')
 
     else:
         messagebox.showerror("Error", "URLまたは数字が違います")
@@ -641,7 +755,10 @@ def savemovieinfo():
         messagebox.showerror("Error", "URLの文字数にエラーがあります")
         return
 
+
     #videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
+
+
    
     print(videoid)
     suspiciousDegree = SuspiciousDegree_input.get("1.0","end")
@@ -908,6 +1025,7 @@ for item in range(searchVideosNumbers):
     print(answer_data_y)
 '''
 
+video_ids = []
 
 def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
@@ -917,6 +1035,8 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
     global cursor
 
     global answer_data_y
+
+    global video_ids
 
     print("globalglobal", test_video_data_x)
 
@@ -942,7 +1062,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
     ).execute()
 
 
-    video_ids = []
+   
 
     videoCountForAPI = 0
     commentCount = 0
@@ -1159,6 +1279,8 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
                                         ))
 
         answer_data_y = np.append(answer_data_y, 0)
+
+        
 
 
 
@@ -1780,7 +1902,6 @@ manth_b.option_add("*TCombobox*Listbox.Font", 30)
 manth_b.current(0)
 
 module_beforeday = []
-
 for i in range(30):
   module_beforeday.append(1 + i)
  
