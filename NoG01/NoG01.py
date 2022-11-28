@@ -83,7 +83,7 @@ from psycopg2 import Error
 
 
 
-YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+YOUTUBE_API_KEY = 'AIzaSyC-ZuE7aWT6TW6gdCIwryf5OcmiZ0JK0wk'
 
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
@@ -396,7 +396,7 @@ def go_windowX():
         param = {
                 'part': 'snippet,contentDetails,statistics',
                 'id': videoid, 
-                'key': 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+                'key': 'AIzaSyC-ZuE7aWT6TW6gdCIwryf5OcmiZ0JK0wk'
                 }
 
         target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
@@ -637,7 +637,8 @@ def go_windowX():
         #11/22日チャンネル検索機能追加
         import datetime
         global video_ids
-        
+        global test_video_data_x
+
         today = datetime.datetime.now()
 
         #beforデータ
@@ -653,11 +654,14 @@ def go_windowX():
            ChyearB-=1
            ChmonthB = 12
 
-        ans = np.array([["ch", 0, 0]])
+        dtype = [('vidID','<U255'), ('anzenn', float), ('suspic', float)]
+        ans = np.array([("chchchchchchchchchchchchchchch", 0, 0)],dtype=dtype)
+       
 
-        a = np.array([[0,0],[0,0]])
 
-        for i in range(12):
+        #aa = np.array([[0,0],[0,0]])
+
+        for i in range(2):
             setVideoDatas(ch, 50, ChyearB, ChmonthB, ChdayB, ChyearA, ChmonthA, ChdayA)
             ChmonthA-=1
             if ChmonthA == 0:
@@ -687,13 +691,13 @@ def go_windowX():
             suspiciousDegree = URL_predict[0][1]
             suspiciousDegree = suspiciousDegree * 100
             count+=1                           
-            dtype = [('vidID','S30'), ('anzenn', float), ('suspic', float)]
-            ans = np.concatenate(( ans, np.array ([[ vidID, anzenn, suspiciousDegree ]]) ))
-            a = np.array(ans, dtype=dtype)
-            np.sort(a, order='suspic')
+           
+            ans = np.concatenate((ans, np.array([(vidID, anzenn, suspiciousDegree)],dtype=dtype)))
+            #a = np.array(ans, dtype=dtype)
+            np.sort(ans, order='suspic')
 
             
-            print("a = ", a)
+            print("ans = ", ans)
 
         video_ids = []
 
@@ -766,7 +770,7 @@ def savemovieinfo():
     param = {
             'part': 'snippet,contentDetails,statistics',
             'id': videoid, 
-            'key': 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+            'key': 'AIzaSyC-ZuE7aWT6TW6gdCIwryf5OcmiZ0JK0wk'
             }
 
     target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
@@ -1061,6 +1065,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
     publishedBefore=dayA,
     ).execute()
 
+    print("1")
 
    
 
@@ -1131,7 +1136,9 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
         print(res['items'])
 
-        video_ids.append(videoId)
+        video_ids = np.append(video_ids, videoId)
+        print("unnko",video_ids)
+
         request = youtube.commentThreads().list(
             part = "snippet",
             videoId=videoId,
@@ -1162,6 +1169,9 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
         BestGoodCount = 0
         WorstGoodCount = 0
+
+        print("2")
+
         for item in response["items"]:
 
             comment = item["snippet"]["topLevelComment"]
@@ -1194,6 +1204,8 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
 
         print("\n")
+
+        print("3")
 
         '''
         vidMinutes = re.findall(r'T.*M',vidDuration)
@@ -1237,7 +1249,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
         print("testetetetetetet", forprint)
         '''
         
-
+        print("4")
         
         cursor.execute("INSERT INTO icebox VALUES("\
                         "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
@@ -1279,6 +1291,8 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
                                         ))
 
         answer_data_y = np.append(answer_data_y, 0)
+
+        print("5")
 
         
 
