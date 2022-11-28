@@ -83,7 +83,7 @@ from psycopg2 import Error
 
 
 
-YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+YOUTUBE_API_KEY = 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
 
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
@@ -396,7 +396,7 @@ def go_windowX():
         param = {
                 'part': 'snippet,contentDetails,statistics',
                 'id': videoid, 
-                'key': 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+                'key': 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
                 }
 
         target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
@@ -504,7 +504,7 @@ def go_windowX():
 
 
         
-            vidCommentsCount = int(item['statistics']['commentCount'])
+            vidCommentsCount = int(item['statistics'].get('commentCount', vidViewCount/100))
             #vidDislikeCount = int(item['statistics']['dislikeCount'])
             subscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
             vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
@@ -637,7 +637,8 @@ def go_windowX():
         #11/22日チャンネル検索機能追加
         import datetime
         global video_ids
-        
+        global test_video_data_x
+
         today = datetime.datetime.now()
 
         #beforデータ
@@ -653,11 +654,26 @@ def go_windowX():
            ChyearB-=1
            ChmonthB = 12
 
-        ans = np.array([["ch", 0, 0]])
+        dtype = [('vidID','<U255'), ('anzenn', float), ('suspic', float)]
+        ans = np.array([("chchchchchchchchchchchchchchch", 100, 0)],dtype=dtype)
+       
 
-        a = np.array([[0,0],[0,0]])
 
-        for i in range(12):
+        #aa = np.array([[0,0],[0,0]])
+
+        
+        test_video_data_x = np.array([[2000, 1000
+                        , 50, 300
+                        , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
+                        , 2022, 4, 1, 12
+                        , eva_toInt("＾＾"), 800
+                        , eva_toInt("大丈夫？？"), 5, 2
+                        , eva_toInt("なにこれ？"), 0, 1
+                        ]])
+
+
+        for i in range(2):
+
             setVideoDatas(ch, 50, ChyearB, ChmonthB, ChdayB, ChyearA, ChmonthA, ChdayA)
             ChmonthA-=1
             if ChmonthA == 0:
@@ -672,9 +688,14 @@ def go_windowX():
                 ChmonthB = 12
 
         count = 0
+        fcount = 0
+
         print(video_ids)
 
         for vid in test_video_data_x:
+            if fcount <= 0:
+                fcount+=1
+                continue
             URL_test2 = np.array([vid])
             scaler = preprocessing.StandardScaler()
             scaler.fit(URL_test2)
@@ -687,15 +708,193 @@ def go_windowX():
             suspiciousDegree = URL_predict[0][1]
             suspiciousDegree = suspiciousDegree * 100
             count+=1                           
-            dtype = [('vidID','S30'), ('anzenn', float), ('suspic', float)]
-            ans = np.concatenate(( ans, np.array ([[ vidID, anzenn, suspiciousDegree ]]) ))
-            a = np.array(ans, dtype=dtype)
-            np.sort(a, order='suspic')
+           
+            ans = np.concatenate((ans, np.array([(vidID, anzenn, suspiciousDegree)],dtype=dtype)))
+            #a = np.array(ans, dtype=dtype)
+            ans = np.sort(ans, order='anzenn')
 
             
-            print("a = ", a)
+            print("ans = ", ans)
 
+        SumSus = 0
+        onetwothreeCount = 0
+        for i in ans:
+            id = i[0]
+            anzenn = i[1]
+            suspiciousDegree = i[2]
+            SumSus += suspiciousDegree
+
+            if (onetwothreeCount == 0):
+                first_Id = id
+                first_Sus = suspiciousDegree
+
+            if (onetwothreeCount == 1):
+                second_Id = id
+                second_Sus = suspiciousDegree
+
+            if (onetwothreeCount == 2):
+                third_Id = id
+                third_Sus = suspiciousDegree
+
+            onetwothreeCount += 1
+
+        averageSus= SumSus/len(ans)
+
+        global label_channeldangerlevel
+
+        label_channeldangerlevel.configure(text="チャンネルの釣り危険度" + str(averageSus) + "%")
+
+        
+        videoid = ans[0][0]
+
+        
+        param = {
+                'part': 'snippet,contentDetails,statistics',
+                'id': videoid, 
+                'key': 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
+                }
+
+        target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
+        videos_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url)))
+        print("videos_body = ", videos_body)
+
+        print(target_url)
+
+        print("forに入りたい")
+        for item in videos_body['items']:
+            print("aa", "for文に入りま")
+
+            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
+
+            title = item['snippet']['title'].replace('\'', '')
+
+
+
+            thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
+            thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
+
+            response1 = requests.get(thumbnailUrl1)
+            response2 = requests.get(thumbnailUrl2)
+
+            img1 = Image.open(BytesIO(response1.content))
+            img2 = Image.open(BytesIO(response2.content))
+
+            img2resize = img2.resize((200,100))
+
+            thumbnail1 = ImageTk.PhotoImage(img1)
+            thumbnail2 = ImageTk.PhotoImage(img2resize)
+
+           
+
+            label_thumbnail2 = tk.Label(label_horizon, image=thumbnail2)
+
+            label_thumbnail2.image = thumbnail2
+
+            label_thumbnail2.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+
+
+        videoid = ans[1][0]    
+        
+        param = {
+                'part': 'snippet,contentDetails,statistics',
+                'id': videoid, 
+                'key': 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
+                }
+
+        target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
+        videos_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url)))
+        print("videos_body = ", videos_body)
+
+        print(target_url)
+
+        print("forに入りたい")
+        for item in videos_body['items']:
+            print("aa", "for文に入りま")
+
+            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
+
+            title = item['snippet']['title'].replace('\'', '')
+
+            
+
+
+            thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
+            thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
+
+            response1 = requests.get(thumbnailUrl1)
+            response2 = requests.get(thumbnailUrl2)
+
+            img1 = Image.open(BytesIO(response1.content))
+            img2 = Image.open(BytesIO(response2.content))
+
+            img2resize = img2.resize((200,100))
+
+            thumbnail1 = ImageTk.PhotoImage(img1)
+            thumbnail2 = ImageTk.PhotoImage(img2resize)
+
+           
+
+            label_thumbnail3 = tk.Label(label_horizon, image=thumbnail2)
+
+            label_thumbnail3.image = thumbnail2
+
+            label_thumbnail3.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+           
+
+        videoid = ans[2][0]    
+
+        param = {
+                'part': 'snippet,contentDetails,statistics',
+                'id': videoid, 
+                'key': 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
+        }
+
+        target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
+        videos_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url)))
+        print("videos_body = ", videos_body)
+
+        print(target_url)
+
+        print("forに入りたい")
+        for item in videos_body['items']:
+            print("aa", "for文に入りま")
+
+            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
+
+            title = item['snippet']['title'].replace('\'', '')
+
+            #label_title = tk.Label(frame2, text="タイトル　→→　" + title, font=("MSゴシック", "15", "bold"))
+            #label_title.pack(padx = 50, pady = 10, after=label_dangerlevel)
+
+
+
+
+            thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
+            thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
+
+            response1 = requests.get(thumbnailUrl1)
+            response2 = requests.get(thumbnailUrl2)
+
+            img1 = Image.open(BytesIO(response1.content))
+            img2 = Image.open(BytesIO(response2.content))
+
+            img2resize = img2.resize((200,100))
+
+            thumbnail1 = ImageTk.PhotoImage(img1)
+            thumbnail2 = ImageTk.PhotoImage(img2resize)
+
+           
+
+            label_thumbnail4 = tk.Label(label_horizon, image=thumbnail2)
+
+            label_thumbnail4.image = thumbnail2
+
+            label_thumbnail4.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+           
+
+        print(ans[2][0])
         video_ids = []
+        
 
     else:
         messagebox.showerror("Error", "予期せぬエラーが発生しました")
@@ -766,7 +965,7 @@ def savemovieinfo():
     param = {
             'part': 'snippet,contentDetails,statistics',
             'id': videoid, 
-            'key': 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+            'key': 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
             }
 
     target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
@@ -841,7 +1040,7 @@ def savemovieinfo():
 
 
         
-        vidCommentsCount = int(item['statistics']['commentCount'])
+        vidCommentsCount = int(item['statistics'].get('commentCount', vidViewCount/100))
         #vidDislikeCount = int(item['statistics']['dislikeCount'])
         subscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
         vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
@@ -1061,6 +1260,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
     publishedBefore=dayA,
     ).execute()
 
+    print("1")
 
    
 
@@ -1097,7 +1297,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
             vidViewCount = int(item['statistics']['viewCount'])
             vidLikeCount = int(item['statistics']['likeCount'])
-            vidCommentsCount = int(item['statistics']['commentCount'])
+            vidCommentsCount = int(item['statistics'].get('commentCount', vidViewCount/100))
             #vidDislikeCount = int(item['statistics']['dislikeCount'])
             vidSubscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
             vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
@@ -1131,7 +1331,9 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
         print(res['items'])
 
-        video_ids.append(videoId)
+        video_ids = np.append(video_ids, videoId)
+        print("unnko",video_ids)
+
         request = youtube.commentThreads().list(
             part = "snippet",
             videoId=videoId,
@@ -1162,6 +1364,9 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
         BestGoodCount = 0
         WorstGoodCount = 0
+
+        print("2")
+
         for item in response["items"]:
 
             comment = item["snippet"]["topLevelComment"]
@@ -1194,6 +1399,8 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
 
         print("\n")
+
+        print("3")
 
         '''
         vidMinutes = re.findall(r'T.*M',vidDuration)
@@ -1237,7 +1444,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
         print("testetetetetetet", forprint)
         '''
         
-
+        print("4")
         
         cursor.execute("INSERT INTO icebox VALUES("\
                         "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
@@ -1279,6 +1486,8 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
                                         ))
 
         answer_data_y = np.append(answer_data_y, 0)
+
+        print("5")
 
         
 
@@ -1541,20 +1750,25 @@ image1 = image1.resize((200,200))
 
 label_horizon = tk.Label(frame3, bg="#42b33d")
 
+"""
 test2 = ImageTk.PhotoImage(image1)
 label_thumbnail2 = tk.Label(label_horizon, image=test2)
 label_thumbnail2.image = test2
-
+"""
 #image1 = image1.resize((150,150))
+
+"""
 test3 = ImageTk.PhotoImage(image1)
 label_thumbnail3 = tk.Label(label_horizon, image=test3)
 label_thumbnail3.image = test3
+"""
 
 #image1 = image1.resize((100,100))
+"""
 test4= ImageTk.PhotoImage(image1)
 label_thumbnail4 = tk.Label(label_horizon, image=test4)
 label_thumbnail4.image = test4
-
+"""
 btn_return2 = tk.Button(frame3, text='最初の画面に戻る',
 width = 15,
 height = 3,
@@ -2057,9 +2271,9 @@ sizegrip2.pack(padx = 5, pady = 5)
 #3画面目
 label_channelIDsearch.pack(padx = 10, pady = 10, expand=1, side = tk.TOP)
 label_channeldangerlevel.pack(padx = 50, pady = 10, expand=1, side = tk.TOP)
-label_thumbnail2.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
-label_thumbnail3.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
-label_thumbnail4.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+#label_thumbnail2.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+#label_thumbnail3.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+#label_thumbnail4.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
 label_horizon.pack(padx = 50, pady = 10, expand=1)
 btn_return2.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
 label_channeldangervideo.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
