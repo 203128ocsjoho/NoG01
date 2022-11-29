@@ -83,7 +83,7 @@ from psycopg2 import Error
 
 
 
-YOUTUBE_API_KEY = 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
+YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
 
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
@@ -312,6 +312,8 @@ def go_backX3():
 def go_windowX():
     global moviehistorytree
     global moviehistorytreecount
+    global channelhistorytree
+    global channelhistorytreecount
 
     global label_thumbnail
 
@@ -396,7 +398,7 @@ def go_windowX():
         param = {
                 'part': 'snippet,contentDetails,statistics',
                 'id': videoid, 
-                'key': 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
+                'key': YOUTUBE_API_KEY
                 }
 
         target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
@@ -589,11 +591,6 @@ def go_windowX():
             frame3.pack(padx = 0, pady = 0)
             label_error.pack_forget()
             label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
-
-            global channelhistorytree
-            global channelhistorytreecount
-            moviehistorytree.insert(parent='', index=0, iid= channelhistorytreecount,values=("XXX",text_input.get("1.0","end"), 'XX%'))
-            channelhistorytreecount += 1
         
 
         else:
@@ -751,7 +748,7 @@ def go_windowX():
         param = {
                 'part': 'snippet,contentDetails,statistics',
                 'id': videoid, 
-                'key': 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
+                'key': YOUTUBE_API_KEY
                 }
 
         target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
@@ -761,8 +758,13 @@ def go_windowX():
         print(target_url)
 
         print("forに入りたい")
+
+        channelName = ""
+
         for item in videos_body['items']:
             print("aa", "for文に入りま")
+
+            channelName = item["snippet"]["channelTitle"]
 
             vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
 
@@ -798,7 +800,7 @@ def go_windowX():
         param = {
                 'part': 'snippet,contentDetails,statistics',
                 'id': videoid, 
-                'key': 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
+                'key': YOUTUBE_API_KEY
                 }
 
         target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
@@ -846,7 +848,7 @@ def go_windowX():
         param = {
                 'part': 'snippet,contentDetails,statistics',
                 'id': videoid, 
-                'key': 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
+                'key': YOUTUBE_API_KEY
         }
 
         target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
@@ -891,6 +893,11 @@ def go_windowX():
 
             label_thumbnail4.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
            
+            #moviehistorytree.insert(parent='', index=0, iid= channelhistorytreecount,values=("XXX",text_input.get("1.0","end"), 'XX%'))
+            #channelhistorytreecount += 1
+
+            channelhistorytree.insert(parent='', index=0, iid= channelhistorytreecount,values=(channelName,text_input.get("1.0","end"), str(averageSus) + "%"))
+            channelhistorytreecount += 1
 
         print(ans[2][0])
         video_ids = []
@@ -965,7 +972,7 @@ def savemovieinfo():
     param = {
             'part': 'snippet,contentDetails,statistics',
             'id': videoid, 
-            'key': 'AIzaSyBw1mA3U3ta0N3M5yzvGWKt0RTSyraOdJc'
+            'key': YOUTUBE_API_KEY
             }
 
     target_url = 'https://www.googleapis.com/youtube/v3/videos?' + (urllib.parse.urlencode(param))
@@ -1866,7 +1873,7 @@ column = ('ChannelName', 'ChannelId', 'ChannelDangerLevel')
 channelhistorytree = ttk.Treeview(label_channelhistoryhorizon, columns=column)
 # 列の設定
 channelhistorytree.column('#0',width=0, stretch='no')
-channelhistorytree.column('ChannelName', anchor='w', width=100)
+channelhistorytree.column('ChannelName', anchor='w', width=300)
 channelhistorytree.column('ChannelId',anchor='w', width=400)
 channelhistorytree.column('ChannelDangerLevel',anchor='w', width=100)
 # 列の見出し設定
