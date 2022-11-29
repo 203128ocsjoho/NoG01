@@ -721,6 +721,7 @@ def go_windowX():
             suspiciousDegree = i[2]
             SumSus += suspiciousDegree
 
+            """
             if (onetwothreeCount == 0):
                 first_Id = id
                 first_Sus = suspiciousDegree
@@ -732,6 +733,7 @@ def go_windowX():
             if (onetwothreeCount == 2):
                 third_Id = id
                 third_Sus = suspiciousDegree
+            """
 
             onetwothreeCount += 1
 
@@ -768,7 +770,7 @@ def go_windowX():
 
             vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
 
-            title = item['snippet']['title'].replace('\'', '')
+            title1 = item['snippet']['title'].replace('\'', '')
 
 
 
@@ -781,7 +783,7 @@ def go_windowX():
             img1 = Image.open(BytesIO(response1.content))
             img2 = Image.open(BytesIO(response2.content))
 
-            img2resize = img2.resize((200,100))
+            img2resize = img2.resize((500,350))
 
             thumbnail1 = ImageTk.PhotoImage(img1)
             thumbnail2 = ImageTk.PhotoImage(img2resize)
@@ -815,7 +817,7 @@ def go_windowX():
 
             vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
 
-            title = item['snippet']['title'].replace('\'', '')
+            title2 = item['snippet']['title'].replace('\'', '')
 
             
 
@@ -829,7 +831,7 @@ def go_windowX():
             img1 = Image.open(BytesIO(response1.content))
             img2 = Image.open(BytesIO(response2.content))
 
-            img2resize = img2.resize((200,100))
+            img2resize = img2.resize((500,350))
 
             thumbnail1 = ImageTk.PhotoImage(img1)
             thumbnail2 = ImageTk.PhotoImage(img2resize)
@@ -863,7 +865,7 @@ def go_windowX():
 
             vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
 
-            title = item['snippet']['title'].replace('\'', '')
+            title3 = item['snippet']['title'].replace('\'', '')
 
             #label_title = tk.Label(frame2, text="タイトル　→→　" + title, font=("MSゴシック", "15", "bold"))
             #label_title.pack(padx = 50, pady = 10, after=label_dangerlevel)
@@ -880,7 +882,7 @@ def go_windowX():
             img1 = Image.open(BytesIO(response1.content))
             img2 = Image.open(BytesIO(response2.content))
 
-            img2resize = img2.resize((200,100))
+            img2resize = img2.resize((500,350))
 
             thumbnail1 = ImageTk.PhotoImage(img1)
             thumbnail2 = ImageTk.PhotoImage(img2resize)
@@ -892,6 +894,16 @@ def go_windowX():
             label_thumbnail4.image = thumbnail2
 
             label_thumbnail4.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+
+            label_channelname.configure(text="チャンネル名　→→　" + channelName)
+
+            label_title1.configure(text = title1)
+            label_title2.configure(text = title2)
+            label_title3.configure(text = title3)
+
+            label_Sus1.configure(text="危険度：" + str(ans[0][2]))
+            label_Sus2.configure(text="危険度：" + str(ans[1][2]))
+            label_Sus3.configure(text="危険度：" + str(ans[2][2]))
            
             #moviehistorytree.insert(parent='', index=0, iid= channelhistorytreecount,values=("XXX",text_input.get("1.0","end"), 'XX%'))
             #channelhistorytreecount += 1
@@ -1340,15 +1352,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
         video_ids = np.append(video_ids, videoId)
         print("unnko",video_ids)
-
-        request = youtube.commentThreads().list(
-            part = "snippet",
-            videoId=videoId,
-            maxResults = 500
-        )
-        response = request.execute()
-
-  
+        
         print("タイトル = [", title , "]")
         print("詳細文　＝　[", description , "]")
         print("チャンネルID = [", channelName , "]")
@@ -1357,7 +1361,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
         print("サムネURL1 = [", thumbnailUrl1 , "]")
         print("サムネURL2 = [", thumbnailUrl2 , "]\n")
         print("videoCountForAPI = [",videoCountForAPI, "]\n")
-  
+
         commentCount = 0
         toplevelcomment = "いいね（デフォルト）"
         #toplevelcommentauthor = "笑（デフォルト）"
@@ -1374,35 +1378,49 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
         print("2")
 
-        for item in response["items"]:
+        comennntbool = True
 
-            comment = item["snippet"]["topLevelComment"]
+        try:
 
-            author = comment["snippet"]["authorDisplayName"]
+            request = youtube.commentThreads().list(
+                part = "snippet",
+                videoId=videoId,
+                maxResults = 500
+            )
+            response = request.execute()
 
-            likeCount = comment["snippet"]["likeCount"]
+            for item in response["items"]:
 
-            replyCount = item["snippet"]["totalReplyCount"]
+                comment = item["snippet"]["topLevelComment"]
 
-            comment_text = comment["snippet"]["textDisplay"]
+                author = comment["snippet"]["authorDisplayName"]
+
+                likeCount = comment["snippet"]["likeCount"]
+
+                replyCount = item["snippet"]["totalReplyCount"]
+
+                comment_text = comment["snippet"]["textDisplay"]
 
             
-            if (likeCount >= BestGoodCount):
-                toplevelcomment = comment_text
-                toplevelcommentauthor = author
-                toplevelcommentlikecount = likeCount
-                toplevelcommentreplycount = replyCount
-                BestGoodCount = likeCount
+                if (likeCount >= BestGoodCount):
+                    toplevelcomment = comment_text
+                    toplevelcommentauthor = author
+                    toplevelcommentlikecount = likeCount
+                    toplevelcommentreplycount = replyCount
+                    BestGoodCount = likeCount
 
-            if (likeCount <= WorstGoodCount):
-                lastLevelcomment = comment_text
-                lastLevelcommentauthor = author
-                lastLevelcommentlikecount = likeCount
-                lastLevelcommentreplycount = replyCount
-                WorstGoodCount = likeCount
-            commentCount += 1
+                if (likeCount <= WorstGoodCount):
+                    lastLevelcomment = comment_text
+                    lastLevelcommentauthor = author
+                    lastLevelcommentlikecount = likeCount
+                    lastLevelcommentreplycount = replyCount
+                    WorstGoodCount = likeCount
+                commentCount += 1
 
-            print("[",author,"]  " , comment_text, "コメ目 → ",commentCount)
+                print("[",author,"]  " , comment_text, "コメ目 → ",commentCount)
+
+        except:
+            messagebox.showinfo("情報","コメントが非表示の動画を検出")
 
 
         print("\n")
@@ -1749,6 +1767,8 @@ command = go_window1
 
 label_channelIDsearch = tk.Label(frame3, text="チャンネルID検索", font=("MSゴシック", "15", "bold"))
 
+label_channelname = tk.Label(frame3, text="", font=("MSゴシック", "30", "bold"))
+
 label_channeldangerlevel = tk.Label(frame3, text="チャンネルの釣り危険度XX%", font=("MSゴシック", "40", "bold"))
 
 label_channeldangervideo = tk.Label(frame3, text="釣り危険度の高い動画", font=("MSゴシック", "15", "bold"))
@@ -1756,6 +1776,20 @@ label_channeldangervideo = tk.Label(frame3, text="釣り危険度の高い動画
 image1 = image1.resize((200,200))
 
 label_horizon = tk.Label(frame3, bg="#42b33d")
+
+label_titlehorizon = tk.Label(frame3, bg="#42b33d")
+
+label_title1 = tk.Label(label_titlehorizon, text="", font=("MSゴシック", "10", "bold"))
+label_title2 = tk.Label(label_titlehorizon, text="", font=("MSゴシック", "10", "bold"))
+label_title3 = tk.Label(label_titlehorizon, text="", font=("MSゴシック", "10", "bold"))
+
+label_Sushorizon = tk.Label(frame3, bg="#42b33d")
+
+label_Sus1 = tk.Label(label_Sushorizon, text="", font=("MSゴシック", "20", "bold"))
+
+label_Sus2 = tk.Label(label_Sushorizon, text="", font=("MSゴシック", "20", "bold"))
+
+label_Sus3 = tk.Label(label_Sushorizon, text="", font=("MSゴシック", "20", "bold"))
 
 """
 test2 = ImageTk.PhotoImage(image1)
@@ -2277,6 +2311,7 @@ sizegrip2.pack(padx = 5, pady = 5)
 
 #3画面目
 label_channelIDsearch.pack(padx = 10, pady = 10, expand=1, side = tk.TOP)
+label_channelname.pack(padx = 50, pady = 10, after=label_channelIDsearch)
 label_channeldangerlevel.pack(padx = 50, pady = 10, expand=1, side = tk.TOP)
 #label_thumbnail2.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
 #label_thumbnail3.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
@@ -2284,6 +2319,16 @@ label_channeldangerlevel.pack(padx = 50, pady = 10, expand=1, side = tk.TOP)
 label_horizon.pack(padx = 50, pady = 10, expand=1)
 btn_return2.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
 label_channeldangervideo.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
+
+label_title1.pack(padx = 100, pady = 10, side = tk.RIGHT)
+label_title2.pack(padx = 100, pady = 10, side = tk.RIGHT)
+label_title3.pack(padx = 100, pady = 10, side = tk.RIGHT)
+label_titlehorizon.pack(padx = 50, pady = 10, expand=1)
+
+label_Sus1.pack(padx = 100, pady = 10, side = tk.RIGHT)
+label_Sus2.pack(padx = 100, pady = 10, side = tk.RIGHT)
+label_Sus3.pack(padx = 100, pady = 10, side = tk.RIGHT)
+label_Sushorizon.pack(padx = 50, pady = 10, expand=1)
 
 
 sizegrip3 = ttk.Sizegrip(frame3)
