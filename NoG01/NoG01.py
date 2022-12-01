@@ -532,17 +532,33 @@ def go_windowX():
         #SuspiciousDegree=suspiciousDegree, URL="https://www.youtube.com/watch?v="+videoid
         URL_predict = model.predict(x)
         print("URL_predict = ", URL_predict)
+        max = 0
+        maxindex = 0
+        for i in range(100):
+            x = URL_predict[0][i]
+            if max < x:
+                max = x
+                maxindex = i
+            else:
+                None
+
+        suspiciousDegree = maxindex
+        print(suspiciousDegree)
+
+        """
         anzenn = URL_predict[0][0]
         anzenn = anzenn * 100
         suspiciousDegree = URL_predict[0][1]
         suspiciousDegree = suspiciousDegree * 100
         print(anzenn)
         print(suspiciousDegree)
+        """
         global label_dangerlevel
 
         label_dangerlevel.configure(text="動画の釣り危険度" + str(suspiciousDegree) + "%")
 
-        moviehistorytree.insert(parent='', index=0, iid= moviehistorytreecount,values=(text_input.get("1.0","end"), str(suspiciousDegree) + '%'))
+
+        moviehistorytree.insert(parent='', index=0, iid= moviehistorytreecount,values=(title,text_input.get("1.0","end"), str(suspiciousDegree) + '%'))
         moviehistorytreecount += 1
 
 
@@ -1607,11 +1623,16 @@ def takeSQL():
         SuspiciousDegree = float(row[18])
         URL = row[19]
 
+        """
         if SuspiciousDegree >= 0.8:
             SuspiciousDegree = 1
         else:
             SuspiciousDegree = 0
-
+        """
+        if SuspiciousDegree >= 99:
+            SuspiciousDegree = 99
+        else:
+            None
         
         SQLdetas = np.concatenate((SQLdetas, np.array([[ViewCount, LikeCount
                                     , (LikeCount*100)/ViewCount, VideoLength
@@ -1638,9 +1659,9 @@ def takeSQL():
 
     x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2)
 
-    
 
     DoStudy(dostudyCount)
+
 
         
    
@@ -1857,15 +1878,17 @@ label_videodangerlevelranking = tk.Label(label_videodangerlevelrankinghorizon, t
 #表の挿入
 #URL検索履歴
 # 列の識別名を指定
-column = ('MovieUrl', 'MovieDangerLevel')
+column = ('MovieTitle','MovieUrl', 'MovieDangerLevel')
 # Treeviewの生成
 moviehistorytree = ttk.Treeview(label_moviehistoryhorizon, columns=column)
 # 列の設定
 moviehistorytree.column('#0',width=0, stretch='no')
+moviehistorytree.column('MovieTitle', anchor='w', width=400)
 moviehistorytree.column('MovieUrl', anchor='w', width=400)
 moviehistorytree.column('MovieDangerLevel',anchor='w', width=100)
 # 列の見出し設定
 moviehistorytree.heading('#0',text='')
+moviehistorytree.heading('MovieTitle', text='動画タイトル',anchor='center')
 moviehistorytree.heading('MovieUrl', text='動画URL',anchor='center')
 moviehistorytree.heading('MovieDangerLevel', text='動画の危険度', anchor='center')
 # レコードの追加
@@ -2573,7 +2596,7 @@ scaler.fit(test_video_data_x)
 x=scaler.transform(test_video_data_x)
 #print(x)
 
-y = np_utils.to_categorical(answer_data_y)
+y = np_utils.to_categorical(answer_data_y,num_classes=100)
 #print(y)
 
 x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2)
@@ -2611,17 +2634,19 @@ else:
 
     #入力層作成　ニューロン数32　活性化関数＝ReLU　入力数＝18
     model.add(Dense(32, activation='relu',input_dim =18))
-    model.add(Dropout(0.4))
+    model.add(Dropout(0.2))
 
     #隠れ層作成　ニューロン数32　活性化関数＝ReLU　
     model.add(Dense(32, activation='relu'))
-    model.add(Dropout(0.4))
+    model.add(Dropout(0.2))
 
     #出力層作成　ニューロン数(出力数)=1　活性化関数＝softmax
-    model.add(Dense(2, activation='softmax'))
+    model.add(Dense(100, activation='softmax'))
+    #model.add(Dense(10))
 
     #最適化アルゴリズム　= SGD,損失機関=交差エントロピー、尺度＝精度
-    model.compile(optimizer='sgd', loss='categorical_crossentropy',metrics=['accuracy'])
+    #model.compile(optimizer='sgd', loss='categorical_crossentropy',metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
 
     print(model.summary())
     model.save(path)
