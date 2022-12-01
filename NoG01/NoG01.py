@@ -1358,6 +1358,7 @@ def setVideoDatas():
 
         target_url = 'https://www.googleapis.com/youtube/v3/videos?' + \
         (urllib.parse.urlencode(param))
+        print("target_url = ", target_url)
         videos_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url)))
         print("videos_body = ", videos_body)
         for item in videos_body['items']:
