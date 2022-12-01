@@ -10,41 +10,6 @@
 
 #*******************************************************
 
-#1
-
-#2
-
-
-#3
-
-
-#4
-
-#5
-#tkinterのインポート
-from argparse import ONE_OR_MORE
-from cgitb import text
-from multiprocessing.connection import answer_challenge
-from pickle import FLOAT
-import tkinter as tk
-
-import tensorflow as tf
-import numpy as np
-import keras as ks
-
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
-
-from keras.utils import np_utils
-from keras.utils import to_categorical
-
-from sklearn import preprocessing
-from sklearn.model_selection import  train_test_split
-
-from keras.models import load_model
-
-import os
-
 '''
 #10/21　表出力でやるはず
 #import pandas as pd
@@ -57,29 +22,50 @@ import os
 #import xlrd
 '''
 
+#tkinter（Python UI）のインポート
+import tkinter as tk
+
 import tkinter.ttk as ttk
-from tkinter import Text, Tk, ttk
+from tkinter import ttk
 from tkinter import messagebox
 
-from PIL import ImageTk, Image 
-from io import BytesIO
+#AI(keras)モデルのインポート
+from keras.models import Sequential
+from keras.models import load_model
 
-#YoutubeAPI系 インポート
+from keras.layers import Dense, Dropout
+from keras.utils import np_utils
+
+#AI制作に便利なsklearnのインポート
+from sklearn import preprocessing
+from sklearn.model_selection import  train_test_split
+
+#AI用配列やデータ格納、計算用のnumpyのインポート
+import numpy as np
+
+#YoutubeAPI系と関連のインポート
 import datetime
 import requests
 import json
-import re
 
 import isodate
 import urllib.request
 import urllib.parse
 
-#from apiclient.discovery import build
 from googleapiclient.discovery import build
 
-
+#SQLインポート
 import psycopg2
 from psycopg2 import Error
+
+#画像系インポート
+from PIL import ImageTk, Image 
+from io import BytesIO
+
+#その他？のインポート
+import os
+
+
 
 
 
@@ -94,7 +80,7 @@ try:
     connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                 user="yuyuyu",        #ユーザ
                 password="yuyuyu123",  #パスワード
-                host="60.66.192.16",       #ホスト名
+                host="localhost",       #ホスト名
                 port="5432",            #ポート
                 dbname="postgres"))    #データベース名
 
@@ -310,6 +296,7 @@ def go_backX3():
 
 #frame1からframe2かframe3
 def go_windowX():
+
     global moviehistorytree
     global moviehistorytreecount
     global channelhistorytree
@@ -318,16 +305,22 @@ def go_windowX():
     global label_thumbnail
 
     global YOUTUBE_API_KEY
+
     global URL_input
     global SuspiciousDegree_input
+
     global cursor
 
     global test_video_data_x
+
     global setVideoDatas
+
+    global eva_toInt
 
     URL = text_input.get("1.0","end")
 
     if box_a.get()=="URL検索":
+
         if text_input.get("1.0","end").count('https://www.youtube.com/watch?v') >= 2:
             label_errorfake.pack_forget()
             label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
@@ -366,16 +359,19 @@ def go_windowX():
         elif "https://youtu.be/" in text_input.get("1.0","end"):
 
             videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
+
             if len(videoid) != 11:
                 messagebox.showerror("Error", "URLの文字数にエラーがあります")
                 return
 
             messagebox.showinfo("ok","短縮URLです")
+
             frame1.pack_forget()
             frame2.pack(padx = 0 , pady = 0)
+
             label_error.pack_forget()
             label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
-    
+
         else:
             label_errorfake.pack_forget() 
             label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)          
@@ -386,10 +382,10 @@ def go_windowX():
 
         #11/17追加
 
-
         if len(videoid) != 11:
             messagebox.showerror("Error", "URLの文字数にエラーがあります")
             return
+
 
         #videoid = URL.replace('https://www.youtube.com/watch?v=','').replace('\n','').replace('%0a','')
    
@@ -415,26 +411,17 @@ def go_windowX():
 
             title = item['snippet']['title'].replace('\'', '')
 
-            #label_title = tk.Label(frame2, text="タイトル　→→　" + title, font=("MSゴシック", "15", "bold"))
-            #label_title.pack(padx = 50, pady = 10, after=label_dangerlevel)
-
             label_title.configure(text="タイトル　→→　" + title)
 
-
-            thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
             thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
 
-            response1 = requests.get(thumbnailUrl1)
             response2 = requests.get(thumbnailUrl2)
 
-            img1 = Image.open(BytesIO(response1.content))
             img2 = Image.open(BytesIO(response2.content))
 
             img2resize = img2.resize((1000,750))
 
-            thumbnail1 = ImageTk.PhotoImage(img1)
             thumbnail2 = ImageTk.PhotoImage(img2resize)
-
 
             label_thumbnail = tk.Label(frame2, image=thumbnail2)
 
@@ -448,8 +435,6 @@ def go_windowX():
             description = item['snippet']['description'].replace('\'', '')
             vidSecondsAfterAll = int(vidDuration.total_seconds())
             channelName = item["snippet"]["channelTitle"]
-            vidSubscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
-            vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
             dateUploaded = isodate.parse_datetime(item["snippet"]["publishedAt"])
 
             dateYear = dateUploaded.year
@@ -476,6 +461,7 @@ def go_windowX():
 
             BestGoodCount = 0
             WorstGoodCount = 0
+
             for itemc in response["items"]:
 
                 comment = itemc["snippet"]["topLevelComment"]
@@ -491,53 +477,68 @@ def go_windowX():
             
                 if (likeCount >= BestGoodCount):
                     toplevelcomment = comment_text
-                    toplevelcommentauthor = author
+                    #toplevelcommentauthor = author
                     toplevelcommentlikecount = likeCount
                     toplevelcommentreplycount = replyCount
 
                 if (likeCount <= WorstGoodCount):
                     lastLevelcomment = comment_text
-                    lastLevelcommentauthor = author
+                    #lastLevelcommentauthor = author
                     lastLevelcommentlikecount = likeCount
                     lastLevelcommentreplycount = replyCount
 
                 commentCount += 1
 
-
-
-        
-            vidCommentsCount = int(item['statistics'].get('commentCount', vidViewCount/100))
-            #vidDislikeCount = int(item['statistics']['dislikeCount'])
             subscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
-            vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
+
         #AIに予測させる
-        global model
-        global URL_test
-        URL_test = np.array([[vidViewCount, vidLikeCount
+
+        path = 'models/NoGProt.h5'
+
+        model = load_model(path)
+
+        URL_test = np.array([(vidViewCount, vidLikeCount
                                     , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
                                     , eva_toInt(title), eva_toInt(description)
                                     , dateYear, dateMonth, dateDay, dateHour
                                     , eva_toInt(channelName), subscriberCount
                                     , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
                                     , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
-                                                                        ]])
+        )])
 
-        scaler = preprocessing.StandardScaler()
-        scaler.fit(URL_test)
-        x=scaler.transform(URL_test)
-        #print(x)
+        URL_test = np.concatenate((URL_test,
+                                    np.array([(vidViewCount, vidLikeCount
+                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
+                                    , eva_toInt(title), eva_toInt(description)
+                                    , dateYear, dateMonth, dateDay, dateHour
+                                    , eva_toInt(channelName), subscriberCount
+                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
+                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
+                                    )])
+        ))
+        
+        print("URL_test = ", URL_test)
 
-        #x_train, x_test = train_test_split(x,test_size=0)
+        cursor.execute('SELECT * FROM icebox')
 
-        #SuspiciousDegree=suspiciousDegree, URL="https://www.youtube.com/watch?v="+videoid
-        URL_predict = model.predict(x)
+        scaler1 = preprocessing.StandardScaler()
+        scaler1.fit(URL_test)
+
+        print("before model predict scaler1 = ", scaler1)
+
+        transform = scaler1.transform(URL_test)
+        
+        print("before model predict transform = ", transform)
+        print("before model predict transform[0][0] = ", transform[0][0])
+
+        URL_predict = model.predict(transform)
         print("URL_predict = ", URL_predict)
         max = 0
         maxindex = 0
         for i in range(100):
-            x = URL_predict[0][i]
-            if max < x:
-                max = x
+            ttt = URL_predict[0][i]
+            if max < ttt:
+                max = ttt
                 maxindex = i
             else:
                 None
@@ -545,14 +546,6 @@ def go_windowX():
         suspiciousDegree = maxindex
         print(suspiciousDegree)
 
-        """
-        anzenn = URL_predict[0][0]
-        anzenn = anzenn * 100
-        suspiciousDegree = URL_predict[0][1]
-        suspiciousDegree = suspiciousDegree * 100
-        print(anzenn)
-        print(suspiciousDegree)
-        """
         global label_dangerlevel
 
         label_dangerlevel.configure(text="動画の釣り危険度" + str(suspiciousDegree) + "%")
@@ -562,7 +555,6 @@ def go_windowX():
         moviehistorytreecount += 1
 
 
-        global cursor
 
         cursor.execute("INSERT INTO correctresult VALUES("\
                             "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
@@ -617,36 +609,6 @@ def go_windowX():
             text_input.delete("1.0","end")
             return
 
-        #11/22足した
-        """
-        elif "https://www.youtube.com/c" in text_input.get("1.0","end"):
-
-            videoid = URL.replace('https://www.youtube.com/c','').replace('\n','').replace('%0a','')
-            if len(videoid) != 11:
-                messagebox.showerror("Error", "URLの文字数にエラーがあります")
-                return
-
-            frame1.pack_forget()
-            frame3.pack(padx = 0 , pady = 0)
-            label_error.pack_forget()
-            label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
-
-        elif "https://youtu.be/" in text_input.get("1.0","end"):
-
-            videoid = URL.replace('https://youtu.be/','').replace('\n','').replace('%0a','')
-            if len(videoid) != 11:
-                messagebox.showerror("Error", "URLの文字数にエラーがあります")
-                return
-
-            messagebox.showinfo("ok","短縮URLです")
-            frame1.pack_forget()
-            frame2.pack(padx = 0 , pady = 0)
-            label_error.pack_forget()
-            label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
-        """
-        
-
-
         #11/22日チャンネル検索機能追加
         import datetime
         global video_ids
@@ -669,12 +631,9 @@ def go_windowX():
 
         dtype = [('vidID','<U255'), ('anzenn', float), ('suspic', float)]
         ans = np.array([("chchchchchchchchchchchchchchch", 100, 0)],dtype=dtype)
-       
-
 
         #aa = np.array([[0,0],[0,0]])
 
-        
         test_video_data_x = np.array([[2000, 1000
                         , 50, 300
                         , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
@@ -706,50 +665,51 @@ def go_windowX():
         print(video_ids)
 
         for vid in test_video_data_x:
+            
             if fcount <= 0:
                 fcount+=1
                 continue
+
             URL_test2 = np.array([vid])
-            scaler = preprocessing.StandardScaler()
-            scaler.fit(URL_test2)
-            videoX=scaler.transform(URL_test2)
+
+            URL_test2 = np.concatenate((URL_test2,
+                                    np.array([vid])
+            ))
+
+            scaler3 = preprocessing.StandardScaler()
+            scaler3.fit(URL_test2)
+            videoX=scaler3.transform(URL_test2)
+
+            print("translated videoX = ", videoX)
+
             URL_predict = model.predict(videoX)
             print("URL_predict = ", URL_predict)
+
             vidID = video_ids[count]
+
             anzenn = URL_predict[0][0]
             anzenn = anzenn * 100
+
             suspiciousDegree = URL_predict[0][1]
             suspiciousDegree = suspiciousDegree * 100
+
             count+=1                           
            
             ans = np.concatenate((ans, np.array([(vidID, anzenn, suspiciousDegree)],dtype=dtype)))
             #a = np.array(ans, dtype=dtype)
             ans = np.sort(ans, order='anzenn')
-
             
             print("ans = ", ans)
 
         SumSus = 0
         onetwothreeCount = 0
+
         for i in ans:
+
             id = i[0]
             anzenn = i[1]
             suspiciousDegree = i[2]
             SumSus += suspiciousDegree
-
-            """
-            if (onetwothreeCount == 0):
-                first_Id = id
-                first_Sus = suspiciousDegree
-
-            if (onetwothreeCount == 1):
-                second_Id = id
-                second_Sus = suspiciousDegree
-
-            if (onetwothreeCount == 2):
-                third_Id = id
-                third_Sus = suspiciousDegree
-            """
 
             onetwothreeCount += 1
 
@@ -759,9 +719,7 @@ def go_windowX():
 
         label_channeldangerlevel.configure(text="チャンネルの釣り危険度" + str(averageSus) + "%")
 
-        
         videoid = ans[0][0]
-
         
         param = {
                 'part': 'snippet,contentDetails,statistics',
@@ -788,8 +746,6 @@ def go_windowX():
 
             title1 = item['snippet']['title'].replace('\'', '')
 
-
-
             thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
             thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
 
@@ -803,8 +759,6 @@ def go_windowX():
 
             thumbnail1 = ImageTk.PhotoImage(img1)
             thumbnail2 = ImageTk.PhotoImage(img2resize)
-
-           
 
             label_thumbnail2 = tk.Label(label_horizon, image=thumbnail2)
 
@@ -835,9 +789,6 @@ def go_windowX():
 
             title2 = item['snippet']['title'].replace('\'', '')
 
-            
-
-
             thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
             thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
 
@@ -851,8 +802,6 @@ def go_windowX():
 
             thumbnail1 = ImageTk.PhotoImage(img1)
             thumbnail2 = ImageTk.PhotoImage(img2resize)
-
-           
 
             label_thumbnail3 = tk.Label(label_horizon, image=thumbnail2)
 
@@ -883,12 +832,6 @@ def go_windowX():
 
             title3 = item['snippet']['title'].replace('\'', '')
 
-            #label_title = tk.Label(frame2, text="タイトル　→→　" + title, font=("MSゴシック", "15", "bold"))
-            #label_title.pack(padx = 50, pady = 10, after=label_dangerlevel)
-
-
-
-
             thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
             thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
 
@@ -902,8 +845,6 @@ def go_windowX():
 
             thumbnail1 = ImageTk.PhotoImage(img1)
             thumbnail2 = ImageTk.PhotoImage(img2resize)
-
-           
 
             label_thumbnail4 = tk.Label(label_horizon, image=thumbnail2)
 
@@ -920,22 +861,15 @@ def go_windowX():
             label_Sus1.configure(text="危険度：" + str(ans[0][2]))
             label_Sus2.configure(text="危険度：" + str(ans[1][2]))
             label_Sus3.configure(text="危険度：" + str(ans[2][2]))
-           
-            #moviehistorytree.insert(parent='', index=0, iid= channelhistorytreecount,values=("XXX",text_input.get("1.0","end"), 'XX%'))
-            #channelhistorytreecount += 1
 
             channelhistorytree.insert(parent='', index=0, iid= channelhistorytreecount,values=(channelName,text_input.get("1.0","end"), str(averageSus) + "%"))
             channelhistorytreecount += 1
 
         print(ans[2][0])
         video_ids = []
-        
 
     else:
         messagebox.showerror("Error", "予期せぬエラーが発生しました")
-        
-       
-
 
 
 def isint(str):  # 整数値を表しているかどうかを判定
@@ -945,7 +879,6 @@ def isint(str):  # 整数値を表しているかどうかを判定
         return False
     else:
         return True
-
 
 
 def savemovieinfo():
@@ -1060,28 +993,22 @@ def savemovieinfo():
             
             if (likeCount >= BestGoodCount):
                 toplevelcomment = comment_text
-                toplevelcommentauthor = author
+                #toplevelcommentauthor = author
                 toplevelcommentlikecount = likeCount
                 toplevelcommentreplycount = replyCount
 
             if (likeCount <= WorstGoodCount):
                 lastLevelcomment = comment_text
-                lastLevelcommentauthor = author
+                #lastLevelcommentauthor = author
                 lastLevelcommentlikecount = likeCount
                 lastLevelcommentreplycount = replyCount
 
             commentCount += 1
 
 
-
-        
-        vidCommentsCount = int(item['statistics'].get('commentCount', vidViewCount/100))
         #vidDislikeCount = int(item['statistics']['dislikeCount'])
         subscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
-        vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
-       
 
-        
         #vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
 
         messagebox.showinfo("aa", "DBmade")
@@ -1107,6 +1034,7 @@ def savemovieinfo():
         cursor.execute("COMMIT;")
 
         messagebox.showinfo("おあり", "gg")
+
     messagebox.showinfo("a", "おわりってことだお")
 
 
@@ -1145,7 +1073,6 @@ def eva_toInt(string):
         else:
             None
 
-
     for a_unsuspicious_word in unsuspicious_words:
 
         # 釣り動画らしくない、怪しくない単語が含まれていると、怪しさカウントをマイナス１する。
@@ -1167,7 +1094,6 @@ def eva_toInt(string):
     return count
 
 
-
 #たくさんの項目数、順番で、それぞれ何を意味しているか。　上、英語　下、日本語
 """
 ViewCount, LikeCount
@@ -1187,7 +1113,6 @@ ViewCount, LikeCount
 , （比較的）評価の高いコメント, （比較的）グッドコメントのグッド数, （比較的）グッドコメントの返信数
 , （比較的）評価の低いコメント, （比較的）バッドコメントのグッド数, （比較的）バッドコメントの返信数
 """
-
 
 
 
@@ -1248,16 +1173,9 @@ test_video_data_x = np.concatenate((test_video_data_x, np.array([[240000, 4800
 
 print("^O^", test_video_data_x)
 
-
 #釣り動画＝1 普通動画＝0 # 2 ＝　ネタ動画
 answer_data_y = np.array([0, 0, 0, 1, 1])
 #answer_data_y = np.array([0])
-
-'''
-for item in range(searchVideosNumbers):
-    answer_data_y = np.append(answer_data_y, 0)
-    print(answer_data_y)
-'''
 
 video_ids = []
 
@@ -1296,9 +1214,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
     ).execute()
 
     print("1")
-
-   
-
+ 
     videoCountForAPI = 0
     commentCount = 0
 
@@ -1341,29 +1257,6 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
             res = youtube.videos().list(id=videoId,part='statistics').execute()
 
-
-        '''
-        param2 = {
-            'part': 
-            'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
-            'id': "UCaminwG9MTO4sLYeC3s6udA",
-            }
-
-        target_url2 = 'https://www.googleapis.com/youtube/v3/channels' + \
-        (urllib.parse.urlencode(param2))
-        channel_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url2)))
-
-        for item in channel_body['items']:
-
-            #vidSubscriberCount = int(item['statistics']['subscriberCount'])
-            vidHiddenSubscriberCount = int(item['statistics']['hiddenSubscriberCount'])
-
-            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
-
-            res = youtube.videos().list(id=videoId,part='statistics').execute()
-
-        '''
-
         print(res['items'])
 
         video_ids = np.append(video_ids, videoId)
@@ -1388,13 +1281,12 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
         lastLevelcommentlikecount = 1
         lastLevelcommentreplycount = 1
 
-
         BestGoodCount = 0
         WorstGoodCount = 0
 
         print("2")
 
-        comennntbool = True
+        #comennntbool = True
 
         try:
 
@@ -1420,14 +1312,14 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
             
                 if (likeCount >= BestGoodCount):
                     toplevelcomment = comment_text
-                    toplevelcommentauthor = author
+                    #toplevelcommentauthor = author
                     toplevelcommentlikecount = likeCount
                     toplevelcommentreplycount = replyCount
                     BestGoodCount = likeCount
 
                 if (likeCount <= WorstGoodCount):
                     lastLevelcomment = comment_text
-                    lastLevelcommentauthor = author
+                    #lastLevelcommentauthor = author
                     lastLevelcommentlikecount = likeCount
                     lastLevelcommentreplycount = replyCount
                     WorstGoodCount = likeCount
@@ -1443,28 +1335,17 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
         print("3")
 
-        '''
-        vidMinutes = re.findall(r'T.*M',vidDuration)
-        vidMinutesAfter = vidMinutes[1:-1]
-        vidSeconds = re.findall(r'M.*S',vidDuration)
-        vidSecondsAfter = vidSeconds[1:-1]
-        vidSecondsAfterAll = 60 * vidMinutesAfter + vidSecondsAfter
-        '''
         vidSecondsAfterAll = int(vidDuration.total_seconds())
 
-        #vidViewCount = res['items']['viewCount']
-        #vidLikeCount = res['items']['likeCount']
-        #vidDislikeCount = res['items']['dislikeCount']
         subscriberCount = 0
+
         print(str(vidHiddenSubscriberCount) + "vidHiddenSubscriberCount")
         print(str(vidSubscriberCount) + "vidSubscriberCount")
+
         if vidHiddenSubscriberCount:
             subscriberCount = vidViewCount
         else:
             subscriberCount = vidSubscriberCount
-
-            ''', vidDislikeCount'''
-            ''', (vidDislikeCount*100)/vidViewCount'''
 
             print(dateUploaded)
             dateUploaded
@@ -1472,19 +1353,6 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
         if (vidSubscriberCount==0):
             subscriberCount = vidViewCount / 2
 
-
-        '''
-        forprint = np.array([np.array([vidViewCount, vidLikeCount
-                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , eva_toInt(title), eva_toInt(description)
-                                    , dateUploaded.year, dateUploaded.month, dateUploaded.day, dateUploaded.hour
-                                    , eva_toInt(channelName), subscriberCount
-                                    , eva_toInt(toplevelcomment), eva_toInt(lastLevelcomment)
-                                    ])])
-
-        print("testetetetetetet", forprint)
-        '''
-        
         print("4")
         
         cursor.execute("INSERT INTO icebox VALUES("\
@@ -1506,15 +1374,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
                             )
                        )
 
-        '''
-        " SET Title=excluded.Title, Description=excluded.Description, ViewCount=excluded.'upd', LikeCount=excluded.'upd'"\
-                        ", VideoLength=excluded.'upd', ChannelName=excluded.'upd', ChannelSubscribersCount=excluded.'upd'"\
-                        ", GoodComment=excluded.'upd', BadComment=excluded.'upd', DateYear=excluded.upd', DateMonth=excluded.'upd', DateDay=excluded.'upd', DateHour=excluded.'upd';"
-        '''
-        
-
         cursor.execute("COMMIT;")
-
 
         test_video_data_x = np.concatenate((test_video_data_x, np.array([[vidViewCount, vidLikeCount
                                     , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
@@ -1530,32 +1390,36 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
         print("5")
 
-        
-
-
 
 def TakeCh():
-    global setVideoDatas
-    chid =text_channelIDinput.get("1.0","end").replace('\n','').replace('%0a','')
+
+    chid = text_channelIDinput.get("1.0","end").replace('\n','').replace('%0a','')
 
     if len(chid) == 24:
         None
     else:
+
         print(len(chid))
+
         messagebox.showerror("Error", "IDが違うぞ☆")
+
         return None
 
     if isint(moviecountinput.get("1.0","end")):
+
         moviecount = int(moviecountinput.get("1.0","end"))
+
         messagebox.showinfo("Error", "数字ok")
 
     else:
         print("elsereturn")
-        messagebox.showerror("Error", "数字を入力してくれ")
-        return None
 
+        messagebox.showerror("Error", "数字を入力してくれ")
+
+        return None
    
     setVideoDatas(chid, moviecount, int(year_b.get()), int(manth_b.get()), int(day_b.get()), int(year_a.get()), int(manth_a.get()), int(day_a.get()))
+
 
 def takeSQL():
 
@@ -1563,18 +1427,23 @@ def takeSQL():
 
     global count_count
     count_count = 0
+
     global video_count
     video_count = 0
 
     global cursor
 
     if isint(text_inputlearningcount.get("1.0","end")):
+
         dostudyCount = int(text_inputlearningcount.get("1.0","end"))
+
         messagebox.showinfo("Error", "数字ok")
 
     else:
         print("elsereturn")
+
         messagebox.showerror("Error", "数字を入力してくれ")
+
         return None
 
     cursor.execute('SELECT * FROM icebox')
@@ -1599,28 +1468,38 @@ def takeSQL():
                                     ))
     
 
-    labelSQL = np.array([0 ,1])
+    labelSQL = np.array([0, 99])
 
     for row in cursor:
+
         VideoID = row[0]
+
         Title = row[1]
         Description = row[2]
+
         ViewCount = int(row[3])
         LikeCount = int(row[4])
+
         VideoLength = int(row[5])
+
         ChannelName = row[6]
         ChannelSubscribersCount = int(row[7])
+
         DateYear = int(row[8])
         DateMonth = int(row[9])
         DateDay = int(row[10])
         DateHour = int(row[11])
+
         GoodComment = row[12]
         GoodCommentGoodCount = int(row[13])
         GoodCommentReplyCount = int(row[14])
+
         BadComment = row[15]
         BadCommentGoodCount = int(row[16])
         BadCommentReplyCount = int(row[17])
+
         SuspiciousDegree = float(row[18])
+
         URL = row[19]
 
         """
@@ -1644,15 +1523,19 @@ def takeSQL():
                                                                         ]])
                                         ))
 
-        
-
         labelSQL = np.append(labelSQL, SuspiciousDegree)
 
 
     scaler = preprocessing.StandardScaler()
     scaler.fit(SQLdetas)
+
+    print("scaler = ", scaler)
+
+    print("SQLdetas = ", SQLdetas)
+
     x=scaler.transform(SQLdetas)
-    #print(x)
+
+    print("takeCH x = ",x)
 
     y = np_utils.to_categorical(labelSQL)
     #print(y)
@@ -1661,21 +1544,6 @@ def takeSQL():
 
 
     DoStudy(dostudyCount)
-
-
-        
-   
-        
-
-
-"""
-def close_frame1():
-    frame1.destroy()
-def close_frame2():
-    frame2.destroy()
-def raise_frame(frame):
-    frame.tkraise()
-"""
 
 
 #frame1
@@ -1701,18 +1569,8 @@ box_a.option_add("*TCombobox*Listbox.Font", 30)
 box_a.current(0)
 
 # ボタン, テキストの設定(text=ボタンに表示するテキスト)
-"""
-btn_go = tk.Button(frame1, text='Go',
-width = 10,
-height = 3,
-foreground = "Black",
-bg = "Cyan",
-command = go_window2
-)
-"""
 
 label_horizon1 = tk.Label(frame1,bg="#42b33d")
-
 
 btn_cry = tk.Button(label_horizon1, text='泣いちゃった',
 width = 10,
@@ -1812,25 +1670,6 @@ label_Sus2 = tk.Label(label_Sushorizon, text="", font=("MSゴシック", "20", "
 
 label_Sus3 = tk.Label(label_Sushorizon, text="", font=("MSゴシック", "20", "bold"))
 
-"""
-test2 = ImageTk.PhotoImage(image1)
-label_thumbnail2 = tk.Label(label_horizon, image=test2)
-label_thumbnail2.image = test2
-"""
-#image1 = image1.resize((150,150))
-
-"""
-test3 = ImageTk.PhotoImage(image1)
-label_thumbnail3 = tk.Label(label_horizon, image=test3)
-label_thumbnail3.image = test3
-"""
-
-#image1 = image1.resize((100,100))
-"""
-test4= ImageTk.PhotoImage(image1)
-label_thumbnail4 = tk.Label(label_horizon, image=test4)
-label_thumbnail4.image = test4
-"""
 btn_return2 = tk.Button(frame3, text='最初の画面に戻る',
 width = 15,
 height = 3,
@@ -2012,15 +1851,6 @@ label_horizonX = tk.Label(frameX,bg="#42b33d")
 
 
 # ボタン, テキストの設定(text=ボタンに表示するテキスト)
-"""
-btn_go = tk.Button(frame1, text='Go',
-width = 10,
-height = 3,
-foreground = "Black",
-bg = "Cyan",
-command = go_window2
-)
-"""
 
 use1 = tk.Button(label_horizonX, text='Go機能1',
 width = 50,
@@ -2098,7 +1928,6 @@ command = go_backX1
 )
 
 
-
 #frameX2
 label_channelID = tk.Label(frameX2, text="チャンネルIDを入力してください", font=("MSゴシック", "15", "bold"))
 
@@ -2118,29 +1947,8 @@ label_beforedaystext = tk.Label(frameX2, text="開始日付を設定(yyyy/mm/dd)
 
 label_afterdaystext = tk.Label(frameX2, text="終了日付を設定(yyyy/mm/dd)", font=("MSゴシック", "15", "bold"))
 
-
-
 label_horizonX2 = tk.Label(frameX2,bg="#42b33d")
 
-"""
-befor_daysinput = tk.Text(label_horizonX2, 
-width = 50,
-height = 3,
-pady = 3,
-wrap = tk.NONE,
-foreground = "Black",
-bg = "Cyan",
-)
-
-after_daysinput = tk.Text(label_horizonX2, 
-width = 50,
-height = 3,
-pady = 3,
-wrap = tk.NONE,
-foreground = "Black",
-bg = "Cyan",
-)
-"""
 
 moviecountinput = tk.Text(frameX2, 
 width = 50,
@@ -2154,7 +1962,6 @@ bg = "Cyan",
 beforebox_horizon = tk.Label(frameX2,bg="#42b33d")
 
 
-
 module_beforeyear = []
 for i in range(30):
     module_beforeyear.append(1998 + i)
@@ -2164,14 +1971,7 @@ year_b = combobox = ttk.Combobox(beforebox_horizon, value=module_beforeyear, wid
 year_b.option_add("*TCombobox*Listbox.Font", 30)
 year_b.current(0)
 print(module_beforeyear)
-"""
-scrollbar = ttk.Scrollbar(
-    frameX2,
-    orient=tk.VERTICAL,
-    command=beforebox_year.yview)
-beforebox_year['yscrollcommand'] = scrollbar.set
-scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
-"""
+
 
 module_beforemonth = ('01', '02','03','04','05','06','07','08','09','10','11','12')
 
@@ -2222,8 +2022,6 @@ command = TakeCh
 )
 
 
-
-
 backX2 = tk.Button(frameX2, text='機能一覧へ',
 width = 20,
 height = 8,
@@ -2231,8 +2029,6 @@ foreground = "Black",
 bg = "Cyan",
 command = go_backX2
 )
-
-
 
 
 #frameX3
@@ -2270,23 +2066,8 @@ command = go_backX3
 
 #ボタンやテキストを配置する位置の設定(frame1)
 
-"""
-label_title.place(x=350, y=50)
-label_desc.place(x=410, y=115)
-label_inputURL.place(x=440, y=200)
-label_error.place(x=100, y=50)
-text_input.place(x=210, y=255)
-#text_input.insert(0, "https://www.youtube.com/watch?v=5qWYfTlAJsg")
-btn_go.place(x=450, y=325)
-btn_cry.place(x=900, y=20)
-"""
-
-
 #1画面目
 
-#btn_cry.pack(pady = 0, anchor = tk.NE, expand=1)
-
-#btn_go4.pack(pady = 0, anchor = tk.NE, expand=1)
 btn_cry.pack(padx = 10, pady = 0, side = tk.RIGHT)
 btn_go4.pack(padx = 10, pady = 0, side = tk.RIGHT)
 btn_go5.pack(padx = 10, pady = 0, side = tk.RIGHT)
@@ -2316,11 +2097,6 @@ frame1.pack(padx = 0, pady = 0)
 
 
 #ボタンやテキストを配置する位置の設定(frame2)
-"""
-label_URLsearch.place(x=100, y=50)
-label_dangerlevel.place(x=250, y=70)
-btn_return.place(x=350, y=450)
-"""
 
 #2画面目
 label_URLsearch.pack(padx = 10, pady = 10, expand=1)
@@ -2336,9 +2112,7 @@ sizegrip2.pack(padx = 5, pady = 5)
 label_channelIDsearch.pack(padx = 10, pady = 10, expand=1, side = tk.TOP)
 label_channelname.pack(padx = 50, pady = 10, after=label_channelIDsearch)
 label_channeldangerlevel.pack(padx = 50, pady = 10, expand=1, side = tk.TOP)
-#label_thumbnail2.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
-#label_thumbnail3.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
-#label_thumbnail4.pack(padx = 50, pady = 10, side = tk.RIGHT, anchor = tk.CENTER)
+
 label_horizon.pack(padx = 50, pady = 10, expand=1)
 btn_return2.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
 label_channeldangervideo.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
@@ -2443,8 +2217,6 @@ datasave.pack(padx = 50, pady = 0, expand=1)
 backX2.pack(padx = 50, pady = 0, expand=1,  anchor='e')
 
 
-
-
 #X3画面目
 text_inputlearningcount.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
 label_learningcount.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
@@ -2454,362 +2226,7 @@ learning.pack(padx = 0, pady = 0, expand=1)
 backX3.pack(padx = 50, pady = 0, expand=1, anchor='e')
 
 
-#raise_frame(frame1)
-#raise_frame(frame2)
-
-"""
-label_URLsearch.grid(row = 0, column = 0, sticky=tkinter.EW)
-label_dangerlevel.grid(row = 1, column = 1, sticky=tkinter.EW)
-btn_return.grid(row = 2, column = 2, sticky=tkinter.EW)
-label_dangerlevel.grid_remove()
-"""
-
-"""
-frame1.grid(row=0, column=0)
-frame2.grid(row=0, column=0)
-"""
-
-
-
-'''
-# 足し算サンプル（使えるかもしれんから残しとく）
-a = tf.constant(1234)
-b = tf.constant(5000)
-add_op = a + b
-tf.print(add_op)
-'''
-
-'''
-# numpytest　ナムパイテスト　後で(10/21)使うはず
-temp = np.array([10, 15, 20, 25, 30])
-ice  = np.array([20, 22, 20, 32, 30])
-plt.scatter(temp, ice)
-x = np.linspace(0, 20, 100)
-plt.plot(x, np.sin(x))
-plt.show()
-# numpytest ナムパイテスト 複数　配列をランダムで作成
-data = np.random.randint(low=0, high=5, size=10)
-'''
-
-
-print("\n(1)起動！起動！！！！\n")
-
-
-print("\n(2)終わりってことだよぉ！(GUI終了)\n")
-print(box_a)
-
-#----------------------------------  ここまでGUI   ------------------------------------------------------------------------------------
-
-
-print("\n(3)【モデルとか、データ定義始め！】\n")
-
-
-
-#-------------------------------------------------------データ定義---------------------------------------------------------
-
-"""
-"""
-
-"""
-YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
-
-youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
-
-
-def get_channel_videos(channel_id):
-    
-    # get Uploads playlist id
-    res = youtube.channels().list(id=channel_id, 
-                                  part='contentDetails').execute()
-    playlist_id = res['items'][0]['contentDetails']['relatedPlaylists']['uploads']
-    
-    videos = []
-    next_page_token = None
-    
-    while 1:
-        res = youtube.playlistItems().list(playlistId=playlist_id, 
-                                           part='snippet', 
-                                           maxResults=50,
-                                           pageToken=next_page_token).execute()
-        videos += res['items']
-        next_page_token = res.get('nextPageToken')
-        
-        if next_page_token is None:
-            break
-    
-    return videos
-
-
-def get_videos_stats(video_ids):
-    stats = []
-    for i in range(0, len(video_ids), 50):
-        res = youtube.videos().list(id=','.join(video_ids[i:i+50]),
-                                   part='statistics').execute()
-        stats += res['items']
-        
-    return stats
-
-
-videos = get_channel_videos('UCaminwG9MTO4sLYeC3s6udA')
-video_ids = list(map(lambda x:x['snippet']['resourceId']['videoId'], videos))
-stats = get_videos_stats(video_ids)
-
-len(stats)
-
-res = youtube.videos().list(id=videos[0]['snippet']['resourceId']['videoId'],part='statistics').execute()
-res['items']
-
-"""
-
-#['items']['statistics']['likeCount']
-
-#most_disliked = sorted(stats, key=lambda x:int(x['statistics']['likeCount']), reverse=False)
-#most_disliked
-
-#for video in most_disliked:
-#    print(video['id'], video['statistics']['dislikeCount'])
-
-#---------------------------------------------------------- Step 1 to 2 ---------------------------------
-
-
-
-
-"""
-
-<<<<<<< HEAD
-    videoCountForAPI = 0
-    commentCount = 0
-
-    for item in search_response['items'][:searchVideosNumbers]:
-    
-        videoCountForAPI += 1
-
-        title = item['snippet']['title'].replace('\'', '')
-        description = item['snippet']['description'].replace('\'', '')
-
-        videoId = item["id"]["videoId"]
-        url = 'https://www.youtube.com/watch?v=%s' % videoId
-        thumbnailUrl1 = item["snippet"]["thumbnails"]["default"]["url"]
-        thumbnailUrl2 = item["snippet"]["thumbnails"]["high"]["url"]
-        dateUploaded = isodate.parse_datetime(item["snippet"]["publishedAt"])
-        channelName = item["snippet"]["channelTitle"]
-        videoId = item['id']['videoId']
-
-        param = {
-            'part': 
-            'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
-            'id': videoId, 
-            'key': YOUTUBE_API_KEY
-            }
-
-        target_url = 'https://www.googleapis.com/youtube/v3/videos?' + \
-        (urllib.parse.urlencode(param))
-        print("target_url = ", target_url)
-        videos_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url)))
-        print("videos_body = ", videos_body)
-        for item in videos_body['items']:
-
-            vidViewCount = int(item['statistics']['viewCount'])
-            vidLikeCount = int(item['statistics']['likeCount'])
-            vidCommentsCount = int(item['statistics']['commentCount'])
-            #vidDislikeCount = int(item['statistics']['dislikeCount'])
-            vidSubscriberCount = int(item['statistics'].get('subscriberCount', vidViewCount/2))
-            vidHiddenSubscriberCount = int(item['statistics'].get('hiddenSubscriberCount', vidViewCount/2))
-
-            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
-
-            res = youtube.videos().list(id=videoId,part='statistics').execute()
-
-
-        '''
-        param2 = {
-            'part': 
-            'id,snippet,contentDetails,player,recordingDetails,statistics,status,topicDetails',
-            'id': "UCaminwG9MTO4sLYeC3s6udA",
-            }
-
-        target_url2 = 'https://www.googleapis.com/youtube/v3/channels' + \
-        (urllib.parse.urlencode(param2))
-        channel_body = json.load(urllib.request.urlopen(urllib.request.Request(target_url2)))
-
-        for item in channel_body['items']:
-
-            #vidSubscriberCount = int(item['statistics']['subscriberCount'])
-            vidHiddenSubscriberCount = int(item['statistics']['hiddenSubscriberCount'])
-
-            vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
-
-            res = youtube.videos().list(id=videoId,part='statistics').execute()
-
-        '''
-
-        print(res['items'])
-
-        video_ids.append(videoId)
-        request = youtube.commentThreads().list(
-            part = "snippet",
-            videoId=videoId,
-            maxResults = 500
-        )
-        response = request.execute()
-
-  
-        print("タイトル = [", title , "]")
-        print("詳細文　＝　[", description , "]")
-        print("チャンネルID = [", channelName , "]")
-        print("VideoURL = [", url , "]")
-        print("投稿時間 = [", dateUploaded , "]")
-        print("サムネURL1 = [", thumbnailUrl1 , "]")
-        print("サムネURL2 = [", thumbnailUrl2 , "]\n")
-        print("videoCountForAPI = [",videoCountForAPI, "]\n")
-  
-        commentCount = 0
-        toplevelcomment = "いいね（デフォルト）"
-        #toplevelcommentauthor = "笑（デフォルト）"
-        toplevelcommentlikecount = 3
-        toplevelcommentreplycount = 3
-        lastLevelcomment = "z"
-        #lastLevelcommentauthor = "zz"
-        lastLevelcommentlikecount = 1
-        lastLevelcommentreplycount = 1
-
-
-        BestGoodCount = 0
-        WorstGoodCount = 0
-        for item in response["items"]:
-
-            comment = item["snippet"]["topLevelComment"]
-
-            author = comment["snippet"]["authorDisplayName"]
-
-            likeCount = comment["snippet"]["likeCount"]
-
-            replyCount = item["snippet"]["totalReplyCount"]
-
-            comment_text = comment["snippet"]["textDisplay"]
-
-            
-            if (likeCount >= BestGoodCount):
-                toplevelcomment = comment_text
-                toplevelcommentauthor = author
-                toplevelcommentlikecount = likeCount
-                toplevelcommentreplycount = replyCount
-
-            if (likeCount <= WorstGoodCount):
-                lastLevelcomment = comment_text
-                lastLevelcommentauthor = author
-                lastLevelcommentlikecount = likeCount
-                lastLevelcommentreplycount = replyCount
-
-            commentCount += 1
-
-            print("[",author,"]  " , comment_text, "コメ目 → ",commentCount)
-
-
-        print("\n")
-
-        '''
-        vidMinutes = re.findall(r'T.*M',vidDuration)
-        vidMinutesAfter = vidMinutes[1:-1]
-        vidSeconds = re.findall(r'M.*S',vidDuration)
-        vidSecondsAfter = vidSeconds[1:-1]
-        vidSecondsAfterAll = 60 * vidMinutesAfter + vidSecondsAfter
-        '''
-        vidSecondsAfterAll = int(vidDuration.total_seconds())
-
-        #vidViewCount = res['items']['viewCount']
-        #vidLikeCount = res['items']['likeCount']
-        #vidDislikeCount = res['items']['dislikeCount']
-        subscriberCount = 0
-        print(str(vidHiddenSubscriberCount) + "vidHiddenSubscriberCount")
-        print(str(vidSubscriberCount) + "vidSubscriberCount")
-        if vidHiddenSubscriberCount:
-            subscriberCount = vidViewCount
-        else:
-            subscriberCount = vidSubscriberCount
-
-            ''', vidDislikeCount'''
-            ''', (vidDislikeCount*100)/vidViewCount'''
-
-            print(dateUploaded)
-            dateUploaded
-
-        if (vidSubscriberCount==0):
-            subscriberCount = vidViewCount / 2
-
-
-        '''
-        forprint = np.array([np.array([vidViewCount, vidLikeCount
-                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , eva_toInt(title), eva_toInt(description)
-                                    , dateUploaded.year, dateUploaded.month, dateUploaded.day, dateUploaded.hour
-                                    , eva_toInt(channelName), subscriberCount
-                                    , eva_toInt(toplevelcomment), eva_toInt(lastLevelcomment)
-                                    ])])
-
-        print("testetetetetetet", forprint)
-        '''
-        
-
-        
-        cursor.execute("INSERT INTO icebox VALUES("\
-                        "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
-                        ", {VideoLength}, '{ChannelName}', {ChannelSubscribersCount}"\
-                        ", {DateYear}, {DateMonth}, {DateDay}, {DateHour}"\
-                        ", '{GoodComment}', {GoodCommentGoodCount}, {GoodCommentReplyCount}"\
-                        ", '{BadComment}', {BadCommentGoodCount}, {BadCommentReplyCount}"\
-                        ", {SuspiciousDegree}, '{URL}') ON CONFLICT DO NOTHING".format(
-                            VideoId=videoId, Title=title, Description=description
-                            , ViewCount=vidViewCount, LikeCount=vidLikeCount
-                            , VideoLength=vidSecondsAfterAll, ChannelName=channelName
-                            , ChannelSubscribersCount=subscriberCount
-                            , DateYear=dateUploaded.year, DateMonth=dateUploaded.month
-                            , DateDay=dateUploaded.day, DateHour=dateUploaded.hour
-                            , GoodComment=toplevelcomment, GoodCommentGoodCount=toplevelcommentlikecount, GoodCommentReplyCount=toplevelcommentreplycount
-                            , BadComment=lastLevelcomment, BadCommentGoodCount=lastLevelcommentlikecount, BadCommentReplyCount=lastLevelcommentreplycount
-                            , SuspiciousDegree="50.111", URL="https://www.youtube.com/watch?v="+videoId
-                            )
-                       )
-
-        '''
-        " SET Title=excluded.Title, Description=excluded.Description, ViewCount=excluded.'upd', LikeCount=excluded.'upd'"\
-                        ", VideoLength=excluded.'upd', ChannelName=excluded.'upd', ChannelSubscribersCount=excluded.'upd'"\
-                        ", GoodComment=excluded.'upd', BadComment=excluded.'upd', DateYear=excluded.upd', DateMonth=excluded.'upd', DateDay=excluded.'upd', DateHour=excluded.'upd';"
-        '''
-        
-
-        cursor.execute("COMMIT;")
-
-
-        test_video_data_x = np.concatenate((test_video_data_x, np.array([[vidViewCount, vidLikeCount
-                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , eva_toInt(title), eva_toInt(description)
-                                    , dateUploaded.year, dateUploaded.month, dateUploaded.day, dateUploaded.hour
-                                    , eva_toInt(channelName), subscriberCount
-                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
-                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
-                                                                        ]])
-                                        ))
-
-        answer_data_y = np.append(answer_data_y, 0)
-
-
-setVideoDatas()
-=======
-setVideoDatas('UCl4e200EZm7NXq_iaYSXfeg', 50, 2022, 6, 1, 2022, 11, 11)
->>>>>>> 72ace3f5e17bafad08d29bf763ad3d5be385ceed
-answer_data_y[len(answer_data_y)-1] = 1
-print(test_video_data_x)
-"""
-
-print("(4)【モデル定義終わり！】\n")
-
-
 #----------------------------------  YoutubeAPIここまで？ -------------------------------------------------------------------------------
-"""
-"""
-
-
 
 
 scaler = preprocessing.StandardScaler()
