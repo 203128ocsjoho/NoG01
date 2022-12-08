@@ -80,7 +80,7 @@ try:
     connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                 user="yuyuyu",        #ユーザ
                 password="yuyuyu123",  #パスワード
-                host="localhost",       #ホスト名
+                host="60.66.192.16",       #ホスト名
                 port="5432",            #ポート
                 dbname="postgres"))    #データベース名
 
@@ -517,22 +517,24 @@ def go_windowX():
                                     )])
         ))
         
+        print(type(URL_test))
+
         print("URL_test = ", URL_test)
 
         cursor.execute('SELECT * FROM icebox')
 
         scaler1 = preprocessing.StandardScaler()
-        scaler1.fit(URL_test)
+        scaler1.fit(URL_test[:999])
 
         print("before model predict scaler1 = ", scaler1)
 
-        transform = scaler1.transform(URL_test)
+        transform = scaler1.transform(URL_test[:999])
         
         print("before model predict transform = ", transform)
         print("before model predict transform[0][0] = ", transform[0][0])
 
-        URL_predict = model.predict(transform)
-        print("URL_predict = ", URL_predict)
+        URL_predict = model.predict(URL_test[:999])
+        """
         max = 0
         maxindex = 0
         for i in range(100):
@@ -544,11 +546,15 @@ def go_windowX():
                 None
 
         suspiciousDegree = maxindex
+        """
+
+        print("URL_predict == " , URL_predict)
+        suspiciousDegree = URL_predict[0][1] * 100
         print(suspiciousDegree)
 
         global label_dangerlevel
 
-        label_dangerlevel.configure(text="動画の釣り危険度" + str(suspiciousDegree) + "%")
+        label_dangerlevel.configure(text="動画の釣り危険度" + str(round(suspiciousDegree, 1)) + "%")
 
 
         moviehistorytree.insert(parent='', index=0, iid= moviehistorytreecount,values=(title,text_input.get("1.0","end"), str(suspiciousDegree) + '%'))
@@ -1468,7 +1474,7 @@ def takeSQL():
                                     ))
     
 
-    labelSQL = np.array([0, 99])
+    labelSQL = np.array([0, 1])
 
     for row in cursor:
 
@@ -1502,8 +1508,7 @@ def takeSQL():
 
         URL = row[19]
 
-        """
-        if SuspiciousDegree >= 0.8:
+        if SuspiciousDegree >= 80:
             SuspiciousDegree = 1
         else:
             SuspiciousDegree = 0
@@ -1512,6 +1517,7 @@ def takeSQL():
             SuspiciousDegree = 99
         else:
             None
+        """
         
         SQLdetas = np.concatenate((SQLdetas, np.array([[ViewCount, LikeCount
                                     , (LikeCount*100)/ViewCount, VideoLength
@@ -1535,15 +1541,27 @@ def takeSQL():
 
     x=scaler.transform(SQLdetas)
 
+    countA = 105
+
+    last = x[countA]
+    print("last ==" , last)
+
     print("takeCH x = ",x)
 
     y = np_utils.to_categorical(labelSQL)
     #print(y)
+    y_last = y[countA]
+    print("y_last ==" , y_last)
 
     x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2)
 
+    x_test = np.concatenate((x_test, np.array([last]) )) 
+    y_test = np.concatenate((y_test, np.array([y_last]) )) 
 
+    print("x_test ==" , x_test)
     DoStudy(dostudyCount)
+
+
 
 
 #frame1
@@ -1852,7 +1870,7 @@ label_horizonX = tk.Label(frameX,bg="#42b33d")
 
 # ボタン, テキストの設定(text=ボタンに表示するテキスト)
 
-use1 = tk.Button(label_horizonX, text='Go機能1',
+use1 = tk.Button(label_horizonX, text='DBに保存',
 width = 50,
 height = 10,
 foreground = "Black",
@@ -1860,7 +1878,7 @@ bg = "Cyan",
 command = go_windowXtoX1
 )
 
-use2 = tk.Button(label_horizonX, text='Go機能2',
+use2 = tk.Button(label_horizonX, text='日付内から取得',
 width = 50,
 height = 10,
 foreground = "Black",
@@ -1868,7 +1886,7 @@ bg = "Cyan",
 command = go_windowXtoX2
 )
 
-use3 = tk.Button(label_horizonX, text='Go機能3',
+use3 = tk.Button(label_horizonX, text='AIに学習',
 width = 50,
 height = 10,
 foreground = "Black",
@@ -2234,7 +2252,7 @@ scaler.fit(test_video_data_x)
 x=scaler.transform(test_video_data_x)
 #print(x)
 
-y = np_utils.to_categorical(answer_data_y,num_classes=100)
+y = np_utils.to_categorical(answer_data_y,num_classes=2)
 #print(y)
 
 x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2)
@@ -2279,7 +2297,7 @@ else:
     model.add(Dropout(0.2))
 
     #出力層作成　ニューロン数(出力数)=1　活性化関数＝softmax
-    model.add(Dense(100, activation='softmax'))
+    model.add(Dense(2, activation='softmax'))
     #model.add(Dense(10))
 
     #最適化アルゴリズム　= SGD,損失機関=交差エントロピー、尺度＝精度
@@ -2347,7 +2365,6 @@ def DoStudy(count=0):
 
     print("\n\ny_test: \n", y_test[:999])
     print("\n\ny_train: \n", y_train[:9])
-
 
 
 # もう一回学習するかコマンド入力させる関数
