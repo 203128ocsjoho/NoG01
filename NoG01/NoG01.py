@@ -500,7 +500,6 @@ def go_windowX():
         URL_test = np.array([(vidViewCount, vidLikeCount
                                     , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
                                     , eva_toInt(title), eva_toInt(description)
-                                    , dateYear, dateMonth, dateDay, dateHour
                                     , eva_toInt(channelName), subscriberCount
                                     , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
                                     , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
@@ -510,7 +509,6 @@ def go_windowX():
                                     np.array([(vidViewCount, vidLikeCount
                                     , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
                                     , eva_toInt(title), eva_toInt(description)
-                                    , dateYear, dateMonth, dateDay, dateHour
                                     , eva_toInt(channelName), subscriberCount
                                     , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
                                     , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
@@ -643,7 +641,6 @@ def go_windowX():
         test_video_data_x = np.array([[2000, 1000
                         , 50, 300
                         , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
-                        , 2022, 4, 1, 12
                         , eva_toInt("＾＾"), 800
                         , eva_toInt("大丈夫？？"), 5, 2
                         , eva_toInt("なにこれ？"), 0, 1
@@ -1121,7 +1118,7 @@ ViewCount, LikeCount
 """
 
 
-
+"""
 test_video_data_x = np.array([[2000, 1000
                         , 50, 300
                         , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
@@ -1130,8 +1127,17 @@ test_video_data_x = np.array([[2000, 1000
                         , eva_toInt("大丈夫？？"), 5, 2
                         , eva_toInt("なにこれ？"), 0, 1
                         ]])
+"""
 
+test_video_data_x = np.array([[2000, 1000
+                        , 50, 300
+                        , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
+                        , eva_toInt("＾＾"), 800
+                        , eva_toInt("大丈夫？？"), 5, 2
+                        , eva_toInt("なにこれ？"), 0, 1
+                        ]])
 
+"""
 test_video_data_x = np.concatenate((test_video_data_x, np.array([[100, 2
                         , 2, 60
                         , eva_toInt("は？？"), eva_toInt("きれそう")
@@ -1165,11 +1171,10 @@ test_video_data_x = np.concatenate((test_video_data_x, np.array([[150000, 1500
                         , eva_toInt("この動画のおかげで彼女できました！田中一郎に感謝！！。"), 3, 8
                                                                 ]])
                                     ))
-
+"""
 test_video_data_x = np.concatenate((test_video_data_x, np.array([[240000, 4800
                         , 2, 630
                         , eva_toInt("Youtuber、やめます！"), eva_toInt("これで終わりだっ・・。\n<br>今までありがとうございました。")
-                        , 2022, 7, 7, 3
                         , eva_toInt("ピカル(Pikaru)"), 180000
                         , eva_toInt("この動画は釣り動画、詐欺動画です。ブラウザバックをお勧めします。"), 155, 5
                         , eva_toInt("ごみ！\n\n<br><br><br><br><br><br><br><br>しね！"), 5, 5
@@ -1180,7 +1185,7 @@ test_video_data_x = np.concatenate((test_video_data_x, np.array([[240000, 4800
 print("^O^", test_video_data_x)
 
 #釣り動画＝1 普通動画＝0 # 2 ＝　ネタ動画
-answer_data_y = np.array([0, 0, 0, 1, 1])
+answer_data_y = np.array([0, 1])
 #answer_data_y = np.array([0])
 
 video_ids = []
@@ -1385,17 +1390,27 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
         test_video_data_x = np.concatenate((test_video_data_x, np.array([[vidViewCount, vidLikeCount
                                     , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
                                     , eva_toInt(title), eva_toInt(description)
+                                    , eva_toInt(channelName), subscriberCount
+                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
+                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
+                                                                        ]])
+                                        ))
+        answer_data_y = np.append(answer_data_y, 0)
+
+        print("5")
+
+
+"""
+        test_video_data_x = np.concatenate((test_video_data_x, np.array([[vidViewCount, vidLikeCount
+                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
+                                    , eva_toInt(title), eva_toInt(description)
                                     , dateUploaded.year, dateUploaded.month, dateUploaded.day, dateUploaded.hour
                                     , eva_toInt(channelName), subscriberCount
                                     , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
                                     , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
                                                                         ]])
                                         ))
-
-        answer_data_y = np.append(answer_data_y, 0)
-
-        print("5")
-
+"""
 
 def TakeCh():
 
@@ -1457,7 +1472,6 @@ def takeSQL():
     SQLdetas = np.array([[2000, 1000
                         , 50, 300
                         , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
-                        , 2022, 4, 1, 12
                         , eva_toInt("＾＾"), 800
                         , eva_toInt("大丈夫？？"), 5, 2
                         , eva_toInt("なにこれ？"), 0, 1
@@ -1466,7 +1480,6 @@ def takeSQL():
     SQLdetas = np.concatenate((SQLdetas, np.array([[150000, 1500
                         , 1, 300
                         , eva_toInt("じゃんけんの勝ち方、、、徹底解説します。"), eva_toInt("明日から勝率１００パー間違いねぇぜ！")
-                        , 2022, 4, 1, 9
                         , eva_toInt("令和のギャンブラー田中一郎の明日から使えるヤバい技チャンネル"), 800
                         , eva_toInt("ネタかと思った。\n<br>でも顔がマジやん。。"), 111, 5
                         , eva_toInt("この動画のおかげで彼女できました！田中一郎に感謝！！。"), 3, 8
@@ -1476,14 +1489,18 @@ def takeSQL():
 
     labelSQL = np.array([0, 1])
 
+    print("cursor = ", cursor)
+
     for row in cursor:
 
         VideoID = row[0]
 
         Title = row[1]
+        print("row title=" , Title)
         Description = row[2]
 
         ViewCount = int(row[3])
+
         LikeCount = int(row[4])
 
         VideoLength = int(row[5])
@@ -1507,6 +1524,8 @@ def takeSQL():
         SuspiciousDegree = float(row[18])
 
         URL = row[19]
+        for x in row:
+            print(x)
 
         if SuspiciousDegree >= 80:
             SuspiciousDegree = 1
@@ -1522,7 +1541,6 @@ def takeSQL():
         SQLdetas = np.concatenate((SQLdetas, np.array([[ViewCount, LikeCount
                                     , (LikeCount*100)/ViewCount, VideoLength
                                     , eva_toInt(Title), eva_toInt(Description)
-                                    , DateYear, DateMonth, DateDay, DateHour
                                     , eva_toInt(ChannelName), ChannelSubscribersCount
                                     , eva_toInt(GoodComment), GoodCommentGoodCount, GoodCommentReplyCount
                                     , eva_toInt(BadComment), BadCommentGoodCount, BadCommentReplyCount
@@ -1582,8 +1600,8 @@ label_errorfake = tk.Label(frame1,bg="#42b33d")
 
 module = ('URL検索', 'チャンネルID検索')
  
-box_a = combobox = ttk.Combobox(frame1, value=module, width=80, height=120, state="readonly", cursor="dot")
-box_a.option_add("*TCombobox*Listbox.Font", 30)
+box_a = combobox = ttk.Combobox(frame1, value=module, width=15, height=20, state="readonly", cursor="dot",font=("Courier", 20, "bold"))
+#box_a.option_add("*TCombobox*Listbox.Font", 30)
 box_a.current(0)
 
 # ボタン, テキストの設定(text=ボタンに表示するテキスト)
@@ -1594,12 +1612,14 @@ btn_cry = tk.Button(label_horizon1, text='泣いちゃった',
 width = 10,
 height = 2,
 bg = "Red",
+font=("MSゴシック", "20", "bold"),
 command = go_window1toX
 )
 
 btn_go4 =  tk.Button(label_horizon1, text='旬の釣り動画検索',
 width = 15,
 height = 2,
+font=("MSゴシック", "20", "bold"),
 foreground = "Yellow",
 bg = "Purple",
 command = go_window4
@@ -1608,14 +1628,16 @@ command = go_window4
 btn_go5 =  tk.Button(label_horizon1, text='履歴の表示',
 width = 10,
 height = 2,
+font=("MSゴシック", "20", "bold"),
 foreground = "Cyan",
 bg = "Green",
 command = go_window5
 ) 
 
-btn_go = tk.Button(frame1, text='Go',
+btn_go = tk.Button(frame1, text='検索',
 width = 10,
 height = 3,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_windowX
@@ -1717,7 +1739,7 @@ command = go_window4to1
 
 #frame5
 
-label_historydisplay = tk.Label(frame5, text="履歴表示画面", font=("MSゴシック", "15", "bold"))
+label_historydisplay = tk.Label(frame5, text="履歴表示画面", font=("MSゴシック", "30", "bold"))
 
 label_moviehistoryhorizon = tk.Label(frame5)
 
@@ -1855,6 +1877,7 @@ dangerlevelrankingtree.insert(parent='', index='end', iid=4, values=("5位", "a"
 btn_return4 = tk.Button(frame5, text='最初の画面に戻る',
 width = 15,
 height = 3,
+font=("MSゴシック", "20", "bold"),
 foreground = "Cyan",
 bg = "Black",
 command = go_window5to1
@@ -1871,24 +1894,27 @@ label_horizonX = tk.Label(frameX,bg="#42b33d")
 # ボタン, テキストの設定(text=ボタンに表示するテキスト)
 
 use1 = tk.Button(label_horizonX, text='DBに保存',
-width = 50,
+width = 25,
 height = 10,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_windowXtoX1
 )
 
 use2 = tk.Button(label_horizonX, text='日付内から取得',
-width = 50,
+width = 25,
 height = 10,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_windowXtoX2
 )
 
 use3 = tk.Button(label_horizonX, text='AIに学習',
-width = 50,
+width = 25,
 height = 10,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_windowXtoX3
@@ -1897,6 +1923,7 @@ command = go_windowXtoX3
 back = tk.Button(frameX, text='最初に戻る',
 width = 10,
 height = 3,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_windowXto1
@@ -1930,8 +1957,9 @@ bg = "Cyan",
 )
 
 save_date = tk.Button(frameX1, text='保存します',
-width = 100,
-height = 15,
+width = 30,
+height = 5,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = savemovieinfo
@@ -1940,6 +1968,7 @@ command = savemovieinfo
 back_windowX1 = tk.Button(frameX1, text='機能一覧へ',
 width = 10,
 height = 3,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_backX1
@@ -2032,8 +2061,9 @@ day_a.option_add("*TCombobox*Listbox.Font", 30)
 day_a.current(0)
 
 datasave = tk.Button(frameX2, text='データを保存',
-width = 100,
-height = 15,
+width = 30,
+height = 5,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = TakeCh
@@ -2041,8 +2071,9 @@ command = TakeCh
 
 
 backX2 = tk.Button(frameX2, text='機能一覧へ',
-width = 20,
-height = 8,
+width = 15,
+height = 3,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_backX2
@@ -2066,8 +2097,9 @@ bg = "Cyan",
 
 
 learning = tk.Button(frameX3, text=' 学習させる',
-width = 100,
-height = 20,
+width = 30,
+height = 5,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = takeSQL
@@ -2075,8 +2107,9 @@ command = takeSQL
 
 
 backX3 = tk.Button(frameX3, text='機能一覧へ',
-width = 20,
-height = 8,
+width = 15,
+height = 5,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_backX3
@@ -2289,7 +2322,7 @@ else:
     model = Sequential()
 
     #入力層作成　ニューロン数32　活性化関数＝ReLU　入力数＝18
-    model.add(Dense(32, activation='relu',input_dim =18))
+    model.add(Dense(32, activation='relu',input_dim =14))
     model.add(Dropout(0.2))
 
     #隠れ層作成　ニューロン数32　活性化関数＝ReLU　
@@ -2301,8 +2334,8 @@ else:
     #model.add(Dense(10))
 
     #最適化アルゴリズム　= SGD,損失機関=交差エントロピー、尺度＝精度
-    #model.compile(optimizer='sgd', loss='categorical_crossentropy',metrics=['accuracy'])
-    model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
+    model.compile(optimizer='sgd', loss='categorical_crossentropy',metrics=['accuracy'])
+    #model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
 
     print(model.summary())
     model.save(path)
