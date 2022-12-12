@@ -1115,13 +1115,23 @@ def savemovieinfo():
 suspicious_words = ["?", "？", "違う", "悪", "謎", "わからない", "分からない", "何故", "なぜ", "なんで", "引退"
                    , "釣り", "詐欺", "ブラウザバック", "ごみ", "ゴミ", "しね",  "はあ" ,"はぁ", "だる", "飽き", "いい", "いらない", "不必要"
                    , "とは", "重要な", "お知らせ", "ベスト", "最", "について。", "どっきり", "ドッキリ", "サプライズ", "えぇ・", "逆"
-                   ,"釣り動画", "サムネ詐欺", "釣り", "ごみ", "おもんな", "騙", "びっくり", "茶番", "案件"]
+                   ,"釣り動画", "サムネ詐欺", "釣り", "ごみ", "おもんな", "騙", "びっくり", "茶番", "案件"
+                   ,"wrong", "evil", "mystery", "don't know", "doesn't know", "Why", "why", "reason", "retired"
+                    , "fishing", "scam", "browser back", "garbage", "stupid", "die", "haa", "huh", "lazy", "tired", "nice", "no needed", "Unnecessary"
+                    , "What is", "What's?", "Important", "Announcement", "Best", "Most", "About."
+                    ,"fishing video", "thumbnail scam", "fishing", "garbage", "strange", "cheating", "surprise", "farce", "problem"]
 
 #好印象単語登録
 unsuspicious_words = ["正し", "義", "善", "良", "わかる", "分かる", "理由が", "りゆうが", "なるほど", "継続", "これからも", "待", "評価"
                    , "必要と", "ありがとう", "有難う", "有り難う", "神"
                    , "まとめ", "考察", "歴代", "便利", "解説", "紹介", "その", "第", "回", "10", "１０", "十", "について、", "について解", "について紹"
-                   , "最高", "ありがとう", "うまい", "面白", "好き", "楽しい"]
+                   , "最高", "ありがとう", "うまい", "面白", "好き", "楽しい"
+                   , "Right", "Righteous", "Virtue", "Good", "Great", "superb", "Understand", "Understand", "Reason", "Reason"
+                   , "I see", "Continue", "From now on", " Wait", "Evaluate"
+                   , "necessary", "thank you", "thank you", "thank you", "god"
+                   , "Summary", "Consideration", "Successive", "Convenient", "Commentary", "Introduction", "That", "No."
+                   , "Time", "10", "ten", "Ten", " About ", "Solution about", "Introduction about"
+                   , "Excellent", "Thank you", "God", "Interesting", "Like", "Fun"]
 
 count = 5 #怪しさカウント
 count_count = 1 #カウントを何回やったかのカウント
