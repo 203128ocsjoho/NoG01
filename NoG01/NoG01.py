@@ -80,7 +80,7 @@ try:
     connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                 user="yuyuyu",        #ユーザ
                 password="yuyuyu123",  #パスワード
-                host="localhost",       #ホスト名
+                host="60.66.192.16",       #ホスト名
                 port="5432",            #ポート
                 dbname="postgres"))    #データベース名
 
@@ -499,40 +499,71 @@ def go_windowX():
 
         URL_test = np.array([(vidViewCount, vidLikeCount
                                     , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , eva_toInt(title), eva_toInt(description)
-                                    , dateYear, dateMonth, dateDay, dateHour
-                                    , eva_toInt(channelName), subscriberCount
-                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
-                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
+                                    , subscriberCount
+                                    , toplevelcommentlikecount, toplevelcommentreplycount
+                                    , lastLevelcommentlikecount, lastLevelcommentreplycount
         )])
-
+        """
         URL_test = np.concatenate((URL_test,
                                     np.array([(vidViewCount, vidLikeCount
                                     , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , eva_toInt(title), eva_toInt(description)
-                                    , dateYear, dateMonth, dateDay, dateHour
-                                    , eva_toInt(channelName), subscriberCount
-                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
-                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
+                                    , subscriberCount
+                                    , toplevelcommentlikecount, toplevelcommentreplycount
+                                    , lastLevelcommentlikecount, lastLevelcommentreplycount
                                     )])
         ))
-        
+        """
+
+
+
+
+
+
+
+        #scaler = preprocessing.StandardScaler()
+        #scaler.fit(URL_test)
+        x=scaler.transform(URL_test)
+        #print(x)
+        #x_train, x_test = train_test_split(x,test_size=0)
+        #SuspiciousDegree=suspiciousDegree, URL="https://www.youtube.com/watch?v="+videoid
+        print("URL_test" ,URL_test)
+        multiply = 1
+        x =  [[round(vidViewCount * multiply), round(vidLikeCount)
+                                    , round((vidLikeCount*100)/vidViewCount), round(vidSecondsAfterAll)
+                                    , round(subscriberCount * multiply)
+                                    , round(toplevelcommentlikecount), round(toplevelcommentreplycount)
+                                    , round(lastLevelcommentlikecount), round(lastLevelcommentreplycount)]]
+        print("x = ",x)
+        URL_predict = model.predict(x)
+        print("URL_predict = ", URL_predict)
+        anzenn = URL_predict[0][0]
+        anzenn = anzenn * 100
+        suspiciousDegree = URL_predict[0][1]
+        suspiciousDegree = suspiciousDegree * 100
+        print(anzenn)
+        print(suspiciousDegree)
+        """
+        print(type(URL_test))
+
         print("URL_test = ", URL_test)
 
         cursor.execute('SELECT * FROM icebox')
 
         scaler1 = preprocessing.StandardScaler()
-        scaler1.fit(URL_test)
+        scaler1.fit(URL_test[:999])
 
         print("before model predict scaler1 = ", scaler1)
 
-        transform = scaler1.transform(URL_test)
+        transform = scaler1.transform(URL_test[:999])
         
         print("before model predict transform = ", transform)
         print("before model predict transform[0][0] = ", transform[0][0])
 
-        URL_predict = model.predict(transform)
-        print("URL_predict = ", URL_predict)
+        URL_predict = model.predict(URL_test[:999])
+        """
+
+
+        """
         max = 0
         maxindex = 0
         for i in range(100):
@@ -544,6 +575,10 @@ def go_windowX():
                 None
 
         suspiciousDegree = maxindex
+        """
+
+        print("URL_predict == " , URL_predict)
+        suspiciousDegree = URL_predict[0][1] * 100
         print(suspiciousDegree)
 
         global label_dangerlevel
@@ -636,11 +671,9 @@ def go_windowX():
 
         test_video_data_x = np.array([[2000, 1000
                         , 50, 300
-                        , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
-                        , 2022, 4, 1, 12
-                        , eva_toInt("＾＾"), 800
-                        , eva_toInt("大丈夫？？"), 5, 2
-                        , eva_toInt("なにこれ？"), 0, 1
+                        , 800
+                        , 5, 2
+                        , 0, 1
                         ]])
 
 
@@ -1115,7 +1148,7 @@ ViewCount, LikeCount
 """
 
 
-
+"""
 test_video_data_x = np.array([[2000, 1000
                         , 50, 300
                         , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
@@ -1124,8 +1157,16 @@ test_video_data_x = np.array([[2000, 1000
                         , eva_toInt("大丈夫？？"), 5, 2
                         , eva_toInt("なにこれ？"), 0, 1
                         ]])
+"""
 
+test_video_data_x = np.array([[2000, 1000
+                        , 50, 300
+                        , 800
+                        , 5, 2
+                        , 0, 1
+                        ]])
 
+"""
 test_video_data_x = np.concatenate((test_video_data_x, np.array([[100, 2
                         , 2, 60
                         , eva_toInt("は？？"), eva_toInt("きれそう")
@@ -1159,14 +1200,12 @@ test_video_data_x = np.concatenate((test_video_data_x, np.array([[150000, 1500
                         , eva_toInt("この動画のおかげで彼女できました！田中一郎に感謝！！。"), 3, 8
                                                                 ]])
                                     ))
-
+"""
 test_video_data_x = np.concatenate((test_video_data_x, np.array([[240000, 4800
                         , 2, 630
-                        , eva_toInt("Youtuber、やめます！"), eva_toInt("これで終わりだっ・・。\n<br>今までありがとうございました。")
-                        , 2022, 7, 7, 3
-                        , eva_toInt("ピカル(Pikaru)"), 180000
-                        , eva_toInt("この動画は釣り動画、詐欺動画です。ブラウザバックをお勧めします。"), 155, 5
-                        , eva_toInt("ごみ！\n\n<br><br><br><br><br><br><br><br>しね！"), 5, 5
+                        , 180000
+                        , 155, 5
+                        , 5, 5
                                                                 ]])
                                     ))
 
@@ -1174,7 +1213,7 @@ test_video_data_x = np.concatenate((test_video_data_x, np.array([[240000, 4800
 print("^O^", test_video_data_x)
 
 #釣り動画＝1 普通動画＝0 # 2 ＝　ネタ動画
-answer_data_y = np.array([0, 0, 0, 1, 1])
+answer_data_y = np.array([0, 1])
 #answer_data_y = np.array([0])
 
 video_ids = []
@@ -1377,6 +1416,19 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
         cursor.execute("COMMIT;")
 
         test_video_data_x = np.concatenate((test_video_data_x, np.array([[vidViewCount, vidLikeCount
+                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll                               
+                                    , subscriberCount
+                                    , toplevelcommentlikecount, toplevelcommentreplycount
+                                    , lastLevelcommentlikecount, lastLevelcommentreplycount
+                                                                        ]])
+                                        ))
+        answer_data_y = np.append(answer_data_y, 0)
+
+        print("5")
+
+
+"""
+        test_video_data_x = np.concatenate((test_video_data_x, np.array([[vidViewCount, vidLikeCount
                                     , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
                                     , eva_toInt(title), eva_toInt(description)
                                     , dateUploaded.year, dateUploaded.month, dateUploaded.day, dateUploaded.hour
@@ -1385,11 +1437,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
                                     , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
                                                                         ]])
                                         ))
-
-        answer_data_y = np.append(answer_data_y, 0)
-
-        print("5")
-
+"""
 
 def TakeCh():
 
@@ -1450,34 +1498,34 @@ def takeSQL():
     
     SQLdetas = np.array([[2000, 1000
                         , 50, 300
-                        , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
-                        , 2022, 4, 1, 12
-                        , eva_toInt("＾＾"), 800
-                        , eva_toInt("大丈夫？？"), 5, 2
-                        , eva_toInt("なにこれ？"), 0, 1
+                        , 800
+                        , 5, 2
+                        , 0, 1
                         ]])
 
     SQLdetas = np.concatenate((SQLdetas, np.array([[150000, 1500
                         , 1, 300
-                        , eva_toInt("じゃんけんの勝ち方、、、徹底解説します。"), eva_toInt("明日から勝率１００パー間違いねぇぜ！")
-                        , 2022, 4, 1, 9
-                        , eva_toInt("令和のギャンブラー田中一郎の明日から使えるヤバい技チャンネル"), 800
-                        , eva_toInt("ネタかと思った。\n<br>でも顔がマジやん。。"), 111, 5
-                        , eva_toInt("この動画のおかげで彼女できました！田中一郎に感謝！！。"), 3, 8
+                        , 800
+                        , 111, 5
+                        , 3, 8
                                                                 ]])
                                     ))
     
 
-    labelSQL = np.array([0, 99])
+    labelSQL = np.array([0, 1])
+
+    print("cursor = ", cursor)
 
     for row in cursor:
 
         VideoID = row[0]
 
         Title = row[1]
+        print("row title=" , Title)
         Description = row[2]
 
         ViewCount = int(row[3])
+
         LikeCount = int(row[4])
 
         VideoLength = int(row[5])
@@ -1501,9 +1549,10 @@ def takeSQL():
         SuspiciousDegree = float(row[18])
 
         URL = row[19]
+        for x in row:
+            print(x)
 
-        """
-        if SuspiciousDegree >= 0.8:
+        if SuspiciousDegree >= 80:
             SuspiciousDegree = 1
         else:
             SuspiciousDegree = 0
@@ -1512,14 +1561,13 @@ def takeSQL():
             SuspiciousDegree = 99
         else:
             None
+        """
         
         SQLdetas = np.concatenate((SQLdetas, np.array([[ViewCount, LikeCount
-                                    , (LikeCount*100)/ViewCount, VideoLength
-                                    , eva_toInt(Title), eva_toInt(Description)
-                                    , DateYear, DateMonth, DateDay, DateHour
-                                    , eva_toInt(ChannelName), ChannelSubscribersCount
-                                    , eva_toInt(GoodComment), GoodCommentGoodCount, GoodCommentReplyCount
-                                    , eva_toInt(BadComment), BadCommentGoodCount, BadCommentReplyCount
+                                    , (LikeCount*100)/ViewCount, VideoLength                                  
+                                    , ChannelSubscribersCount
+                                    , GoodCommentGoodCount, GoodCommentReplyCount
+                                    , BadCommentGoodCount, BadCommentReplyCount
                                                                         ]])
                                         ))
 
@@ -1535,15 +1583,27 @@ def takeSQL():
 
     x=scaler.transform(SQLdetas)
 
+    countA = 105
+
+    last = x[countA]
+    print("last ==" , last)
+
     print("takeCH x = ",x)
 
     y = np_utils.to_categorical(labelSQL)
     #print(y)
+    y_last = y[countA]
+    print("y_last ==" , y_last)
 
     x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2)
 
+    x_test = np.concatenate((x_test, np.array([last]) )) 
+    y_test = np.concatenate((y_test, np.array([y_last]) )) 
 
+    print("x_test ==" , x_test)
     DoStudy(dostudyCount)
+
+
 
 
 #frame1
@@ -1564,8 +1624,8 @@ label_errorfake = tk.Label(frame1,bg="#42b33d")
 
 module = ('URL検索', 'チャンネルID検索')
  
-box_a = combobox = ttk.Combobox(frame1, value=module, width=80, height=120, state="readonly", cursor="dot")
-box_a.option_add("*TCombobox*Listbox.Font", 30)
+box_a = combobox = ttk.Combobox(frame1, value=module, width=15, height=20, state="readonly", cursor="dot",font=("Courier", 20, "bold"))
+#box_a.option_add("*TCombobox*Listbox.Font", 30)
 box_a.current(0)
 
 # ボタン, テキストの設定(text=ボタンに表示するテキスト)
@@ -1576,12 +1636,14 @@ btn_cry = tk.Button(label_horizon1, text='泣いちゃった',
 width = 10,
 height = 2,
 bg = "Red",
+font=("MSゴシック", "20", "bold"),
 command = go_window1toX
 )
 
 btn_go4 =  tk.Button(label_horizon1, text='旬の釣り動画検索',
 width = 15,
 height = 2,
+font=("MSゴシック", "20", "bold"),
 foreground = "Yellow",
 bg = "Purple",
 command = go_window4
@@ -1590,14 +1652,16 @@ command = go_window4
 btn_go5 =  tk.Button(label_horizon1, text='履歴の表示',
 width = 10,
 height = 2,
+font=("MSゴシック", "20", "bold"),
 foreground = "Cyan",
 bg = "Green",
 command = go_window5
 ) 
 
-btn_go = tk.Button(frame1, text='Go',
+btn_go = tk.Button(frame1, text='検索',
 width = 10,
 height = 3,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_windowX
@@ -1699,7 +1763,7 @@ command = go_window4to1
 
 #frame5
 
-label_historydisplay = tk.Label(frame5, text="履歴表示画面", font=("MSゴシック", "15", "bold"))
+label_historydisplay = tk.Label(frame5, text="履歴表示画面", font=("MSゴシック", "30", "bold"))
 
 label_moviehistoryhorizon = tk.Label(frame5)
 
@@ -1837,6 +1901,7 @@ dangerlevelrankingtree.insert(parent='', index='end', iid=4, values=("5位", "a"
 btn_return4 = tk.Button(frame5, text='最初の画面に戻る',
 width = 15,
 height = 3,
+font=("MSゴシック", "20", "bold"),
 foreground = "Cyan",
 bg = "Black",
 command = go_window5to1
@@ -1852,25 +1917,28 @@ label_horizonX = tk.Label(frameX,bg="#42b33d")
 
 # ボタン, テキストの設定(text=ボタンに表示するテキスト)
 
-use1 = tk.Button(label_horizonX, text='Go機能1',
-width = 50,
+use1 = tk.Button(label_horizonX, text='DBに保存',
+width = 25,
 height = 10,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_windowXtoX1
 )
 
-use2 = tk.Button(label_horizonX, text='Go機能2',
-width = 50,
+use2 = tk.Button(label_horizonX, text='日付内から取得',
+width = 25,
 height = 10,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_windowXtoX2
 )
 
-use3 = tk.Button(label_horizonX, text='Go機能3',
-width = 50,
+use3 = tk.Button(label_horizonX, text='AIに学習',
+width = 25,
 height = 10,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_windowXtoX3
@@ -1879,6 +1947,7 @@ command = go_windowXtoX3
 back = tk.Button(frameX, text='最初に戻る',
 width = 10,
 height = 3,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_windowXto1
@@ -1912,8 +1981,9 @@ bg = "Cyan",
 )
 
 save_date = tk.Button(frameX1, text='保存します',
-width = 100,
-height = 15,
+width = 30,
+height = 5,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = savemovieinfo
@@ -1922,6 +1992,7 @@ command = savemovieinfo
 back_windowX1 = tk.Button(frameX1, text='機能一覧へ',
 width = 10,
 height = 3,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_backX1
@@ -2014,8 +2085,9 @@ day_a.option_add("*TCombobox*Listbox.Font", 30)
 day_a.current(0)
 
 datasave = tk.Button(frameX2, text='データを保存',
-width = 100,
-height = 15,
+width = 30,
+height = 5,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = TakeCh
@@ -2023,8 +2095,9 @@ command = TakeCh
 
 
 backX2 = tk.Button(frameX2, text='機能一覧へ',
-width = 20,
-height = 8,
+width = 15,
+height = 3,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_backX2
@@ -2048,8 +2121,9 @@ bg = "Cyan",
 
 
 learning = tk.Button(frameX3, text=' 学習させる',
-width = 100,
-height = 20,
+width = 30,
+height = 5,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = takeSQL
@@ -2057,8 +2131,9 @@ command = takeSQL
 
 
 backX3 = tk.Button(frameX3, text='機能一覧へ',
-width = 20,
-height = 8,
+width = 15,
+height = 5,
+font=("MSゴシック", "20", "bold"),
 foreground = "Black",
 bg = "Cyan",
 command = go_backX3
@@ -2234,7 +2309,7 @@ scaler.fit(test_video_data_x)
 x=scaler.transform(test_video_data_x)
 #print(x)
 
-y = np_utils.to_categorical(answer_data_y,num_classes=100)
+y = np_utils.to_categorical(answer_data_y,num_classes=2)
 #print(y)
 
 x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2)
@@ -2271,7 +2346,7 @@ else:
     model = Sequential()
 
     #入力層作成　ニューロン数32　活性化関数＝ReLU　入力数＝18
-    model.add(Dense(32, activation='relu',input_dim =18))
+    model.add(Dense(32, activation='relu',input_dim =9))
     model.add(Dropout(0.2))
 
     #隠れ層作成　ニューロン数32　活性化関数＝ReLU　
@@ -2279,12 +2354,12 @@ else:
     model.add(Dropout(0.2))
 
     #出力層作成　ニューロン数(出力数)=1　活性化関数＝softmax
-    model.add(Dense(100, activation='softmax'))
+    model.add(Dense(2, activation='softmax'))
     #model.add(Dense(10))
 
     #最適化アルゴリズム　= SGD,損失機関=交差エントロピー、尺度＝精度
-    #model.compile(optimizer='sgd', loss='categorical_crossentropy',metrics=['accuracy'])
-    model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
+    model.compile(optimizer='sgd', loss='categorical_crossentropy',metrics=['accuracy'])
+    #model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
 
     print(model.summary())
     model.save(path)
@@ -2347,7 +2422,6 @@ def DoStudy(count=0):
 
     print("\n\ny_test: \n", y_test[:999])
     print("\n\ny_train: \n", y_train[:9])
-
 
 
 # もう一回学習するかコマンド入力させる関数
