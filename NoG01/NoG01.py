@@ -499,22 +499,50 @@ def go_windowX():
 
         URL_test = np.array([(vidViewCount, vidLikeCount
                                     , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , eva_toInt(title), eva_toInt(description)
-                                    , eva_toInt(channelName), subscriberCount
-                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
-                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
+                                    , subscriberCount
+                                    , toplevelcommentlikecount, toplevelcommentreplycount
+                                    , lastLevelcommentlikecount, lastLevelcommentreplycount
         )])
-
+        """
         URL_test = np.concatenate((URL_test,
                                     np.array([(vidViewCount, vidLikeCount
                                     , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , eva_toInt(title), eva_toInt(description)
-                                    , eva_toInt(channelName), subscriberCount
-                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
-                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
+                                    , subscriberCount
+                                    , toplevelcommentlikecount, toplevelcommentreplycount
+                                    , lastLevelcommentlikecount, lastLevelcommentreplycount
                                     )])
         ))
-        
+        """
+
+
+
+
+
+
+
+        #scaler = preprocessing.StandardScaler()
+        #scaler.fit(URL_test)
+        x=scaler.transform(URL_test)
+        #print(x)
+        #x_train, x_test = train_test_split(x,test_size=0)
+        #SuspiciousDegree=suspiciousDegree, URL="https://www.youtube.com/watch?v="+videoid
+        print("URL_test" ,URL_test)
+        multiply = 1
+        x =  [[round(vidViewCount * multiply), round(vidLikeCount)
+                                    , round((vidLikeCount*100)/vidViewCount), round(vidSecondsAfterAll)
+                                    , round(subscriberCount * multiply)
+                                    , round(toplevelcommentlikecount), round(toplevelcommentreplycount)
+                                    , round(lastLevelcommentlikecount), round(lastLevelcommentreplycount)]]
+        print("x = ",x)
+        URL_predict = model.predict(x)
+        print("URL_predict = ", URL_predict)
+        anzenn = URL_predict[0][0]
+        anzenn = anzenn * 100
+        suspiciousDegree = URL_predict[0][1]
+        suspiciousDegree = suspiciousDegree * 100
+        print(anzenn)
+        print(suspiciousDegree)
+        """
         print(type(URL_test))
 
         print("URL_test = ", URL_test)
@@ -532,6 +560,9 @@ def go_windowX():
         print("before model predict transform[0][0] = ", transform[0][0])
 
         URL_predict = model.predict(URL_test[:999])
+        """
+
+
         """
         max = 0
         maxindex = 0
@@ -552,7 +583,7 @@ def go_windowX():
 
         global label_dangerlevel
 
-        label_dangerlevel.configure(text="動画の釣り危険度" + str(round(suspiciousDegree, 1)) + "%")
+        label_dangerlevel.configure(text="動画の釣り危険度" + str(suspiciousDegree) + "%")
 
 
         moviehistorytree.insert(parent='', index=0, iid= moviehistorytreecount,values=(title,text_input.get("1.0","end"), str(suspiciousDegree) + '%'))
@@ -640,10 +671,9 @@ def go_windowX():
 
         test_video_data_x = np.array([[2000, 1000
                         , 50, 300
-                        , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
-                        , eva_toInt("＾＾"), 800
-                        , eva_toInt("大丈夫？？"), 5, 2
-                        , eva_toInt("なにこれ？"), 0, 1
+                        , 800
+                        , 5, 2
+                        , 0, 1
                         ]])
 
 
@@ -1131,10 +1161,9 @@ test_video_data_x = np.array([[2000, 1000
 
 test_video_data_x = np.array([[2000, 1000
                         , 50, 300
-                        , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
-                        , eva_toInt("＾＾"), 800
-                        , eva_toInt("大丈夫？？"), 5, 2
-                        , eva_toInt("なにこれ？"), 0, 1
+                        , 800
+                        , 5, 2
+                        , 0, 1
                         ]])
 
 """
@@ -1174,10 +1203,9 @@ test_video_data_x = np.concatenate((test_video_data_x, np.array([[150000, 1500
 """
 test_video_data_x = np.concatenate((test_video_data_x, np.array([[240000, 4800
                         , 2, 630
-                        , eva_toInt("Youtuber、やめます！"), eva_toInt("これで終わりだっ・・。\n<br>今までありがとうございました。")
-                        , eva_toInt("ピカル(Pikaru)"), 180000
-                        , eva_toInt("この動画は釣り動画、詐欺動画です。ブラウザバックをお勧めします。"), 155, 5
-                        , eva_toInt("ごみ！\n\n<br><br><br><br><br><br><br><br>しね！"), 5, 5
+                        , 180000
+                        , 155, 5
+                        , 5, 5
                                                                 ]])
                                     ))
 
@@ -1388,11 +1416,10 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
         cursor.execute("COMMIT;")
 
         test_video_data_x = np.concatenate((test_video_data_x, np.array([[vidViewCount, vidLikeCount
-                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , eva_toInt(title), eva_toInt(description)
-                                    , eva_toInt(channelName), subscriberCount
-                                    , eva_toInt(toplevelcomment), toplevelcommentlikecount, toplevelcommentreplycount
-                                    , eva_toInt(lastLevelcomment), lastLevelcommentlikecount, lastLevelcommentreplycount
+                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll                               
+                                    , subscriberCount
+                                    , toplevelcommentlikecount, toplevelcommentreplycount
+                                    , lastLevelcommentlikecount, lastLevelcommentreplycount
                                                                         ]])
                                         ))
         answer_data_y = np.append(answer_data_y, 0)
@@ -1471,18 +1498,16 @@ def takeSQL():
     
     SQLdetas = np.array([[2000, 1000
                         , 50, 300
-                        , eva_toInt("うおおおおおおお！！！"), eva_toInt("え・・・？")
-                        , eva_toInt("＾＾"), 800
-                        , eva_toInt("大丈夫？？"), 5, 2
-                        , eva_toInt("なにこれ？"), 0, 1
+                        , 800
+                        , 5, 2
+                        , 0, 1
                         ]])
 
     SQLdetas = np.concatenate((SQLdetas, np.array([[150000, 1500
                         , 1, 300
-                        , eva_toInt("じゃんけんの勝ち方、、、徹底解説します。"), eva_toInt("明日から勝率１００パー間違いねぇぜ！")
-                        , eva_toInt("令和のギャンブラー田中一郎の明日から使えるヤバい技チャンネル"), 800
-                        , eva_toInt("ネタかと思った。\n<br>でも顔がマジやん。。"), 111, 5
-                        , eva_toInt("この動画のおかげで彼女できました！田中一郎に感謝！！。"), 3, 8
+                        , 800
+                        , 111, 5
+                        , 3, 8
                                                                 ]])
                                     ))
     
@@ -1539,11 +1564,10 @@ def takeSQL():
         """
         
         SQLdetas = np.concatenate((SQLdetas, np.array([[ViewCount, LikeCount
-                                    , (LikeCount*100)/ViewCount, VideoLength
-                                    , eva_toInt(Title), eva_toInt(Description)
-                                    , eva_toInt(ChannelName), ChannelSubscribersCount
-                                    , eva_toInt(GoodComment), GoodCommentGoodCount, GoodCommentReplyCount
-                                    , eva_toInt(BadComment), BadCommentGoodCount, BadCommentReplyCount
+                                    , (LikeCount*100)/ViewCount, VideoLength                                  
+                                    , ChannelSubscribersCount
+                                    , GoodCommentGoodCount, GoodCommentReplyCount
+                                    , BadCommentGoodCount, BadCommentReplyCount
                                                                         ]])
                                         ))
 
@@ -2322,7 +2346,7 @@ else:
     model = Sequential()
 
     #入力層作成　ニューロン数32　活性化関数＝ReLU　入力数＝18
-    model.add(Dense(32, activation='relu',input_dim =14))
+    model.add(Dense(32, activation='relu',input_dim =9))
     model.add(Dropout(0.2))
 
     #隠れ層作成　ニューロン数32　活性化関数＝ReLU　
