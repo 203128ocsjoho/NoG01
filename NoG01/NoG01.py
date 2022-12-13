@@ -80,7 +80,7 @@ try:
     connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                 user="yuyuyu",        #ユーザ
                 password="yuyuyu123",  #パスワード
-                host="60.66.192.16",       #ホスト名
+                host="localhost",       #ホスト名
                 port="5432",            #ポート
                 dbname="postgres"))    #データベース名
 
@@ -459,10 +459,21 @@ def go_windowX():
             )
             response = request.execute()
 
+            if (len(response["items"]) <= 30):
+                messagebox.showerror("Error", "コメント数が30以下なので分析できません。")
+                return
+
+
+            global suspicious_words, unsuspicious_words
+
+            positive_count = 0
+            negative_count = 0
+
             BestGoodCount = 0
             WorstGoodCount = 0
 
             for itemc in response["items"]:
+
 
                 comment = itemc["snippet"]["topLevelComment"]
 
@@ -473,6 +484,26 @@ def go_windowX():
                 replyCount = itemc["snippet"]["totalReplyCount"]
 
                 comment_text = comment["snippet"]["textDisplay"]
+
+                for a_suspicious_word in suspicious_words:
+
+                    # 釣り動画らしい、怪しい単語が含まれていると、怪しさカウントをプラス１する。
+                    if comment_text != None and a_suspicious_word in comment_text:
+                        negative_count += 1
+
+                    # 何の単語も含まれていないと、何もせず次のループへ。
+                    else:
+                        None
+
+                for a_unsuspicious_word in unsuspicious_words:
+
+                    # 釣り動画らしくない、怪しくない単語が含まれていると、怪しさカウントをマイナス１する。
+                    if(comment_text != None and a_unsuspicious_word in comment_text):
+                        positive_count += 1
+
+                    # 何の単語も含まれていないと、何もせず次のループへ。
+                    else:
+                        None
 
             
                 if (likeCount >= BestGoodCount):
@@ -497,12 +528,11 @@ def go_windowX():
 
         model = load_model(path)
 
-        URL_test = np.array([(vidViewCount, vidLikeCount
-                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll
-                                    , subscriberCount
-                                    , toplevelcommentlikecount, toplevelcommentreplycount
-                                    , lastLevelcommentlikecount, lastLevelcommentreplycount
-        )])
+        positive_word = positive_count/len(response["items"])
+        negative_word = negative_count/len(response["items"])
+
+        URL_test = np.array([( (vidLikeCount*100)/vidViewCount, positive_word, negative_word)])
+
         """
         URL_test = np.concatenate((URL_test,
                                     np.array([(vidViewCount, vidLikeCount
@@ -522,24 +552,31 @@ def go_windowX():
 
         #scaler = preprocessing.StandardScaler()
         #scaler.fit(URL_test)
-        x=scaler.transform(URL_test)
+        
+        
+        #x=scaler.transform(URL_test)
+        
         #print(x)
         #x_train, x_test = train_test_split(x,test_size=0)
         #SuspiciousDegree=suspiciousDegree, URL="https://www.youtube.com/watch?v="+videoid
         print("URL_test" ,URL_test)
+
         multiply = 1
-        x =  [[round(vidViewCount * multiply), round(vidLikeCount)
-                                    , round((vidLikeCount*100)/vidViewCount), round(vidSecondsAfterAll)
-                                    , round(subscriberCount * multiply)
-                                    , round(toplevelcommentlikecount), round(toplevelcommentreplycount)
-                                    , round(lastLevelcommentlikecount), round(lastLevelcommentreplycount)]]
+        x =  [[round((vidLikeCount*100)/vidViewCount), round(positive_word), round(negative_word)]]
         print("x = ",x)
+
+        x = scaler.transform(x)
+        print("x = ",x)
+
         URL_predict = model.predict(x)
+
         print("URL_predict = ", URL_predict)
+
         anzenn = URL_predict[0][0]
         anzenn = anzenn * 100
         suspiciousDegree = URL_predict[0][1]
         suspiciousDegree = suspiciousDegree * 100
+
         print(anzenn)
         print(suspiciousDegree)
         """
@@ -702,6 +739,7 @@ def go_windowX():
             if fcount <= 0:
                 fcount+=1
                 continue
+
 
             URL_test2 = np.array([vid])
 
@@ -1076,12 +1114,24 @@ def savemovieinfo():
 #怪しさ単語登録
 suspicious_words = ["?", "？", "違う", "悪", "謎", "わからない", "分からない", "何故", "なぜ", "なんで", "引退"
                    , "釣り", "詐欺", "ブラウザバック", "ごみ", "ゴミ", "しね",  "はあ" ,"はぁ", "だる", "飽き", "いい", "いらない", "不必要"
-                   , "とは", "重要な", "お知らせ", "ベスト", "最", "について。"]
+                   , "とは", "重要な", "お知らせ", "ベスト", "最", "について。", "どっきり", "ドッキリ", "サプライズ", "えぇ・", "逆"
+                   ,"釣り動画", "サムネ詐欺", "釣り", "ごみ", "おもんな", "騙", "びっくり", "茶番", "案件"
+                   ,"wrong", "evil", "mystery", "don't know", "doesn't know", "Why", "why", "reason", "retired"
+                    , "fishing", "scam", "browser back", "garbage", "stupid", "die", "haa", "huh", "lazy", "tired", "nice", "no needed", "Unnecessary"
+                    , "What is", "What's?", "Important", "Announcement", "Best", "Most", "About."
+                    ,"fishing video", "thumbnail scam", "fishing", "garbage", "strange", "cheating", "surprise", "farce", "problem"]
 
 #好印象単語登録
 unsuspicious_words = ["正し", "義", "善", "良", "わかる", "分かる", "理由が", "りゆうが", "なるほど", "継続", "これからも", "待", "評価"
                    , "必要と", "ありがとう", "有難う", "有り難う", "神"
-                   , "まとめ", "考察", "歴代", "便利", "解説", "紹介", "その", "第", "回", "10", "１０", "十", "について、", "について解", "について紹"]
+                   , "まとめ", "考察", "歴代", "便利", "解説", "紹介", "その", "第", "回", "10", "１０", "十", "について、", "について解", "について紹"
+                   , "最高", "ありがとう", "うまい", "面白", "好き", "楽しい"
+                   , "Right", "Righteous", "Virtue", "Good", "Great", "superb", "Understand", "Understand", "Reason", "Reason"
+                   , "I see", "Continue", "From now on", " Wait", "Evaluate"
+                   , "necessary", "thank you", "thank you", "thank you", "god"
+                   , "Summary", "Consideration", "Successive", "Convenient", "Commentary", "Introduction", "That", "No."
+                   , "Time", "10", "ten", "Ten", " About ", "Solution about", "Introduction about"
+                   , "Excellent", "Thank you", "God", "Interesting", "Like", "Fun"]
 
 count = 5 #怪しさカウント
 count_count = 1 #カウントを何回やったかのカウント
@@ -1159,12 +1209,7 @@ test_video_data_x = np.array([[2000, 1000
                         ]])
 """
 
-test_video_data_x = np.array([[2000, 1000
-                        , 50, 300
-                        , 800
-                        , 5, 2
-                        , 0, 1
-                        ]])
+test_video_data_x = np.array([[50, 5, 0]])
 
 """
 test_video_data_x = np.concatenate((test_video_data_x, np.array([[100, 2
@@ -1201,13 +1246,7 @@ test_video_data_x = np.concatenate((test_video_data_x, np.array([[150000, 1500
                                                                 ]])
                                     ))
 """
-test_video_data_x = np.concatenate((test_video_data_x, np.array([[240000, 4800
-                        , 2, 630
-                        , 180000
-                        , 155, 5
-                        , 5, 5
-                                                                ]])
-                                    ))
+test_video_data_x = np.concatenate((test_video_data_x, np.array([[1, 0.01, 0.5]]) ))
 
 
 print("^O^", test_video_data_x)
@@ -1327,6 +1366,11 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
         #comennntbool = True
 
+        global suspicious_words, unsuspicious_words
+
+        positive_count = 0
+        negative_count = 0
+
         try:
 
             request = youtube.commentThreads().list(
@@ -1335,6 +1379,10 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
                 maxResults = 500
             )
             response = request.execute()
+
+            if (len(response["items"]) <= 30):
+                messagebox.showerror("Error", "コメント数が30以下なので分析できません。")
+                continue
 
             for item in response["items"]:
 
@@ -1347,6 +1395,27 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
                 replyCount = item["snippet"]["totalReplyCount"]
 
                 comment_text = comment["snippet"]["textDisplay"]
+
+                for a_suspicious_word in suspicious_words:
+
+                    # 釣り動画らしい、怪しい単語が含まれていると、怪しさカウントをプラス１する。
+                    if comment_text != None and a_suspicious_word in comment_text:
+                        negative_count += 1
+
+                    # 何の単語も含まれていないと、何もせず次のループへ。
+                    else:
+                        None
+
+                for a_unsuspicious_word in unsuspicious_words:
+
+                    # 釣り動画らしくない、怪しくない単語が含まれていると、怪しさカウントをマイナス１する。
+                    if(comment_text != None and a_unsuspicious_word in comment_text):
+                        positive_count += 1
+
+                    # 何の単語も含まれていないと、何もせず次のループへ。
+                    else:
+                        None
+ 
 
             
                 if (likeCount >= BestGoodCount):
@@ -1393,6 +1462,17 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
             subscriberCount = vidViewCount / 2
 
         print("4")
+
+        positive_word = positive_count/len(response["items"])
+        negative_word = negative_count/len(response["items"])
+
+        print("response = ", response)
+
+        print("positive_count = ", positive_count)
+        print("negative_count = ", negative_count)
+
+        print("positive_word = ", positive_word)
+        print("negative_word = ", negative_word)
         
         cursor.execute("INSERT INTO icebox VALUES("\
                         "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
@@ -1400,7 +1480,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
                         ", {DateYear}, {DateMonth}, {DateDay}, {DateHour}"\
                         ", '{GoodComment}', {GoodCommentGoodCount}, {GoodCommentReplyCount}"\
                         ", '{BadComment}', {BadCommentGoodCount}, {BadCommentReplyCount}"\
-                        ", {SuspiciousDegree}, '{URL}') ON CONFLICT DO NOTHING".format(
+                        ", {SuspiciousDegree}, '{URL}', {PositiveWord}, {NegativeWord}) ON CONFLICT DO NOTHING".format(
                             VideoId=videoId, Title=title, Description=description
                             , ViewCount=vidViewCount, LikeCount=vidLikeCount
                             , VideoLength=vidSecondsAfterAll, ChannelName=channelName
@@ -1409,19 +1489,13 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
                             , DateDay=dateUploaded.day, DateHour=dateUploaded.hour
                             , GoodComment=toplevelcomment, GoodCommentGoodCount=toplevelcommentlikecount, GoodCommentReplyCount=toplevelcommentreplycount
                             , BadComment=lastLevelcomment, BadCommentGoodCount=lastLevelcommentlikecount, BadCommentReplyCount=lastLevelcommentreplycount
-                            , SuspiciousDegree="50.111", URL="https://www.youtube.com/watch?v="+videoId
+                            , SuspiciousDegree="50.111", URL="https://www.youtube.com/watch?v="+videoId, PositiveWord=positive_word, NegativeWord=negative_word
                             )
                        )
 
         cursor.execute("COMMIT;")
 
-        test_video_data_x = np.concatenate((test_video_data_x, np.array([[vidViewCount, vidLikeCount
-                                    , (vidLikeCount*100)/vidViewCount, vidSecondsAfterAll                               
-                                    , subscriberCount
-                                    , toplevelcommentlikecount, toplevelcommentreplycount
-                                    , lastLevelcommentlikecount, lastLevelcommentreplycount
-                                                                        ]])
-                                        ))
+        test_video_data_x = np.concatenate((test_video_data_x, np.array([[(vidLikeCount*100)/vidViewCount, positive_word, negative_word]]) ))
         answer_data_y = np.append(answer_data_y, 0)
 
         print("5")
@@ -1496,13 +1570,18 @@ def takeSQL():
 
     cursor.execute('SELECT * FROM icebox')
     
+    """
     SQLdetas = np.array([[2000, 1000
                         , 50, 300
                         , 800
                         , 5, 2
                         , 0, 1
                         ]])
+    """
+    SQLdetas = np.array([[50, 5, 0]])
 
+    SQLdetas = np.concatenate((SQLdetas, np.array([[1, 0.01, 0.5]]) ))
+    """
     SQLdetas = np.concatenate((SQLdetas, np.array([[150000, 1500
                         , 1, 300
                         , 800
@@ -1510,6 +1589,7 @@ def takeSQL():
                         , 3, 8
                                                                 ]])
                                     ))
+    """
     
 
     labelSQL = np.array([0, 1])
@@ -1562,7 +1642,13 @@ def takeSQL():
         else:
             None
         """
-        
+
+        positive_rate = row[20]
+        negative_rate = row[21]
+
+        SQLdetas = np.concatenate((SQLdetas, np.array([[(LikeCount*100)/ViewCount, positive_rate, negative_rate ]]) ))
+
+        """
         SQLdetas = np.concatenate((SQLdetas, np.array([[ViewCount, LikeCount
                                     , (LikeCount*100)/ViewCount, VideoLength                                  
                                     , ChannelSubscribersCount
@@ -1570,6 +1656,7 @@ def takeSQL():
                                     , BadCommentGoodCount, BadCommentReplyCount
                                                                         ]])
                                         ))
+        """
 
         labelSQL = np.append(labelSQL, SuspiciousDegree)
 
@@ -2346,7 +2433,7 @@ else:
     model = Sequential()
 
     #入力層作成　ニューロン数32　活性化関数＝ReLU　入力数＝18
-    model.add(Dense(32, activation='relu',input_dim =9))
+    model.add(Dense(32, activation='relu', input_dim = 3))
     model.add(Dropout(0.2))
 
     #隠れ層作成　ニューロン数32　活性化関数＝ReLU　
@@ -2400,7 +2487,7 @@ def DoStudy(count=0):
     
     study_times_int = int(study_times_str) if count is None else count
 
-    history = model.fit(x_train, y_train, epochs=study_times_int, batch_size=10) #batch_sizeは8(2^3)でもいいかも？
+    history = model.fit(x_train, y_train, epochs=study_times_int, batch_size=1) #batch_sizeは8(2^3)でもいいかも？
 
     loss, accuracy = model.evaluate(x_test,y_test)
     print("\n\n誤差: [",loss,"], 精度: [",accuracy, "*100%]")
