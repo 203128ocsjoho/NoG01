@@ -234,6 +234,7 @@ def go_window4to1():
     cryCount = True
     label_error.pack_forget()
     label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+    label_thumbnailForTrendy.pack_forget()
 
 def go_window5to1():
     frame5.pack_forget()
@@ -960,6 +961,50 @@ def isint(str):  # 整数値を表しているかどうかを判定
         return True
 
 
+
+def showtrendymovieinfo():
+    global label_thumbnailForTrendy
+
+    if datetime.date.today().month == 1:
+        cursor.execute('SELECT * FROM correctresult WHERE ( ("DateYear" = {Year}) OR ("DateYear" = {Year} - 1) ) AND ( ("DateMonth" = {Month1}) OR ("DateMonth" = {Month2}) ) ORDER BY "SuspiciousDegree" DESC, "DateYear" DESC, "DateMonth" DESC, "DateDay" DESC, "DateHour" DESC'.format(Year=datetime.date.today().year, Month1=1, Month2=12))
+    else:
+        cursor.execute('SELECT * FROM correctresult WHERE ("DateYear" = {Year}) AND ( ("DateMonth" = {Month1}) OR ("DateMonth" = {Month2}) ) ORDER BY "SuspiciousDegree" DESC, "DateYear" DESC, "DateMonth" DESC, "DateDay" DESC, "DateHour" DESC'.format(Year=datetime.date.today().year, Month1=datetime.date.today().month, Month2=datetime.date.today().month-1)) 
+
+    for row in cursor:
+        VideoID = row[0]
+        Title = row[1]
+        Description = row[2]
+        ChennelName = row[6]
+        VideoYear = row[8]
+        VideoMonth = row[9]
+        VideoDay = row[10]
+        VideoHour = row[11]
+        SuspiciousDegree = row[18]
+        thumbnailUrlTrendy = "https://img.youtube.com/vi/" + VideoID + "/hqdefault.jpg"
+
+        responseTrendy = requests.get(thumbnailUrlTrendy )
+
+        imgTrendy = Image.open(BytesIO(responseTrendy.content))
+
+        imgTrendyResize = imgTrendy.resize((1000,750))
+
+        thumbnailTrendy = ImageTk.PhotoImage(imgTrendyResize)
+
+        label_thumbnailForTrendy = tk.Label(frame4, image=thumbnailTrendy)
+
+        label_thumbnailForTrendy.image = thumbnailTrendy
+
+    label_thumbnailForTrendy.pack(padx = 50, pady = 10, after=label_trendyvideodangerlevel)
+
+    label_trendyvideodangerlevel.configure(text="動画の釣り危険度"+str(SuspiciousDegree)+"%")
+
+    frame1.pack_forget()
+    frame4.pack(padx = 0, pady = 0)
+    label_error.pack_forget()
+
+
+#------------------------------------------------------------------------------------------------------
+
 def savemovieinfo():
 
 
@@ -974,7 +1019,7 @@ def savemovieinfo():
         messagebox.showinfo("Error", "数字ok")
     else:
         print("elsereturn")
-        messagebox.showerror("Error", "数字を入力してくれ")
+        messagebox.showerror("Error", "数字を入力してください")
         return None
 
     
@@ -1023,7 +1068,6 @@ def savemovieinfo():
 
     print("forに入りたい")
     for item in videos_body['items']:
-        print("aa", "for文に入りま")
 
         vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
 
@@ -1090,7 +1134,7 @@ def savemovieinfo():
 
         #vidDuration = isodate.parse_duration(item['contentDetails']['duration'])
 
-        messagebox.showinfo("aa", "DBmade")
+        messagebox.showinfo("aa", "DBに接続")
 
         cursor.execute("INSERT INTO icebox VALUES("\
                             "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
@@ -1112,9 +1156,7 @@ def savemovieinfo():
                            )
         cursor.execute("COMMIT;")
 
-        messagebox.showinfo("おあり", "gg")
-
-    messagebox.showinfo("a", "おわりってことだお")
+    messagebox.showinfo("info", "保存完了")
 
 
 
@@ -1299,7 +1341,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
     publishedBefore=dayA,
     ).execute()
 
-    print("1")
+    messagebox.showinfo("info","保存開始")
  
     videoCountForAPI = 0
     commentCount = 0
@@ -1481,6 +1523,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
 
         print("positive_word = ", positive_word)
         print("negative_word = ", negative_word)
+
         
         cursor.execute("INSERT INTO icebox VALUES("\
                         "'{VideoId}', '{Title}', '{Description}', {ViewCount}, {LikeCount}"\
@@ -1506,7 +1549,7 @@ def setVideoDatas(ID, number, yb, mb, db, ya, ma, da):
         test_video_data_x = np.concatenate((test_video_data_x, np.array([[(vidLikeCount*100)/vidViewCount, positive_word, negative_word]]) ))
         answer_data_y = np.append(answer_data_y, 0)
 
-        print("5")
+    messagebox.showinfo("info","保存完了")
 
 
 """
@@ -1704,7 +1747,7 @@ def takeSQL():
 #frame1
 
 # ラベル表示
-label_title = tk.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
+label_title_main = tk.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
 
 #label_desc = tk.Label(frame1, text="(選択肢ボタン)\n(URL検索)\nor(チャンネルID検索)", font=("MSゴシック", "12", "bold"))
 
@@ -1727,7 +1770,7 @@ box_a.current(0)
 
 label_horizon1 = tk.Label(frame1,bg="#42b33d")
 
-btn_cry = tk.Button(label_horizon1, text='泣いちゃった',
+btn_cry = tk.Button(label_horizon1, text='デバッグ機能',
 width = 10,
 height = 2,
 bg = "Red",
@@ -1741,7 +1784,7 @@ height = 2,
 font=("MSゴシック", "20", "bold"),
 foreground = "Yellow",
 bg = "Purple",
-command = go_window4
+command = showtrendymovieinfo
 )
 
 btn_go5 =  tk.Button(label_horizon1, text='履歴の表示',
@@ -1843,10 +1886,6 @@ label_trendyvideo = tk.Label(frame4, text="旬の釣り動画検索", font=("MS�
 
 label_trendyvideodangerlevel = tk.Label(frame4, text="動画の危険度XX%", font=("MSゴシック", "40", "bold"))
 
-image1 = image1.resize((600,400))
-test5= ImageTk.PhotoImage(image1)
-label_thumbnail5 = tk.Label(frame4, image=test5)
-label_thumbnail5.image = test5
 
 btn_return3 = tk.Button(frame4, text='最初の画面に戻る',
 width = 15,
@@ -2243,7 +2282,7 @@ btn_go4.pack(padx = 10, pady = 0, side = tk.RIGHT)
 btn_go5.pack(padx = 10, pady = 0, side = tk.RIGHT)
 label_horizon1.pack(padx = 50, pady = 10, expand=1)
 
-label_title.pack(padx = 50, pady = 40, expand=1)
+label_title_main.pack(padx = 50, pady = 40, expand=1)
 
 box_a.pack(padx = 10, pady = 0, expand=1)
 
@@ -2287,9 +2326,9 @@ label_horizon.pack(padx = 50, pady = 10, expand=1)
 btn_return2.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
 label_channeldangervideo.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
 
-label_title1.pack(padx = 100, pady = 10, side = tk.RIGHT)
-label_title2.pack(padx = 100, pady = 10, side = tk.RIGHT)
-label_title3.pack(padx = 100, pady = 10, side = tk.RIGHT)
+label_title1.pack(padx = 10, pady = 10, side = tk.RIGHT)
+label_title2.pack(padx = 10, pady = 10, side = tk.RIGHT)
+label_title3.pack(padx = 10, pady = 10, side = tk.RIGHT)
 label_titlehorizon.pack(padx = 50, pady = 10, expand=1)
 
 label_Sus1.pack(padx = 100, pady = 10, side = tk.RIGHT)
@@ -2304,7 +2343,6 @@ sizegrip3.pack(padx = 5, pady = 5)
 #4画面目
 label_trendyvideo.pack(padx = 10, pady = 10, expand=1)
 label_trendyvideodangerlevel.pack(padx = 50, pady = 10, expand=1)
-label_thumbnail5.pack(padx = 50, pady = 10)
 btn_return3.pack(padx = 50, pady = 10, expand=1)
 
 sizegrip4 = ttk.Sizegrip(frame4)
