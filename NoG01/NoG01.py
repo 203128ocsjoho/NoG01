@@ -28,6 +28,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import simpledialog
 
 #AI(keras)モデルのインポート
 from keras.models import Sequential
@@ -65,24 +66,45 @@ from io import BytesIO
 #その他？のインポート
 import os
 
+kankyouYN = messagebox.askyesno("初期設定","デフォルトではない環境を設定しますか？")
+
+if kankyouYN == True:
+    askAPI = simpledialog.askstring(title="YOUTUBEAPIキーを入力", prompt="YOUTUBE_API_KEY") 
+    askIP = simpledialog.askstring(title="IPアドレスを入力", prompt="IP")
+    askPORT = simpledialog.askinteger(title="ポート番号を入力", prompt="Port")
+    askUSER = simpledialog.askstring(title="ユーザー名を入力", prompt="UserName")
+    askPASS = simpledialog.askstring(title="パスワードを入力", prompt="Password")
+else:
+    None
 
 
 
-
-YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
+if kankyouYN == True:
+    YOUTUBE_API_KEY = askAPI
+else:
+    YOUTUBE_API_KEY = 'AIzaSyCu7OyzTomXx6rujSKQCzS4aSAjgfBFqB8'
 
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 
 
 try:
+    #卒業研究終了後少ししたらポート閉じます
     #接続
-    connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
-                user="yuyuyu",        #ユーザ
-                password="yuyuyu123",  #パスワード
-                host="60.66.192.16",       #ホスト名
-                port="5432",            #ポート
-                dbname="postgres"))    #データベース名
+    if kankyouYN == True:
+        connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
+                    user=askUSER,        #ユーザ
+                    password=askPASS,  #パスワード
+                    host=askIP,       #ホスト名
+                    port=str(askPORT),            #ポート
+                    dbname="postgres"))         #データベース名
+    else:
+        connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
+                    user="yuyuyu",        #ユーザ
+                    password="yuyuyu123",  #パスワード
+                    host="60.66.192.16",       #ホスト名
+                    port="5432",            #ポート
+                    dbname="postgres"))    #データベース名
 
     #カーソル取得
     cursor = connector.cursor()
