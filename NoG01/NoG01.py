@@ -80,7 +80,7 @@ try:
     connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                 user="yuyuyu",        #ユーザ
                 password="yuyuyu123",  #パスワード
-                host="localhost",       #ホスト名
+                host="60.66.192.16",       #ホスト名
                 port="5432",            #ポート
                 dbname="postgres"))    #データベース名
 
@@ -296,6 +296,10 @@ def go_backX3():
 
 #frame1からframe2かframe3
 def go_windowX():
+    #model lord
+    path = 'models/NoGProt.h5'
+
+    model = load_model(path)
 
     global moviehistorytree
     global moviehistorytreecount
@@ -524,10 +528,6 @@ def go_windowX():
 
         #AIに予測させる
 
-        path = 'models/NoGProt.h5'
-
-        model = load_model(path)
-
         positive_word = positive_count/len(response["items"])
         negative_word = negative_count/len(response["items"])
 
@@ -671,8 +671,21 @@ def go_windowX():
             frame3.pack(padx = 0, pady = 0)
             label_error.pack_forget()
             label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
-        
+            """
+            elif "https://www.youtube.com/@" in text_input.get("1.0","end"):
+                x = urlopen(URL)
+                raw_data = x.read()
+                encoding = x.info().get_content_charset('utf8')  # JSON default
+                data = json.loads(raw_data.decode(encoding))
 
+                ch = URL.replace('https://www.youtube.com/','').replace('\n','').replace('%0a','')
+
+                messagebox.showinfo("info", "カスタムURLです")
+                frame1.pack_forget()
+                frame3.pack(padx = 0, pady = 0)
+                label_error.pack_forget()
+                label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
+            """
         else:
             label_errorfake.pack_forget()
             label_error.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
@@ -706,12 +719,7 @@ def go_windowX():
 
         #aa = np.array([[0,0],[0,0]])
 
-        test_video_data_x = np.array([[2000, 1000
-                        , 50, 300
-                        , 800
-                        , 5, 2
-                        , 0, 1
-                        ]])
+        test_video_data_x = np.array([[50, 5, 0]])
 
 
         for i in range(2):
