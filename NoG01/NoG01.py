@@ -995,12 +995,12 @@ def showtrendymovieinfo():
     for row in cursor:
         VideoID = row[0]
         Title = row[1]
-        Description = row[2]
-        ChennelName = row[6]
-        VideoYear = row[8]
-        VideoMonth = row[9]
-        VideoDay = row[10]
-        VideoHour = row[11]
+        #Description = row[2]
+        #ChennelName = row[6]
+        #VideoYear = row[8]
+        #VideoMonth = row[9]
+        #VideoDay = row[10]
+        #VideoHour = row[11]
         SuspiciousDegree = row[18]
         thumbnailUrlTrendy = "https://img.youtube.com/vi/" + VideoID + "/hqdefault.jpg"
 
@@ -1008,7 +1008,7 @@ def showtrendymovieinfo():
 
         imgTrendy = Image.open(BytesIO(responseTrendy.content))
 
-        imgTrendyResize = imgTrendy.resize((1000,750))
+        imgTrendyResize = imgTrendy.resize((900,675))
 
         thumbnailTrendy = ImageTk.PhotoImage(imgTrendyResize)
 
@@ -1016,9 +1016,13 @@ def showtrendymovieinfo():
 
         label_thumbnailForTrendy.image = thumbnailTrendy
 
+        break
+
     label_thumbnailForTrendy.pack(padx = 50, pady = 10, after=label_trendyvideodangerlevel)
 
-    label_trendyvideodangerlevel.configure(text="動画の釣り危険度"+str(SuspiciousDegree)+"%")
+    label_trendyvideotitle.configure(text="タイトル　→→　" + Title)
+
+    label_trendyvideodangerlevel.configure(text="動画の釣り危険度" + str(SuspiciousDegree) + "%")
 
     frame1.pack_forget()
     frame4.pack(padx = 0, pady = 0)
@@ -1906,12 +1910,14 @@ command = go_window3to1
 
 label_trendyvideo = tk.Label(frame4, text="旬の釣り動画検索", font=("MSゴシック", "15", "bold"))
 
+label_trendyvideotitle = tk.Label(frame4, text="タイトル", font=("MSゴシック", "15", "bold"))
+
 label_trendyvideodangerlevel = tk.Label(frame4, text="動画の危険度XX%", font=("MSゴシック", "40", "bold"))
 
 
 btn_return3 = tk.Button(frame4, text='最初の画面に戻る',
-width = 15,
-height = 3,
+width = 20,
+height = 7,
 foreground = "Cyan",
 bg = "Black",
 command = go_window4to1
@@ -2364,6 +2370,7 @@ sizegrip3.pack(padx = 5, pady = 5)
 
 #4画面目
 label_trendyvideo.pack(padx = 10, pady = 10, expand=1)
+label_trendyvideotitle.pack(padx = 10, pady = 10, expand=1)
 label_trendyvideodangerlevel.pack(padx = 50, pady = 10, expand=1)
 btn_return3.pack(padx = 50, pady = 10, expand=1)
 
