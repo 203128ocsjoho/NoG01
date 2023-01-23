@@ -10,12 +10,14 @@
 
 #*******************************************************
 
+
+#いつかつかうかも？
 '''
-#10/21　表出力でやるはず
 #import pandas as pd
 #import matplotlib.pyplot as plt
 '''
 
+#いつかつかうかも？
 '''
 #エクセル系
 #import openpyxl
@@ -913,7 +915,8 @@ def go_window5to1():
     label_error.pack_forget()
     label_errorfake.pack(padx = 10, pady = 5, expand=1, after=label_inputURL)
 
-    dangerlevelrankingtree.delete()
+    for item in dangerlevelrankingtree.get_children():
+        dangerlevelrankingtree.delete(item)
 
 
 
@@ -1224,7 +1227,9 @@ def eva_toInt(string):
     return count
 
 
-#たくさんの項目数、順番で、それぞれ何を意味しているか。　上、英語　下、日本語（outdated
+#（Outdated?)
+
+#たくさんの項目数、順番で、それぞれ何を意味しているか。　上、英語　下、日本語
 """
 ViewCount, LikeCount
 , LikeRate([LikeCount*100]/ViewCount), VideoLength(sec)
@@ -1233,8 +1238,7 @@ ViewCount, LikeCount
 , ChannelName, ChannelSubscribersCount
 , GoodComment, LikeCountofGoodComment, ReplyCountofGoodComment
 , BadComment, LikeCountofBadComment, ReplyCountofBadComment
-"""
-"""
+
 再生数, グッド数
 , グッド率([グッド数*100]/再生数), 動画時間（秒）
 , タイトル名, 詳細文
@@ -1243,6 +1247,8 @@ ViewCount, LikeCount
 , （比較的）評価の高いコメント, （比較的）グッドコメントのグッド数, （比較的）グッドコメントの返信数
 , （比較的）評価の低いコメント, （比較的）バッドコメントのグッド数, （比較的）バッドコメントの返信数
 """
+
+#（Outdated?)
 
 
 test_video_data_x = np.array([[50, 5, 0]])
