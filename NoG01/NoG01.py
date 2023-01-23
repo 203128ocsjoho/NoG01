@@ -803,6 +803,7 @@ def showtrendymovieinfo():
 
     for row in cursor:
         VideoID = row[0]
+        """
         Title = row[1]
         Description = row[2]
         ChennelName = row[6]
@@ -810,6 +811,7 @@ def showtrendymovieinfo():
         VideoMonth = row[9]
         VideoDay = row[10]
         VideoHour = row[11]
+        """
         SuspiciousDegree = row[18]
         thumbnailUrlTrendy = "https://img.youtube.com/vi/" + VideoID + "/hqdefault.jpg"
 
@@ -824,6 +826,8 @@ def showtrendymovieinfo():
         label_thumbnailForTrendy = tk.Label(frame4, image=thumbnailTrendy)
 
         label_thumbnailForTrendy.image = thumbnailTrendy
+
+        break
 
 
     label_thumbnailForTrendy.pack(padx = 50, pady = 10, after=label_trendyvideodangerlevel)
@@ -848,14 +852,16 @@ def go_window5():
     countForRanking = 0
 
     for row in cursor:
-        VideoID = row[0]
+        #VideoID = row[0]
         Title = row[1]
+        """
         Description = row[2]
         ChennelName = row[6]
         VideoYear = row[8]
         VideoMonth = row[9]
         VideoDay = row[10]
         VideoHour = row[11]
+        """
         SuspiciousDegree = row[18]
         URL = row[19]
 
@@ -907,6 +913,7 @@ def go_window4to1():
 def go_window5to1():
     
     global cryCount
+
     cryCount = True
     
     frame5.pack_forget()
@@ -1534,7 +1541,7 @@ def TakeCh():
 
         return None
    
-    setVideoDatas(chid, moviecount, int(year_b.get()), int(manth_b.get()), int(day_b.get()), int(year_a.get()), int(manth_a.get()), int(day_a.get()))
+    setVideoDatas(chid, moviecount, int(year_b.get()), int(month_b.get()), int(day_b.get()), int(year_a.get()), int(month_a.get()), int(day_a.get()))
 
 
 def takeSQL():
@@ -1637,7 +1644,7 @@ def takeSQL():
 
 
 
-#frame1
+#frame1（メインメニュー画面）
 
 # ラベル表示
 label_title_main = tk.Label(frame1, text="Youtube 釣り動画判別", font=("MSゴシック", "20", "bold"))
@@ -1708,7 +1715,9 @@ bg = "Cyan",
 )
 
 
-# frame2
+
+
+# frame2（動画ID検索画面）
 
 label_URLsearch = tk.Label(frame2, text="URL検索", font=("MSゴシック", "15", "bold"))
 
@@ -1739,7 +1748,9 @@ bg = "Black",
 command = go_window2to1
 )
 
-#frame3
+
+
+#frame3（チャンネル動画検索画面）
 
 label_channelIDsearch = tk.Label(frame3, text="チャンネルID検索", font=("MSゴシック", "15", "bold"))
 
@@ -1775,7 +1786,9 @@ bg = "White",
 command = go_window3to1
 )
 
-#frame4
+
+
+#frame4（旬の釣り動画検索画面）
 
 label_trendyvideo = tk.Label(frame4, text="旬の釣り動画検索", font=("MSゴシック", "15", "bold"))
 
@@ -1790,7 +1803,9 @@ bg = "Black",
 command = go_window4to1
 )
 
-#frame5
+
+
+#frame5（履歴表示画面）
 
 label_historydisplay = tk.Label(frame5, text="履歴表示画面", font=("MSゴシック", "30", "bold"))
 
@@ -1932,7 +1947,7 @@ command = go_window5to1
 )
 
 
-#frameX
+#frameX（デバッグ選択画面）
 
 #横並びに配置するための入れ物(text)を定義する
 label_horizonX = tk.Label(frameX,bg="#42b33d")
@@ -1977,7 +1992,7 @@ command = go_windowXto1
 )
 
 
-#frameX1
+#frameX1（デバッグ１画面）
 label_horizonX1 = tk.Label(frameX1,bg="#42b33d")
 label_horizonY1 = tk.Label(frameX1,bg="#42b33d")
 
@@ -2022,7 +2037,9 @@ command = go_backX1
 )
 
 
-#frameX2
+
+#frameX2（デバッグ２画面）
+
 label_channelID = tk.Label(frameX2, text="チャンネルIDを入力してください", font=("MSゴシック", "15", "bold"))
 
 text_channelIDinput = tk.Text(frameX2, 
@@ -2057,55 +2074,69 @@ beforebox_horizon = tk.Label(frameX2,bg="#42b33d")
 
 
 module_beforeyear = []
-for i in range(30):
-    module_beforeyear.append(1998 + i)
 
- 
-year_b = combobox = ttk.Combobox(beforebox_horizon, value=module_beforeyear, width=80, height=120, state="readonly", cursor="dot")
+for i in range(32):
+    module_beforeyear.append(2005 + i)
+
+year_b = ttk.Combobox(beforebox_horizon, value=module_beforeyear, width=80, height=120, state="readonly", cursor="dot")
 year_b.option_add("*TCombobox*Listbox.Font", 30)
 year_b.current(0)
+
 print(module_beforeyear)
+
 
 
 module_beforemonth = ('01', '02','03','04','05','06','07','08','09','10','11','12')
 
-manth_b = combobox = ttk.Combobox(beforebox_horizon, value=module_beforemonth, width=80, height=120, state="readonly", cursor="dot")
-manth_b.option_add("*TCombobox*Listbox.Font", 30)
-manth_b.current(0)
+month_b = ttk.Combobox(beforebox_horizon, value=module_beforemonth, width=80, height=120, state="readonly", cursor="dot")
+month_b.option_add("*TCombobox*Listbox.Font", 30)
+month_b.current(0)
+
+
 
 module_beforeday = []
+
 for i in range(30):
-  module_beforeday.append(1 + i)
+    module_beforeday.append(1 + i)
  
-day_b = combobox = ttk.Combobox(beforebox_horizon, value=module_beforeday, width=80, height=120, state="readonly", cursor="dot")
+day_b = ttk.Combobox(beforebox_horizon, value=module_beforeday, width=80, height=120, state="readonly", cursor="dot")
 day_b.option_add("*TCombobox*Listbox.Font", 30)
 day_b.current(0)
 
 
+
 afterbox_horizon = tk.Label(frameX2,bg="#42b33d")
 
+
 module_afteryear = []
-for i in range(30):
-    module_afteryear.append(1998 + i)
+
+for i in range(32):
+    module_afteryear.append(2005 + i)
  
-year_a = combobox = ttk.Combobox(afterbox_horizon, value=module_afteryear, width=80, height=120, state="readonly", cursor="dot")
+year_a = ttk.Combobox(afterbox_horizon, value=module_afteryear, width=80, height=120, state="readonly", cursor="dot")
 year_a.option_add("*TCombobox*Listbox.Font", 30)
 year_a.current(0)
 
+
+
 module = ('01', '02','03','04','05','06','07','08','09','10','11','12')
  
-manth_a = combobox = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
-manth_a.option_add("*TCombobox*Listbox.Font", 30)
-manth_a.current(0)
+month_a = ttk.Combobox(afterbox_horizon, value=module, width=80, height=120, state="readonly", cursor="dot")
+month_a.option_add("*TCombobox*Listbox.Font", 30)
+month_a.current(0)
+
 
 
 module_afterday = []
+
 for i in range(30):
-  module_afterday.append(1 + i)
- 
-day_a = combobox = ttk.Combobox(afterbox_horizon, value=module_afterday, width=80, height=120, state="readonly", cursor="dot")
+    module_afterday.append(1 + i)
+
+day_a = ttk.Combobox(afterbox_horizon, value=module_afterday, width=80, height=120, state="readonly", cursor="dot")
 day_a.option_add("*TCombobox*Listbox.Font", 30)
 day_a.current(0)
+
+
 
 datasave = tk.Button(frameX2, text='データを保存',
 width = 30,
@@ -2127,9 +2158,87 @@ command = go_backX2
 )
 
 
-#frameX3
-label_learninghorizon = tk.Label(frameX3,bg="#42b33d")
+#デバッグ二画面用　イベント定義
 
+def selectMonthB(event):
+
+    #messagebox.showerror("monthb", "monthb")
+
+    global year_b
+    global month_b
+    global day_b
+
+    module = ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12')
+
+    module_beforeday_forselect = []
+    
+    if  month_b.get() == module[0] or month_b.get() == module[2] or month_b.get() == module[4] or month_b.get() == module[6] or month_b.get() == module[7] or month_b.get() == module[9] or month_b.get() == module[11]:
+
+        for i in range(31):
+            module_beforeday_forselect.append(1 + i)
+
+
+    else:
+
+        if month_b.get() == module[1]:
+            
+            if int(year_b.get()) % 4 == 0:
+                for i in range(29):
+                    module_beforeday_forselect.append(1 + i)
+            else:
+                for i in range(28):
+                    module_beforeday_forselect.append(1 + i)
+
+        else:
+            for i in range(30):
+              module_beforeday_forselect.append(1 + i)
+    
+
+    day_b.configure(value=module_beforeday_forselect)
+
+
+def selectMonthA(event):
+
+    global year_a
+    global month_a
+    global day_a
+
+    module = ('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12')
+
+    module_afterday_forselect = []
+    
+    if  month_a.get() == module[0] or month_a.get() == module[2] or month_a.get() == module[4] or month_a.get() == module[6] or month_a.get() == module[7] or month_a.get() == module[9] or month_a.get() == module[11]:
+
+        for i in range(31):
+            module_afterday_forselect.append(1 + i)
+
+
+    else:
+
+        if month_a.get() == module[1]:
+            
+            if int(year_a.get()) % 4 == 0:
+                for i in range(29):
+                    module_afterday_forselect.append(1 + i)
+            else:
+                for i in range(28):
+                    module_afterday_forselect.append(1 + i)
+
+        else:
+            for i in range(30):
+              module_afterday_forselect.append(1 + i)
+
+    
+    day_a.configure(value=module_afterday_forselect)
+
+
+month_b.bind('<<ComboboxSelected>>', selectMonthB)
+month_a.bind('<<ComboboxSelected>>', selectMonthA)
+
+
+#frameX3（デバッグ３画面）
+
+label_learninghorizon = tk.Label(frameX3,bg="#42b33d")
 
 label_learningcount = tk.Label(label_learninghorizon, text="回数を指定", font=("MSゴシック", "15", "bold"))
 
@@ -2165,7 +2274,7 @@ command = go_backX3
 
 #ボタンやテキストを配置する位置の設定(frame1)
 
-#1画面目
+#1画面目（メインメニュー画面　配置）
 
 btn_cry.pack(padx = 10, pady = 0, side = tk.RIGHT)
 btn_go4.pack(padx = 10, pady = 0, side = tk.RIGHT)
@@ -2198,7 +2307,8 @@ frame1.pack(padx = 0, pady = 0)
 
 #ボタンやテキストを配置する位置の設定(frame2)
 
-#2画面目
+#2画面目（動画ID検索画面　配置）
+
 label_URLsearch.pack(padx = 10, pady = 10, expand=1)
 label_dangerlevel.pack(padx = 50, pady = 10, expand=1)
 label_title.pack(padx = 50, pady = 10, after=label_dangerlevel)
@@ -2210,23 +2320,28 @@ sizegrip2.pack(padx = 5, pady = 5)
 
 
 
-#3画面目
+#3画面目（チャンネル動画検索画面　配置）
+
 label_channelIDsearch.pack(padx = 10, pady = 10, expand=1, side = tk.TOP)
 label_channelname.pack(padx = 50, pady = 10, after=label_channelIDsearch)
 label_channeldangerlevel.pack(padx = 50, pady = 10, expand=1, side = tk.TOP)
 
 label_horizon.pack(padx = 50, pady = 10, expand=1)
+
 btn_return2.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
+
 label_channeldangervideo.pack(padx = 50, pady = 10, expand=1, side = tk.BOTTOM, anchor = tk.CENTER)
 
 label_title1.pack(padx = 10, pady = 10, side = tk.RIGHT)
 label_title2.pack(padx = 10, pady = 10, side = tk.RIGHT)
 label_title3.pack(padx = 10, pady = 10, side = tk.RIGHT)
+
 label_titlehorizon.pack(padx = 50, pady = 10, expand=1)
 
 label_Sus1.pack(padx = 100, pady = 10, side = tk.RIGHT)
 label_Sus2.pack(padx = 100, pady = 10, side = tk.RIGHT)
 label_Sus3.pack(padx = 100, pady = 10, side = tk.RIGHT)
+
 label_Sushorizon.pack(padx = 50, pady = 10, expand=1)
 
 sizegrip3 = ttk.Sizegrip(frame3)
@@ -2234,9 +2349,11 @@ sizegrip3.pack(padx = 5, pady = 5)
 
 
 
-#4画面目
+#4画面目（旬の釣り動画　配置）
+
 label_trendyvideo.pack(padx = 10, pady = 10, expand=1)
 label_trendyvideodangerlevel.pack(padx = 50, pady = 10, expand=1)
+
 btn_return3.pack(padx = 50, pady = 10, expand=1)
 
 sizegrip4 = ttk.Sizegrip(frame4)
@@ -2244,21 +2361,27 @@ sizegrip4.pack(padx = 5, pady = 5)
 
 
 
-#5画面目
+#5画面目（履歴表示画面　配置）
+
 label_historydisplay.pack(padx=0, pady=0)
 
 moviehistorytree.pack(padx=0, pady=0, side = tk.RIGHT)
+
 counttree.pack(padx=0, pady=0, side = tk.RIGHT)
+
 label_moviehistory.pack(padx=0, pady=0, side = tk.RIGHT)
 label_moviehistoryhorizon.pack(padx = 0, pady = 10, expand=1)
 
 channelhistorytree.pack(padx=0, pady=0, side = tk.RIGHT)
+
 counttree1.pack(padx=0, pady=0, side = tk.RIGHT)
+
 label_channelhistory.pack(padx=0, pady=0, side = tk.RIGHT)
 label_channelhistoryhorizon.pack(padx = 0, pady = 10, expand=1)
 
 
 dangerlevelrankingtree.pack(padx=0, pady=0, side = tk.RIGHT)
+
 label_videodangerlevelranking.pack(padx=0, pady=0, side = tk.RIGHT)
 label_videodangerlevelrankinghorizon.pack(padx = 0, pady = 10, expand=1)
 
@@ -2269,23 +2392,30 @@ sizegrip5.pack(padx = 5, pady = 5)
 
 
 
-#X画面目
+#X画面目（デバッグ選択画面　配置）
+
 use1.pack(padx = 10, pady = 0, side = tk.LEFT)
 use2.pack(padx = 10, pady = 0, side = tk.LEFT)
 use3.pack(padx = 10, pady = 0, side = tk.LEFT)
+
 label_horizonX.pack(padx = 50, pady = 10, expand=1)
 
 back.pack(padx = 50, pady = 40, expand=1, anchor='e')
 
 
 
-#X1画面目
+#X1画面目（デバッグ１画面　配置）
+
 label_URLinput.pack(padx = 10, pady = 10, side = tk.LEFT)
+
 URL_input.pack(padx = 10, pady = 10, side = tk.LEFT)
+
 label_horizonX1.pack(padx = 50, pady = 40, expand=1)
 
 label_SuspiciousDegree.pack(padx = 10, pady = 0, side = tk.LEFT)
+
 SuspiciousDegree_input.pack(padx = 10, pady = 0, side = tk.LEFT)
+
 label_horizonY1.pack(padx = 50, pady = 10, expand=1)
 
 save_date.pack (padx = 50, pady = 40, expand=1)
@@ -2294,7 +2424,8 @@ back_windowX1.pack (padx = 50, pady = 40, expand=1, anchor='e')
 
 
 
-#X2画面目
+#X2画面目（デバッグ２画面　配置）
+
 label_channelID.pack(padx = 50, pady = 40, expand=1)
 
 text_channelIDinput.pack(padx = 0, pady = 0, expand=1)
@@ -2303,35 +2434,46 @@ label_moviecounttext.pack(padx = 50, pady = 40, expand=1)
 
 moviecountinput.pack(padx = 50, pady = 0, expand=1)
 
+
+
 label_beforedaystext.pack(padx = 50, pady = 40, expand=1)
 
 year_b.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
-manth_b.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+month_b.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
 day_b.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+
 beforebox_horizon.pack(padx = 20, pady = 10, expand=1)
+
 
 label_afterdaystext.pack(padx = 50, pady = 40, expand=1)
 
 year_a.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
-manth_a.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+month_a.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
 day_a.pack(padx = 50, pady = 0, expand=1, side = tk.LEFT)
+
 afterbox_horizon.pack(padx = 20, pady = 10, expand=1)
+
 
 datasave.pack(padx = 50, pady = 0, expand=1)
 backX2.pack(padx = 50, pady = 0, expand=1,  anchor='e')
 
 
 
-#X3画面目
+#X3画面目（デバッグ３画面　配置）
+
 text_inputlearningcount.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
+
 label_learningcount.pack(padx = 50, pady = 40, expand=1, side = tk.RIGHT)
+
 label_learninghorizon.pack(padx = 50, pady = 40, expand=1)
 
 learning.pack(padx = 0, pady = 0, expand=1)
+
 backX3.pack(padx = 50, pady = 0, expand=1, anchor='e')
 
 
-#----------------------------------  YoutubeAPIここまで？ -------------------------------------------------------------------------------
+
+#----------------------------------  画面設定ここまで -------------------------------------------------------------------------------
 
 
 scaler = preprocessing.StandardScaler()
