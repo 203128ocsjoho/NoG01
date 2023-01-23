@@ -2604,7 +2604,7 @@ def DoStudy(count=0):
     print("\n\ny_train: \n", y_train[:9])
 
 
-
+"""
 # もう一回学習するかコマンド入力させる関数
 def yes_no_input():
 
@@ -2614,7 +2614,7 @@ def yes_no_input():
         return True
     elif choice in ['n', ' n', 'no', 'いいえ']:
         return False
-
+"""
 
 
 
@@ -2628,14 +2628,16 @@ root.mainloop() #なんかわからんけどGUIをループして起動するや
 
 
 
-DoStudy() # 一回目の学習を行う
+# DoStudy()
+# 一回目の学習を行う
 
 
 
-
+"""
 # 二回目以降は、選択させる。
 while(yes_no_input()):
     DoStudy()
+"""
 
 
 
