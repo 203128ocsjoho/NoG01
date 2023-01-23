@@ -49,6 +49,7 @@ import numpy as np
 #YoutubeAPI系と関連のインポート
 import datetime
 import requests
+from requests import get
 import json
 
 import isodate
@@ -99,6 +100,11 @@ else:
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 
+ip_glo = "60.66.192.16"
+localip = get('https://api.ipify.org').content.decode('utf8')
+if localip == ip_glo:
+    ip_glo = "localhost"
+
 # PostgreSQL関係
 try:
 
@@ -124,7 +130,7 @@ try:
         connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                     user="yuyuyu",        #ユーザ
                     password="yuyuyu123",  #パスワード
-                    host="localhost",       #ホスト名
+                    host=ip_glo,       #ホスト名
                     port="5432",            #ポート
                     dbname="postgres"))    #データベース名
 
