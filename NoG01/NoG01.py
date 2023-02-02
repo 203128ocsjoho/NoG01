@@ -108,7 +108,7 @@ try:
     connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                 user="yuyuyu",        #ユーザ
                 password="yuyuyu123",  #パスワード
-                host="localhost",       #ホスト名
+                host="60.66.192.16",       #ホスト名
                 port="5432",            #ポート
                 dbname="postgres"))    #データベース名
 
@@ -124,7 +124,7 @@ try:
         connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                     user="yuyuyu",        #ユーザ
                     password="yuyuyu123",  #パスワード
-                    host="localhost",       #ホスト名
+                    host="60.66.192.16",       #ホスト名
                     port="5432",            #ポート
                     dbname="postgres"))    #データベース名
 
