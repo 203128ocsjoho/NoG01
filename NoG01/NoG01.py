@@ -49,6 +49,7 @@ import numpy as np
 #YoutubeAPI系と関連のインポート
 import datetime
 import requests
+from requests import get
 import json
 
 import isodate
@@ -99,6 +100,11 @@ else:
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 
+ip_glo = "60.66.192.16"
+localip = get('https://api.ipify.org').content.decode('utf8')
+if localip == ip_glo:
+    ip_glo = "localhost"
+
 # PostgreSQL関係
 try:
 
@@ -124,7 +130,11 @@ try:
         connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                     user="yuyuyu",        #ユーザ
                     password="yuyuyu123",  #パスワード
+<<<<<<< HEAD
                     host="60.66.192.16",       #ホスト名
+=======
+                    host=ip_glo,       #ホスト名
+>>>>>>> 07b0741d8a0ed8cbde7d2df4cefac999f7e8f126
                     port="5432",            #ポート
                     dbname="postgres"))    #データベース名
 
@@ -2598,7 +2608,7 @@ def DoStudy(count=0):
     print("\n\ny_train: \n", y_train[:9])
 
 
-
+"""
 # もう一回学習するかコマンド入力させる関数
 def yes_no_input():
 
@@ -2608,7 +2618,7 @@ def yes_no_input():
         return True
     elif choice in ['n', ' n', 'no', 'いいえ']:
         return False
-
+"""
 
 
 
@@ -2622,14 +2632,16 @@ root.mainloop() #なんかわからんけどGUIをループして起動するや
 
 
 
-DoStudy() # 一回目の学習を行う
+# DoStudy()
+# 一回目の学習を行う
 
 
 
-
+"""
 # 二回目以降は、選択させる。
 while(yes_no_input()):
     DoStudy()
+"""
 
 
 
