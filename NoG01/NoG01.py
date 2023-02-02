@@ -33,6 +33,8 @@ from tkinter import messagebox
 from tkinter import simpledialog
 
 #AI(keras)モデルのインポート
+import tensorflow as tf
+
 from keras.models import Sequential
 from keras.models import load_model
 
@@ -56,6 +58,7 @@ import isodate
 import urllib.request
 import urllib.parse
 
+import googleapiclient
 from googleapiclient.discovery import build
 
 #SQLインポート
@@ -81,6 +84,12 @@ root.state("zoomed")
 # 初期設定
 kankyouYN = messagebox.askyesno("初期設定","デフォルトではない環境を設定しますか？")
 
+ip_glo = "60.66.192.16"
+localip = get('https://api.ipify.org').content.decode('utf8')
+
+if localip == ip_glo:
+    ip_glo = "localhost"
+
 if kankyouYN == True:
     askAPI = simpledialog.askstring(title="YOUTUBEAPIキーを入力", prompt="YOUTUBE_API_KEY") 
     askIP = simpledialog.askstring(title="IPアドレスを入力", prompt="IP")
@@ -100,23 +109,13 @@ else:
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 
-ip_glo = "60.66.192.16"
-localip = get('https://api.ipify.org').content.decode('utf8')
-if localip == ip_glo:
-    ip_glo = "localhost"
+
 
 # PostgreSQL関係
 try:
 
     #卒業研究終了後少ししたらポート閉じます
     #接続
-
-    connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
-                user="yuyuyu",        #ユーザ
-                password="yuyuyu123",  #パスワード
-                host="60.66.192.16",       #ホスト名
-                port="5432",            #ポート
-                dbname="postgres"))    #データベース名
 
 
     if kankyouYN == True:
@@ -130,11 +129,7 @@ try:
         connector =  psycopg2.connect('postgresql://{user}:{password}@{host}:{port}/{dbname}'.format( 
                     user="yuyuyu",        #ユーザ
                     password="yuyuyu123",  #パスワード
-<<<<<<< HEAD
-                    host="60.66.192.16",       #ホスト名
-=======
                     host=ip_glo,       #ホスト名
->>>>>>> 07b0741d8a0ed8cbde7d2df4cefac999f7e8f126
                     port="5432",            #ポート
                     dbname="postgres"))    #データベース名
 
